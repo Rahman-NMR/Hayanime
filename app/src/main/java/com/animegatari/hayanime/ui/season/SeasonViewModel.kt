@@ -1,13 +1,13 @@
-package com.animegatari.hayanime.ui.notifications
+package com.animegatari.hayanime.ui.season
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class NotificationsViewModel : ViewModel() {
-
+class SeasonViewModel : ViewModel() {
     private val _text = MutableLiveData<String>().apply {
-        value = "This is notifications Fragment"
+        value = "This is Season Fragment"
     }
+
     val text: LiveData<String> = _text
 }

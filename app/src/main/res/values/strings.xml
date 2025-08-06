@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">Hayanime</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="app_name" translatable="false">Hayanime</string>
+    <string name="title_season">Seasonal</string>
+    <string name="title_search">Search</string>
+    <string name="title_my_list">My List</string>
 </resources>
