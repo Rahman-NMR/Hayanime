@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Theme.Hayanime" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color. -->
@@ -12,5 +12,10 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+    </style>
+
+    <style name="BaseTheme.Hayanime" parent="Theme.Hayanime">
+        <item name="fontFamily">@font/roboto_family</item>
+        <item name="android:fontFamily">@font/roboto_family</item>
     </style>
 </resources>
