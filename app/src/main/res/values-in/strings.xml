@@ -3,4 +3,8 @@
     <string name="title_season">Musiman</string>
     <string name="title_search">Telusuri</string>
     <string name="title_my_list">Daftarku</string>
+    <string name="unknown_label">Tidak diketahui</string>
+    <string name="search_hint">Cari anime dari MyAnimeList</string>
+    <string name="label_status_currently_airing">Sedang Tayang</string>
+    <string name="label_status_not_yet_aired">Belum Tayang</string>
 </resources>

@@ -1,6 +1,18 @@
 <resources>
     <string name="app_name" translatable="false">Hayanime</string>
+    <string name="unknown_symbol" translatable="false">\??</string>
+    <string name="empty_number" translatable="false">0</string>
+    <string name="not_available" translatable="false">N/A</string>
+    <string name="nothing" translatable="false">-</string>
+    <string name="label_episode" translatable="false">Episode</string>
+    <string name="label_nsfw" translatable="false">NSFW</string>
+    <string name="label_episode_duration_minutes" translatable="false">%1$s min/eps</string>
+
     <string name="title_season">Seasonal</string>
     <string name="title_search">Search</string>
     <string name="title_my_list">My List</string>
+    <string name="unknown_label">Unknown</string>
+    <string name="search_hint">Search anime from MyAnimeList</string>
+    <string name="label_status_currently_airing">Currently Airing</string>
+    <string name="label_status_not_yet_aired">Not Yet Aired</string>
 </resources>
