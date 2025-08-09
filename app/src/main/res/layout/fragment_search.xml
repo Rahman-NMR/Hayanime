@@ -28,7 +28,8 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:liftOnScrollColor="?attr/colorSurface">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:layout_width="match_parent"

@@ -15,4 +15,5 @@
     <string name="search_hint">Search anime from MyAnimeList</string>
     <string name="label_status_currently_airing">Currently Airing</string>
     <string name="label_status_not_yet_aired">Not Yet Aired</string>
+    <string name="toast_back_pressed">Press back again to exit</string>
 </resources>

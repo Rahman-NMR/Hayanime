@@ -26,11 +26,12 @@
         android:layout_height="wrap_content"
         android:background="@drawable/bg_bottom_left_corner_16"
         android:gravity="end"
-        android:paddingHorizontal="12dp"
         android:paddingVertical="8dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="12dp"
         android:text="@string/unknown_label"
         android:textAlignment="textEnd"
-        android:textColor="?attr/colorSurface"
+        android:textColor="?attr/colorSurfaceVariant"
         android:textSize="16sp"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="@+id/main_picture"
@@ -64,10 +65,10 @@
         android:drawablePadding="2dp"
         android:gravity="center_vertical"
         android:text="@string/not_available"
-        android:textColor="?attr/colorSurface"
+        android:textColor="?attr/colorSurfaceVariant"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:drawableTint="?attr/colorSurface" />
+        app:drawableTint="?attr/colorSurfaceVariant" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/num_scoring_user"
@@ -77,9 +78,9 @@
         android:drawablePadding="4dp"
         android:gravity="center_vertical"
         android:text="@string/not_available"
-        android:textColor="?attr/colorSurface"
+        android:textColor="?attr/colorSurfaceVariant"
         android:textSize="14sp"
-        app:drawableTint="?attr/colorSurface"
+        app:drawableTint="?attr/colorSurfaceVariant"
         tools:ignore="MissingConstraints" />
 
     <com.google.android.material.button.MaterialButton
@@ -115,6 +116,7 @@
         android:maxLines="1"
         android:text="@string/unknown_label"
         android:textAlignment="textStart"
+        android:textColor="?attr/colorOnSurfaceVariant"
         android:textSize="14sp"
         app:layout_constrainedWidth="true" />
 
@@ -127,6 +129,7 @@
         android:maxLines="1"
         android:text="@string/unknown_label"
         android:textAlignment="textEnd"
+        android:textColor="?attr/colorOnSurfaceVariant"
         android:textSize="14sp"
         app:layout_constrainedWidth="true"
         tools:ignore="MissingConstraints" />
@@ -137,6 +140,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
         android:text="@string/unknown_label"
+        android:textColor="?attr/colorPrimary"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -162,10 +166,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_corner_16"
+        android:backgroundTint="?attr/colorErrorContainer"
         android:paddingHorizontal="10dp"
         android:paddingVertical="4dp"
         android:text="@string/label_nsfw"
-        android:textColor="?attr/colorSurface"
+        android:textColor="?attr/colorOnErrorContainer"
         android:visibility="visible"
         tools:visibility="visible" />
 
@@ -174,6 +179,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/unknown_label"
+        android:textColor="?attr/colorOnSurfaceVariant"
         tools:ignore="MissingConstraints" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -182,7 +188,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/unknown_label"
+        android:textColor="?attr/colorSecondary"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -221,7 +229,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_corner_16"
-        android:backgroundTint="?attr/colorSurface"
+        android:backgroundTint="?attr/colorSurfaceVariant"
         android:paddingHorizontal="8dp"
         android:paddingVertical="4dp"
         android:text="@string/unknown_symbol"
@@ -232,7 +240,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/label_episode"
-        android:textColor="?attr/colorSurface"
+        android:textColor="?attr/colorSurfaceVariant"
         tools:ignore="MissingConstraints" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -241,6 +249,7 @@
         android:layout_height="wrap_content"
         android:gravity="end"
         android:text="@string/label_episode_duration_minutes"
+        android:textColor="?attr/colorOnSurfaceVariant"
         android:textSize="16sp"
         tools:ignore="MissingConstraints" />
 
@@ -255,7 +264,9 @@
         android:gravity="center_vertical"
         android:paddingVertical="6dp"
         android:text="@string/unknown_label"
+        android:textColor="?attr/colorOnSurfaceVariant"
         android:textSize="16sp"
+        app:drawableTint="?attr/colorOnSurfaceVariant"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -271,7 +282,7 @@
         android:paddingHorizontal="16dp"
         android:paddingVertical="6dp"
         android:text="@string/unknown_label"
-        android:textColor="?attr/colorSurface"
+        android:textColor="?attr/colorSurfaceVariant"
         android:visibility="visible"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"

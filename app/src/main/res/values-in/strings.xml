@@ -7,4 +7,5 @@
     <string name="search_hint">Cari anime dari MyAnimeList</string>
     <string name="label_status_currently_airing">Sedang Tayang</string>
     <string name="label_status_not_yet_aired">Belum Tayang</string>
+    <string name="toast_back_pressed">Tekan kembali untuk keluar</string>
 </resources>

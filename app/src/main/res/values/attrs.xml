@@ -1,0 +1,22 @@
+<resources>
+    <attr name="colorExtraColor1" format="color" />
+    <attr name="colorOnExtraColor1" format="color" />
+    <attr name="colorExtraColor1Container" format="color" />
+    <attr name="colorOnExtraColor1Container" format="color" />
+    <attr name="colorExtraColor2" format="color" />
+    <attr name="colorOnExtraColor2" format="color" />
+    <attr name="colorExtraColor2Container" format="color" />
+    <attr name="colorOnExtraColor2Container" format="color" />
+    <attr name="colorExtraColor3" format="color" />
+    <attr name="colorOnExtraColor3" format="color" />
+    <attr name="colorExtraColor3Container" format="color" />
+    <attr name="colorOnExtraColor3Container" format="color" />
+    <attr name="colorExtraColor4" format="color" />
+    <attr name="colorOnExtraColor4" format="color" />
+    <attr name="colorExtraColor4Container" format="color" />
+    <attr name="colorOnExtraColor4Container" format="color" />
+    <attr name="colorExtraColor5" format="color" />
+    <attr name="colorOnExtraColor5" format="color" />
+    <attr name="colorExtraColor5Container" format="color" />
+    <attr name="colorOnExtraColor5Container" format="color" />
+</resources>

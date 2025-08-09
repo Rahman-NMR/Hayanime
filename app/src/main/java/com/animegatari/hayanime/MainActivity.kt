@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
                 if (backPressedTime + 2000 > System.currentTimeMillis()) {
                     finish()
                 } else {
-                    Toast.makeText(this@MainActivity, "Press back again to exit", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, getString(R.string.toast_back_pressed), Toast.LENGTH_SHORT).show()
                 }
 
                 backPressedTime = System.currentTimeMillis()
