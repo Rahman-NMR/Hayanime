@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_item_avatar"
+        android:contentDescription="@string/description_profile"
+        android:icon="@drawable/ic_account_circle_24px_rounded"
+        android:title=""
+        app:showAsAction="always" />
+</menu>

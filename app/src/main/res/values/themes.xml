@@ -69,6 +69,18 @@
         <item name="colorOnExtraColor5Container">@color/colorOnExtraColor5Container</item>
     </style>
 
+    <style name="CircularCornerSize">
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="Fab.ScrollToTop" parent="Widget.Material3.FloatingActionButton.Small.Surface">
+        <item name="android:src">@drawable/ic_arrow_upward_24px_rounded</item>
+        <item name="android:layout_gravity">bottom|center_horizontal</item>
+        <item name="android:layout_margin">16dp</item>
+        <item name="shapeAppearanceOverlay">@style/CircularCornerSize</item>
+        <item name="maxImageSize">20dp</item>
+    </style>
+
     <style name="MainTheme.Hayanime" parent="Theme.Hayanime">
         <!-- font family. -->
         <item name="fontFamily">@font/roboto_family</item>

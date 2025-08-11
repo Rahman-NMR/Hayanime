@@ -3,9 +3,15 @@
     <string name="title_season">Musiman</string>
     <string name="title_search">Telusuri</string>
     <string name="title_my_list">Daftarku</string>
-    <string name="unknown_label">Tidak diketahui</string>
     <string name="search_hint">Cari anime dari MyAnimeList</string>
+
+    <string name="label_unknown">Tidak diketahui</string>
     <string name="label_status_currently_airing">Sedang Tayang</string>
     <string name="label_status_not_yet_aired">Belum Tayang</string>
+
+    <string name="description_fab_scroll_to_top">Scroll ke atas</string>
+    <string name="description_profile">Profil</string>
+
     <string name="toast_back_pressed">Tekan kembali untuk keluar</string>
+    <string name="toast_no_internet">Tidak ada koneksi internet</string>
 </resources>

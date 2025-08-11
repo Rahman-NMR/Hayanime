@@ -4,26 +4,61 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.animegatari.hayanime.R
 import com.animegatari.hayanime.databinding.FragmentSeasonBinding
+import com.animegatari.hayanime.ui.recyclerview.decorations.BottomPaddingItemDecoration
+import com.animegatari.hayanime.utils.dummy.Dummy
+import com.animegatari.hayanime.utils.dummy.DummyAdapter
 
 class SeasonFragment : Fragment() {
     private var _binding: FragmentSeasonBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var seasonViewModel: SeasonViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        seasonViewModel = ViewModelProvider(this)[SeasonViewModel::class.java]
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val seasonViewModel = ViewModelProvider(this).get(SeasonViewModel::class.java)
         _binding = FragmentSeasonBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        val root: View = binding.root
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        val textView: TextView = binding.textSeason
-        seasonViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        binding.loadingIndicator.hide()
+        binding.fabScrollToTop.hide()
+
+        binding.swipeRefresh.setOnRefreshListener {
+            binding.swipeRefresh.isRefreshing = false
+            binding.loadingIndicator.apply {
+                show()
+                postDelayed({ hide() }, 11000)
+            }
         }
-        return root
+
+        seasonViewModel.text.observe(viewLifecycleOwner) {
+//            binding.textSeason.text = it
+        }
+
+        binding.setupRecyclerView()
+    }
+
+    private fun FragmentSeasonBinding.setupRecyclerView() {
+        val paddingBottom = resources.getDimensionPixelSize(R.dimen.layout_padding_bottom)
+
+        recyclerView.layoutManager = StaggeredGridLayoutManager(
+            Dummy.calculateSpanCount(requireContext(), 200),
+            StaggeredGridLayoutManager.VERTICAL
+        )
+        recyclerView.addItemDecoration(BottomPaddingItemDecoration(paddingBottom))
+        recyclerView.adapter = DummyAdapter()
     }
 
     override fun onDestroyView() {
