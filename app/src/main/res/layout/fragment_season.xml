@@ -46,43 +46,53 @@
             android:layout_height="wrap_content"
             android:paddingHorizontal="12dp">
 
+            <androidx.constraintlayout.helper.widget.Flow
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:constraint_referenced_ids="button_group, btn_sort_by"
+                app:flow_firstHorizontalStyle="spread_inside"
+                app:flow_horizontalGap="4dp"
+                app:flow_lastHorizontalStyle="spread_inside"
+                app:flow_wrapMode="chain"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <com.google.android.material.button.MaterialButtonGroup
                 android:id="@+id/button_group"
                 style="@style/Widget.Material3.MaterialButtonGroup.Connected"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxWidth="400dp"
-                app:layout_constrainedWidth="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_max="400dp">
+                app:layout_constrainedWidth="true">
 
                 <Button
-                    android:id="@+id/button1"
+                    android:id="@+id/btn_change_season"
                     style="@style/Widget.Material3.Button.TonalButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:minWidth="32dp"
                     android:text="@string/unknown_symbol" />
 
                 <Button
-                    android:id="@+id/button2"
+                    android:id="@+id/btn_change_year"
                     style="@style/Widget.Material3.Button.TonalButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:minWidth="32dp"
                     android:text="@string/unknown_symbol" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/material_buttons"
-                    style="@style/Widget.Material3.Button.TonalButton.Icon"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/label_unknown"
-                    app:icon="@drawable/ic_arrow_downward_24px_rounded"
-                    app:layout_constrainedWidth="true" />
             </com.google.android.material.button.MaterialButtonGroup>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_sort_by"
+                style="@style/Widget.Material3.Button.TonalButton.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_unknown"
+                app:icon="@drawable/ic_arrow_downward_24px_rounded"
+                app:layout_constrainedWidth="true"
+                tools:ignore="MissingConstraints" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
