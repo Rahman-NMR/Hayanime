@@ -1,13 +1,13 @@
-package com.animegatari.hayanime.utils.dummy
+package com.animegatari.hayanime.ui.utils.dummy
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.animegatari.hayanime.databinding.LayoutAnimeGridBinding
+import com.animegatari.hayanime.databinding.LayoutAnimeListBinding
 
-class DummyAdapter : RecyclerView.Adapter<DummyAdapter.DummyaViewHolder>() {
+class DummyAdapterList : RecyclerView.Adapter<DummyAdapterList.DummyaViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DummyaViewHolder {
-        val binding = LayoutAnimeGridBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = LayoutAnimeListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return DummyaViewHolder(binding)
     }
 
@@ -17,7 +17,7 @@ class DummyAdapter : RecyclerView.Adapter<DummyAdapter.DummyaViewHolder>() {
 
     override fun getItemCount() = Dummy.dummyData.size
 
-    class DummyaViewHolder(private val binding: LayoutAnimeGridBinding) : RecyclerView.ViewHolder(binding.root) {
+    class DummyaViewHolder(private val binding: LayoutAnimeListBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(str: String) {
             binding.title.text = str
         }

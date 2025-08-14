@@ -1,12 +1,12 @@
-package com.animegatari.hayanime.ui.myList
+package com.animegatari.hayanime.ui.main.search
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class MyListViewModel : ViewModel() {
+class SearchViewModel : ViewModel() {
     private val _text = MutableLiveData<String>().apply {
-        value = "This is My List Fragment"
+        value = "This is Search Fragment"
     }
 
     val text: LiveData<String> = _text

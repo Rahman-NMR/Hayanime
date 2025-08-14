@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/navigation_season"
-        android:name="com.animegatari.hayanime.ui.season.SeasonFragment"
+        android:name="com.animegatari.hayanime.ui.main.season.SeasonFragment"
         android:label="@string/title_season"
         tools:layout="@layout/fragment_season" />
 
     <fragment
         android:id="@+id/navigation_search"
-        android:name="com.animegatari.hayanime.ui.search.SearchFragment"
+        android:name="com.animegatari.hayanime.ui.main.search.SearchFragment"
         android:label="@string/title_search"
         tools:layout="@layout/fragment_search" />
 
     <fragment
         android:id="@+id/navigation_my_list"
-        android:name="com.animegatari.hayanime.ui.myList.MyListFragment"
+        android:name="com.animegatari.hayanime.ui.main.myList.MyListFragment"
         android:label="@string/title_my_list"
         tools:layout="@layout/fragment_my_list" />
 </navigation>

@@ -1,4 +1,4 @@
-package com.animegatari.hayanime.ui.season
+package com.animegatari.hayanime.ui.main.search
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,24 +8,25 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.animegatari.hayanime.R
-import com.animegatari.hayanime.databinding.FragmentSeasonBinding
-import com.animegatari.hayanime.ui.recyclerview.decorations.BottomPaddingItemDecoration
-import com.animegatari.hayanime.utils.dummy.Dummy
-import com.animegatari.hayanime.utils.dummy.DummyAdapter
+import com.animegatari.hayanime.databinding.FragmentSearchBinding
+import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
+import com.animegatari.hayanime.ui.utils.dummy.Dummy
+import com.animegatari.hayanime.ui.utils.dummy.DummyAdapter
 
-class SeasonFragment : Fragment() {
-    private var _binding: FragmentSeasonBinding? = null
+class SearchFragment : Fragment() {
+    private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var seasonViewModel: SeasonViewModel
+    private lateinit var searchViewModel: SearchViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        seasonViewModel = ViewModelProvider(this)[SeasonViewModel::class.java]
+
+        searchViewModel = ViewModelProvider(this)[SearchViewModel::class.java]
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentSeasonBinding.inflate(inflater, container, false)
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -43,14 +44,14 @@ class SeasonFragment : Fragment() {
             }
         }
 
-        seasonViewModel.text.observe(viewLifecycleOwner) {
-//            binding.textSeason.text = it
+        searchViewModel.text.observe(viewLifecycleOwner) {
+//            binding.textSearch.text = it
         }
 
         binding.setupRecyclerView()
     }
 
-    private fun FragmentSeasonBinding.setupRecyclerView() {
+    private fun FragmentSearchBinding.setupRecyclerView() {
         val paddingBottom = resources.getDimensionPixelSize(R.dimen.layout_padding_bottom)
 
         recyclerView.layoutManager = StaggeredGridLayoutManager(
@@ -64,5 +65,10 @@ class SeasonFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.searchView.hide()
     }
 }

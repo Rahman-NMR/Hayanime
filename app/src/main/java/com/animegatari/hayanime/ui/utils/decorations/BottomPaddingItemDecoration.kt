@@ -1,4 +1,4 @@
-package com.animegatari.hayanime.ui.recyclerview.decorations
+package com.animegatari.hayanime.ui.utils.decorations
 
 import android.graphics.Rect
 import android.view.View

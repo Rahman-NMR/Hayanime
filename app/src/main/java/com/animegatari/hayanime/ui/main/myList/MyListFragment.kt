@@ -1,4 +1,4 @@
-package com.animegatari.hayanime.ui.myList
+package com.animegatari.hayanime.ui.main.myList
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.animegatari.hayanime.R
 import com.animegatari.hayanime.databinding.FragmentMyListBinding
-import com.animegatari.hayanime.ui.adapter.ViewPagerAdapter
+import com.animegatari.hayanime.ui.main.myList.viewPager.ViewPagerAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MyListFragment : Fragment() {

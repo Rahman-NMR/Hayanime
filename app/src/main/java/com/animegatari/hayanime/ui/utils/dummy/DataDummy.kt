@@ -1,4 +1,4 @@
-package com.animegatari.hayanime.utils.dummy
+package com.animegatari.hayanime.ui.utils.dummy
 
 import android.content.Context
 import kotlin.math.floor

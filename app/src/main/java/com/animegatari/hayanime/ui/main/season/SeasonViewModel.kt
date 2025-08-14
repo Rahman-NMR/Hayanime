@@ -1,4 +1,4 @@
-package com.animegatari.hayanime.ui.season
+package com.animegatari.hayanime.ui.main.season
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

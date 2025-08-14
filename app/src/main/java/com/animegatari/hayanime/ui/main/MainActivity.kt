@@ -1,4 +1,4 @@
-package com.animegatari.hayanime
+package com.animegatari.hayanime.ui.main
 
 import android.os.Bundle
 import android.widget.Toast
@@ -8,6 +8,7 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.animegatari.hayanime.R
 import com.animegatari.hayanime.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {

@@ -1,4 +1,4 @@
-package com.animegatari.hayanime.ui.viewPager
+package com.animegatari.hayanime.ui.main.myList.viewPager
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,8 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.animegatari.hayanime.R
 import com.animegatari.hayanime.databinding.FragmentMyAnimeListBinding
-import com.animegatari.hayanime.ui.recyclerview.decorations.BottomPaddingItemDecoration
-import com.animegatari.hayanime.utils.dummy.DummyAdapterList
+import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
+import com.animegatari.hayanime.ui.utils.dummy.DummyAdapterList
 
 class MyAnimeListFragment : Fragment() {
     private var _binding: FragmentMyAnimeListBinding? = null

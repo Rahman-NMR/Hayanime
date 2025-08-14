@@ -1,4 +1,4 @@
-package com.animegatari.hayanime.ui.viewPager
+package com.animegatari.hayanime.ui.main.myList.viewPager
 
 import androidx.lifecycle.ViewModel
 
