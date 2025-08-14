@@ -4,26 +4,53 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.animegatari.hayanime.R
 import com.animegatari.hayanime.databinding.FragmentMyListBinding
+import com.animegatari.hayanime.ui.adapter.ViewPagerAdapter
+import com.google.android.material.tabs.TabLayoutMediator
 
 class MyListFragment : Fragment() {
     private var _binding: FragmentMyListBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var myListViewModel: MyListViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        myListViewModel = ViewModelProvider(this)[MyListViewModel::class.java]
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val myListViewModel = ViewModelProvider(this).get(MyListViewModel::class.java)
         _binding = FragmentMyListBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        val root: View = binding.root
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        val textView: TextView = binding.textMyList
         myListViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+//            binding.textSeason.text = it
         }
-        return root
+
+        binding.viewPager()
+    }
+
+    private fun FragmentMyListBinding.viewPager() {
+        viewPager.adapter = ViewPagerAdapter(this@MyListFragment)
+
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            tab.text = when (position) {
+                0 -> getString(R.string.status_all_anime)
+                1 -> getString(R.string.status_watching)
+                2 -> getString(R.string.status_completed)
+                3 -> getString(R.string.status_plan_to_watch)
+                4 -> getString(R.string.status_on_hold)
+                5 -> getString(R.string.status_dropped)
+                else -> getString(R.string.label_unknown)
+            }
+        }.attach()
     }
 
     override fun onDestroyView() {

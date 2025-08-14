@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:padding="@dimen/recyclerview_corner_padding_small">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/main_picture"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toStartOf="@id/layout_guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/placeholder" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bottom_left_corner_16"
+        android:drawableStart="@drawable/ic_star_24px_rounded"
+        android:drawablePadding="2dp"
+        android:gravity="center_vertical"
+        android:paddingVertical="6dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="8dp"
+        android:text="@string/not_available"
+        android:textColor="?attr/colorSurfaceVariant"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:drawableTint="?attr/colorSurfaceVariant"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="@id/main_picture"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/main_picture"
+        app:layout_constraintTop_toBottomOf="@+id/main_picture" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/layout_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.3" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_main_picture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="end"
+        app:barrierMargin="12dp"
+        app:constraint_referenced_ids="main_picture" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="middle"
+        android:gravity="end"
+        android:maxLines="1"
+        android:text="@string/label_unknown"
+        android:textAlignment="textEnd"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="14sp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@id/barrier_main_picture"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.helper.widget.Flow
+        android:id="@+id/helper_flow_rating"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        app:constraint_referenced_ids="nsfw, media_type_n_start_season"
+        app:flow_horizontalGap="8dp"
+        app:flow_wrapMode="chain"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/barrier_main_picture"
+        app:layout_constraintTop_toBottomOf="@id/status" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/nsfw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_corner_16"
+        android:backgroundTint="?attr/colorErrorContainer"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="4dp"
+        android:text="@string/label_nsfw"
+        android:textColor="?attr/colorOnErrorContainer"
+        android:visibility="visible"
+        tools:visibility="visible" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/media_type_n_start_season"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:text="@string/label_unknown"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="14sp"
+        app:layout_constrainedWidth="true"
+        tools:ignore="MissingConstraints" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/label_unknown"
+        android:textColor="?attr/colorPrimary"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/barrier_main_picture"
+        app:layout_constraintTop_toBottomOf="@id/helper_flow_rating" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_unknown"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        app:layout_constraintEnd_toEndOf="@id/barrier_btn_action_y"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/barrier_main_picture"
+        app:layout_constraintTop_toBottomOf="@id/title" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/genres"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/label_unknown"
+        android:textColor="?attr/colorSecondary"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="@id/barrier_btn_action_y"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/barrier_main_picture"
+        app:layout_constraintTop_toBottomOf="@id/rating" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/source_n_studio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/label_unknown"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="16sp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="@id/barrier_btn_action_y"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/barrier_main_picture"
+        app:layout_constraintTop_toBottomOf="@id/genres" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_edit_mylist"
+        style="@style/Widget.Material3.Button.IconButton.Outlined"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:contentDescription="@string/description_edit_this_anime"
+        app:cornerRadius="12dp"
+        app:icon="@drawable/ic_edit_note_24px_rounded"
+        app:iconSize="24dp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_plus_one_episode"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_plus_one_episode"
+        style="@style/Widget.Material3.Button.IconButton.Filled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/description_add_one_episode"
+        app:cornerRadius="12dp"
+        app:icon="@drawable/ic_add_24px_rounded"
+        app:iconSize="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/source_n_studio" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_btn_action_y"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="start"
+        app:barrierMargin="-8dp"
+        app:constraint_referenced_ids="btn_edit_mylist, btn_plus_one_episode" />
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progress_episode"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="@id/barrier_btn_action_y"
+        app:layout_constraintStart_toStartOf="@id/barrier_main_picture"
+        app:layout_constraintTop_toBottomOf="@id/source_n_studio"
+        app:trackThickness="16dp" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/num_episodes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_corner_16"
+        android:backgroundTint="?attr/colorSurfaceVariant"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="4dp"
+        android:text="@string/unknown_symbol"
+        android:textColor="?attr/colorSurfaceInverse"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="@id/barrier_btn_action_y"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@id/barrier_main_picture"
+        app:layout_constraintTop_toBottomOf="@id/progress_episode" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/percentage_episode_done"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_corner_16"
+        android:backgroundTint="?attr/colorSurfaceVariant"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="4dp"
+        android:text="@string/unknown_symbol"
+        android:textColor="?attr/colorSurfaceInverse"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="@id/barrier_btn_action_y"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/barrier_main_picture"
+        app:layout_constraintTop_toBottomOf="@id/progress_episode" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,6 +11,8 @@
 
     <string name="description_fab_scroll_to_top">Scroll ke atas</string>
     <string name="description_profile">Profil</string>
+    <string name="description_edit_this_anime">Edit anime ini</string>
+    <string name="description_add_one_episode">Tambah satu episode</string>
 
     <string name="toast_back_pressed">Tekan kembali untuk keluar</string>
     <string name="toast_no_internet">Tidak ada koneksi internet</string>

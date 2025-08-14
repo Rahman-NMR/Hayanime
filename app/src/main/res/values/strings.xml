@@ -7,6 +7,12 @@
     <string name="label_episode" translatable="false">Episode</string>
     <string name="label_nsfw" translatable="false">NSFW</string>
     <string name="label_episode_duration_minutes" translatable="false">%1$s min/eps</string>
+    <string name="status_all_anime" translatable="false">All Anime</string>
+    <string name="status_watching" translatable="false">Watching</string>
+    <string name="status_completed" translatable="false">Completed</string>
+    <string name="status_plan_to_watch" translatable="false">Plan to Watch</string>
+    <string name="status_on_hold" translatable="false">On Hold</string>
+    <string name="status_dropped" translatable="false">Dropped</string>
 
     <string name="title_season">Seasonal</string>
     <string name="title_search">Search</string>
@@ -19,6 +25,8 @@
 
     <string name="description_fab_scroll_to_top">Scroll to top</string>
     <string name="description_profile">Profile</string>
+    <string name="description_edit_this_anime">Edit this anime</string>
+    <string name="description_add_one_episode">Add one episode</string>
 
     <string name="toast_back_pressed">Press back again to exit</string>
     <string name="toast_no_internet">No internet connection</string>

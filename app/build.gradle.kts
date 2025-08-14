@@ -20,8 +20,8 @@ android {
         applicationId = "com.animegatari.hayanime"
         minSdk = 28
         targetSdk = 36
-        versionCode = 6
-        versionName = "0.0.6"
+        versionCode = 7
+        versionName = "0.0.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.androidx.fragment.ktx)
 
 //    testing
     testImplementation(libs.junit)
