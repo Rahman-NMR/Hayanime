@@ -1,22 +1,46 @@
 package com.animegatari.hayanime.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.animegatari.hayanime.R
 import com.animegatari.hayanime.databinding.ActivityMainBinding
+import com.animegatari.hayanime.ui.auth.AuthActivity
+import com.animegatari.hayanime.ui.auth.AuthViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
-
     private var backPressedTime: Long = 0
-    private val onBackInvokedCallback = object : OnBackPressedCallback(true) {
+
+    private val authViewModel: AuthViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        onBackPressedDispatcher.addCallback(this@MainActivity, onBackHandler)
+
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
+        navController = navHostFragment.navController
+        binding.navView.setupWithNavController(navController)
+
+        observeLoginStatus()
+    }
+
+    private val onBackHandler = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             val navController = findNavController(R.id.nav_host_fragment_activity_main)
             if (navController.currentDestination?.id == R.id.navigation_search) {
@@ -31,15 +55,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private fun observeLoginStatus() = lifecycleScope.launch {
+        authViewModel.isLoggedIn.collect { isLoggedIn ->
+            if (isLoggedIn == false) {
+                startActivity(Intent(this@MainActivity, AuthActivity::class.java))
+                finish()
+            }
+        }
+    }
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        onBackPressedDispatcher.addCallback(this@MainActivity, onBackInvokedCallback)
-
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
-        navController = navHostFragment.navController
-        binding.navView.setupWithNavController(navController)
+    override fun onResume() {
+        super.onResume()
+        authViewModel.validateToken()
     }
 }
