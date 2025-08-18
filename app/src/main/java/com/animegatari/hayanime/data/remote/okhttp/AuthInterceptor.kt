@@ -1,4 +1,4 @@
-package com.animegatari.hayanime.data.remote
+package com.animegatari.hayanime.data.remote.okhttp
 
 import com.animegatari.hayanime.data.local.datastore.TokenDataStore
 import kotlinx.coroutines.flow.firstOrNull
@@ -9,7 +9,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AuthInterceptor @Inject constructor(private val tokenDataStore: TokenDataStore) : Interceptor { //TODO: used?
+class AuthInterceptor @Inject constructor(private val tokenDataStore: TokenDataStore) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val token = runBlocking { tokenDataStore.accessToken.firstOrNull() }
         val request = chain.request()

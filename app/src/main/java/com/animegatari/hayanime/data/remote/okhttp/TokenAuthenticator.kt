@@ -1,4 +1,4 @@
-package com.animegatari.hayanime.data.remote
+package com.animegatari.hayanime.data.remote.okhttp
 
 import com.animegatari.hayanime.BuildConfig
 import com.animegatari.hayanime.data.local.datastore.TokenDataStore
@@ -11,13 +11,14 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
 import javax.inject.Inject
+import javax.inject.Provider
 import javax.inject.Singleton
 
 @Singleton
 class TokenAuthenticator @Inject constructor(
     private val tokenDataStore: TokenDataStore,
-    private val authApiService: AuthApiService,
-) : Authenticator { //TODO: used?
+    private val authApiService: Provider<AuthApiService>,
+) : Authenticator {
     override fun authenticate(route: Route?, response: Response): Request? {
         val refreshToken = runBlocking { tokenDataStore.refreshToken.firstOrNull() }
 
@@ -33,7 +34,7 @@ class TokenAuthenticator @Inject constructor(
         }
         return runBlocking {
             try {
-                val newTokens: AccessTokenResponse = authApiService.refreshAccessToken(
+                val newTokens: AccessTokenResponse = authApiService.get().refreshAccessToken(
                     clientId = BuildConfig.MAL_CLIENT_ID,
                     clientSecret = BuildConfig.MAL_CLIENT_SECRET,
                     refreshToken = refreshToken
