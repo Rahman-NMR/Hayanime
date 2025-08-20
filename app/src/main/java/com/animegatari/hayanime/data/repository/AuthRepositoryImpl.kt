@@ -1,10 +1,11 @@
-package com.animegatari.hayanime.domain.repository
+package com.animegatari.hayanime.data.repository
 
 import android.net.Uri
 import com.animegatari.hayanime.BuildConfig
 import com.animegatari.hayanime.data.local.datastore.TokenDataStore
 import com.animegatari.hayanime.data.remote.api.AuthApiService
 import com.animegatari.hayanime.data.remote.response.AccessTokenResponse
+import com.animegatari.hayanime.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton

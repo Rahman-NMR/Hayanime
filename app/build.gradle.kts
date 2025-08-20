@@ -11,6 +11,7 @@ plugins {
 kotlin {
     compilerOptions {
         jvmTarget = JvmTarget.fromTarget(JavaVersion.VERSION_21.toString())
+        freeCompilerArgs = listOf("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
     }
 }
 
@@ -23,8 +24,8 @@ android {
         applicationId = "com.animegatari.hayanime"
         minSdk = 28
         targetSdk = 36
-        versionCode = 11
-        versionName = "0.0.11"
+        versionCode = 12
+        versionName = "0.0.12"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -70,6 +71,8 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.splashscreen)
+    implementation(libs.androidx.paging)
+    implementation(libs.glide)
 
     // bussiness
     implementation(libs.androidx.lifecycle.livedata.ktx)

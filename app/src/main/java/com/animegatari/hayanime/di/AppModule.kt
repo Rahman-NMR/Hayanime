@@ -5,9 +5,12 @@ import com.animegatari.hayanime.BuildConfig
 import com.animegatari.hayanime.data.local.datastore.TokenDataStore
 import com.animegatari.hayanime.data.remote.okhttp.AuthInterceptor
 import com.animegatari.hayanime.data.remote.okhttp.TokenAuthenticator
+import com.animegatari.hayanime.data.remote.api.AnimeApiService
 import com.animegatari.hayanime.data.remote.api.AuthApiService
+import com.animegatari.hayanime.data.repository.AnimeRepositoryImpl
 import com.animegatari.hayanime.domain.repository.AuthRepository
-import com.animegatari.hayanime.domain.repository.AuthRepositoryImpl
+import com.animegatari.hayanime.data.repository.AuthRepositoryImpl
+import com.animegatari.hayanime.domain.repository.AnimeRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -27,6 +30,10 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindAuthRepository(authRepositoryImpl: AuthRepositoryImpl): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAnimeRepository(animeRepositoryImpl: AnimeRepositoryImpl): AnimeRepository
 
     companion object {
         @Provides
@@ -78,6 +85,17 @@ abstract class AppModule {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(AuthApiService::class.java)
+        }
+
+        @Provides
+        @Singleton
+        fun provideAnimeApiService(okHttpClient: OkHttpClient): AnimeApiService {
+            return Retrofit.Builder()
+                .baseUrl(BuildConfig.API_URL)
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(AnimeApiService::class.java)
         }
 
         @Provides

@@ -34,12 +34,12 @@ class MyAnimeListFragment : Fragment() {
         val position = arguments?.getInt(ARG_POSITION) ?: 0
         val str = "Fragment : ${
             when (position) {
-                0 -> getString(R.string.status_all_anime)
-                1 -> getString(R.string.status_watching)
-                2 -> getString(R.string.status_completed)
-                3 -> getString(R.string.status_plan_to_watch)
-                4 -> getString(R.string.status_on_hold)
-                5 -> getString(R.string.status_dropped)
+                0 -> getString(R.string.watching_status_all_anime)
+                1 -> getString(R.string.watching_status_watching)
+                2 -> getString(R.string.watching_status_completed)
+                3 -> getString(R.string.watching_status_plan_to_watch)
+                4 -> getString(R.string.watching_status_on_hold)
+                5 -> getString(R.string.watching_status_dropped)
                 else -> getString(R.string.label_unknown)
             }
         }"
