@@ -3,7 +3,6 @@ package com.animegatari.hayanime.ui.auth
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +15,7 @@ import com.animegatari.hayanime.R
 import com.animegatari.hayanime.core.PKCEUtil.generateCodeVerifier
 import com.animegatari.hayanime.databinding.ActivityAuthBinding
 import com.animegatari.hayanime.ui.main.MainActivity
+import com.animegatari.hayanime.ui.utils.PopupMessage.toastShort
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -89,7 +89,7 @@ class AuthActivity : AppCompatActivity() {
 
             authViewModel.handleAuthCode(code)
         } else {
-            Toast.makeText(this, getString(R.string.toast_error_occurred), Toast.LENGTH_SHORT).show()
+            toastShort(this, getString(R.string.message_error_occurred))
         }
     }
 

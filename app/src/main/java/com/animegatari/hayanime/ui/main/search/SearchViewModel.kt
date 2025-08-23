@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.animegatari.hayanime.core.Config.COMMON_ANIME_FIELDS
+import com.animegatari.hayanime.core.Config.DEFAULT_PAGE_LIMIT
 import com.animegatari.hayanime.data.remote.response.AnimeList
 import com.animegatari.hayanime.domain.repository.AnimeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,13 +25,16 @@ class SearchViewModel @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     val animeList: Flow<PagingData<AnimeList>> = _searchQuery
         .flatMapLatest { query ->
-            if (query.isEmpty())
+            if (query.isEmpty()) {
                 flowOf(PagingData.empty())
-            else animeRepository.searchAnime(
-                query = query,
-                limit = 10,
-                offset = 0
-            )
+            } else {
+                animeRepository.searchAnime(
+                    query = query,
+                    isNsfw = true,
+                    limitConfig = DEFAULT_PAGE_LIMIT,
+                    common = COMMON_ANIME_FIELDS
+                )
+            }
         }.cachedIn(viewModelScope)
 
     fun getAnimeList(searchQuery: String) {

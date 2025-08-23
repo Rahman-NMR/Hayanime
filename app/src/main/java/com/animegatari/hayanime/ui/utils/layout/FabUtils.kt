@@ -9,6 +9,12 @@ object FabUtils {
         var isAtTop = true
 
         override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
+            if (rv.adapter == null || rv.adapter?.itemCount == 0) {
+                fab.hide()
+                isAtTop = true
+                return
+            }
+
             val layoutManager = rv.layoutManager as StaggeredGridLayoutManager
             val firstVisibleItemPositions = IntArray(layoutManager.spanCount)
             layoutManager.findFirstVisibleItemPositions(firstVisibleItemPositions)

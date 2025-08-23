@@ -2,7 +2,6 @@ package com.animegatari.hayanime.ui.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +14,7 @@ import com.animegatari.hayanime.R
 import com.animegatari.hayanime.databinding.ActivityMainBinding
 import com.animegatari.hayanime.ui.auth.AuthActivity
 import com.animegatari.hayanime.ui.auth.AuthViewModel
+import com.animegatari.hayanime.ui.utils.PopupMessage.toastShort
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
                 if (backPressedTime + 2000 > System.currentTimeMillis()) {
                     finish()
                 } else {
-                    Toast.makeText(this@MainActivity, getString(R.string.toast_back_pressed), Toast.LENGTH_SHORT).show()
+                    toastShort(this@MainActivity, getString(R.string.message_back_pressed))
                 }
 
                 backPressedTime = System.currentTimeMillis()

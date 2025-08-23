@@ -5,5 +5,5 @@ import com.animegatari.hayanime.data.remote.response.AnimeList
 import kotlinx.coroutines.flow.Flow
 
 interface AnimeRepository {
-    fun searchAnime(query: String, limit: Int, offset: Int): Flow<PagingData<AnimeList>>
+    fun searchAnime(query: String, isNsfw: Boolean, limitConfig: Int, common: String): Flow<PagingData<AnimeList>>
 }

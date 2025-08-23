@@ -45,8 +45,14 @@
     <!-- rating -->
     <string name="rating_g" translatable="false">G - All Ages</string>
     <string name="rating_pg" translatable="false">PG - Children</string>
-    <string name="rating_pg_13" translatable="false">PG - 13 - Teens 13 and Older</string>
-    <string name="rating_r" translatable="false">R - 17+ (violence &amp; profanity)</string>
+    <string name="rating_pg_13" translatable="false">PG-13 - Teens 13 and Older</string>
+    <string name="rating_r" translatable="false">R - 17+ (Violence &amp; Profanity)</string>
     <string name="rating_r_plus" translatable="false">R+ - Profanity &amp; Mild Nudity</string>
     <string name="rating_rx" translatable="false">Rx - Hentai</string>
+
+    <!-- season -->
+    <string name="season_winter" translatable="false">Winter</string>
+    <string name="season_spring" translatable="false">Spring</string>
+    <string name="season_summer" translatable="false">Summer</string>
+    <string name="season_fall" translatable="false">Fall</string>
 </resources>

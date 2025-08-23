@@ -13,8 +13,11 @@ import com.animegatari.hayanime.data.types.AiringStatus
 import com.animegatari.hayanime.data.types.MediaType
 import com.animegatari.hayanime.data.types.NsfwMedia
 import com.animegatari.hayanime.data.types.RatingCategory
+import com.animegatari.hayanime.data.types.SeasonStart
 import com.animegatari.hayanime.data.types.WatchingStatus
 import com.animegatari.hayanime.databinding.LayoutAnimeGridBinding
+import com.animegatari.hayanime.utils.FormatterUtils.digitNumberFormatter
+import com.animegatari.hayanime.utils.FormatterUtils.formatApiDate
 import com.animegatari.hayanime.utils.TimeUtils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -39,10 +42,11 @@ class AnimeGridAdapter(
             val anime = animeList.node ?: return
 
             with(binding) {
+                val pictureUrl = anime.mainPicture
                 Glide.with(viewContext)
-                    .load(anime.mainPicture?.medium)
-                    .placeholder(R.drawable.placeholder) //TODO: change image placeholder & error
-                    .error(R.drawable.placeholder)
+                    .load(pictureUrl?.medium ?: pictureUrl?.large)
+                    .placeholder(R.drawable.img_placeholder)
+                    .error(R.drawable.img_error)
                     .transition(DrawableTransitionOptions.withCrossFade(333))
                     .into(mainPicture)
 
@@ -53,14 +57,15 @@ class AnimeGridAdapter(
 
                 numScoringUser.text = anime.numScoringUsers
                     ?.takeIf { it != 0 }
-                    ?.toString()
+                    ?.let { digitNumberFormatter(it) }
                     ?: viewContext.getString(R.string.not_available)
 
                 val season = anime.startSeason?.season?.takeIf { it.isNotEmpty() }
                 val year = anime.startSeason?.year?.takeIf { it != 0 }
+                val strSeason = viewContext.getString(SeasonStart.fromApiValue(season).stringResId)
                 startSeason.text = when {
-                    season != null && year != null -> "${season.replaceFirstChar { it.titlecase() }} $year"
-                    season != null -> season.replaceFirstChar { it.titlecase() }
+                    season != null && year != null -> "$strSeason $year"
+                    season != null -> strSeason
                     year != null -> year.toString()
                     else -> viewContext.getString(R.string.label_unknown)
                 }
@@ -110,12 +115,18 @@ class AnimeGridAdapter(
                     ?: viewContext.getString(R.string.label_unknown)
 
                 val statusWatching = WatchingStatus.fromApiValue(anime.myListStatus?.status)
+                val strWatchingStatus = viewContext.getString(statusWatching.stringResId)
                 watchingStatus.apply {
                     isVisible = anime.myListStatus != null
-                    text = if (statusWatching != WatchingStatus.COMPLETED) {
-                        viewContext.getString(statusWatching.stringResId)
-                    } else "${viewContext.getString(statusWatching.stringResId)} on ${anime.myListStatus?.finishDate}"
-                } //TODO: sdf for finishDate
+                    text = when (statusWatching) {
+                        WatchingStatus.COMPLETED -> {
+                            val formattedFinishDate = formatApiDate(anime.myListStatus?.finishDate)
+                            formattedFinishDate?.let { "$strWatchingStatus on $it" } ?: strWatchingStatus
+                        }
+
+                        else -> strWatchingStatus
+                    }
+                }
 
                 btnEditMylist.setOnClickListener { onEditMyListClicked(anime) }
 
