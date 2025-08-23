@@ -9,6 +9,7 @@
     <string name="title_season">Seasonal</string>
     <string name="title_search">Search</string>
     <string name="title_my_list">My List</string>
+    <string name="title_choose_season_year">Choose Season Year</string>
     <string name="search_hint">Search anime from MyAnimeList</string>
 
     <string name="label_login_with_mal">Login with MyAnimeList</string>
@@ -17,6 +18,8 @@
     <string name="label_episode">Episode</string>
     <string name="label_nsfw">NSFW</string>
     <string name="label_episode_duration">%1$s/eps</string>
+    <string name="label_cancel">Cancel</string>
+    <string name="label_this_season">this season</string>
 
     <string name="info_empty_initial_search">Oops! You haven\'t performed any searches yet.</string>
     <string name="info_no_results_found">No results found for %1$s.</string>

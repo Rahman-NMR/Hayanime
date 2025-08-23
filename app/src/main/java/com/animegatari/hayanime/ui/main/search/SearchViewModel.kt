@@ -32,7 +32,7 @@ class SearchViewModel @Inject constructor(
                     query = query,
                     isNsfw = true,
                     limitConfig = DEFAULT_PAGE_LIMIT,
-                    common = COMMON_ANIME_FIELDS
+                    commonFields = COMMON_ANIME_FIELDS
                 )
             }
         }.cachedIn(viewModelScope)

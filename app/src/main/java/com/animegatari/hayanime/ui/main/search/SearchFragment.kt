@@ -73,6 +73,7 @@ class SearchFragment : Fragment() {
             if (searchQuery.length >= 3) {
                 searchView.hide()
                 searchViewModel.getAnimeList(searchQuery)
+                tvInfoMsg.text = getString(R.string.info_no_results_found, searchQuery)
                 false
             } else {
                 snackBarShort(root, getString(R.string.message_query_short))
@@ -111,11 +112,7 @@ class SearchFragment : Fragment() {
         animeAdapter.loadStateFlow.collectLatest { loadStates ->
             val refreshState = loadStates.refresh
 
-            val query = binding.searchBar.text.toString().trim()
-            binding.tvInfoMsg.apply {
-                text = getString(R.string.info_no_results_found, query)
-                isVisible = refreshState is LoadState.NotLoading && animeAdapter.itemCount == 0
-            }
+            binding.tvInfoMsg.isVisible = refreshState is LoadState.NotLoading && animeAdapter.itemCount == 0
             binding.loadingIndicator.isVisible = when (refreshState) {
                 is LoadState.Loading -> true
                 is LoadState.Error -> {

@@ -50,6 +50,10 @@
     <string name="rating_r_plus" translatable="false">R+ - Profanity &amp; Mild Nudity</string>
     <string name="rating_rx" translatable="false">Rx - Hentai</string>
 
+    <!-- sort -->
+    <string name="sort_by_anime_score" translatable="false">Score</string>
+    <string name="sort_by_anime_num_list_users" translatable="false">Members</string>
+
     <!-- season -->
     <string name="season_winter" translatable="false">Winter</string>
     <string name="season_spring" translatable="false">Spring</string>

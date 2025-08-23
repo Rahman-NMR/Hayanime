@@ -1,19 +1,14 @@
 package com.animegatari.hayanime.data.types
 
-enum class NsfwMedia() {
-    WHITE(),
-    GRAY(),
-    BLACK(),
+enum class NsfwMedia(val apiValue: String? = null) {
+    WHITE("white"),
+    GRAY("gray"),
+    BLACK("black"),
     UNKNOWN();
 
     companion object {
         fun fromApiValue(apiValue: String?): NsfwMedia {
-            return when (apiValue?.lowercase()) {
-                "white" -> WHITE
-                "gray" -> GRAY
-                "black" -> BLACK
-                else -> UNKNOWN
-            }
+            return entries.find { it.apiValue == apiValue?.lowercase() } ?: UNKNOWN
         }
     }
 }
