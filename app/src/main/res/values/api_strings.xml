@@ -20,6 +20,7 @@
     <string name="media_type_special" translatable="false">Special</string>
     <string name="media_type_ona" translatable="false">ONA</string>
     <string name="media_type_music" translatable="false">Music</string>
+    <string name="media_type_tv_special" translatable="false">TV Special</string>
 
     <!-- airing status -->
     <string name="airing_status_finished_airing" translatable="false">Finished Airing</string>

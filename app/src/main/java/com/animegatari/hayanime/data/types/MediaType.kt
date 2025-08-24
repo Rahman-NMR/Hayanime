@@ -10,6 +10,7 @@ enum class MediaType(@StringRes val stringResId: Int, val apiValue: String? = nu
     SPECIAL(R.string.media_type_special, "special"),
     ONA(R.string.media_type_ona, "ona"),
     MUSIC(R.string.media_type_music, "music"),
+    TV_SPECIAL(R.string.media_type_tv_special, "tv_special"),
     UNKNOWN(R.string.label_unknown);
 
     companion object {
