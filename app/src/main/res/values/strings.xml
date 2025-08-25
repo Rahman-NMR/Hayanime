@@ -20,6 +20,9 @@
     <string name="label_episode_duration">%1$s/eps</string>
     <string name="label_cancel">Cancel</string>
     <string name="label_this_season">this season</string>
+    <string name="label_source_studio">Source : %1$s\nStudio : %2$s</string>
+    <string name="label_source">Source: %1$s</string>
+    <string name="label_studio">Studio: %1$s</string>
 
     <string name="info_empty_initial_search">Oops! You haven\'t performed any searches yet.</string>
     <string name="info_no_results_found">No results found for %1$s.</string>

@@ -28,6 +28,7 @@
     <string name="airing_status_not_yet_aired" translatable="false">Not Yet Aired</string>
 
     <!-- source -->
+    <string name="source_other" translatable="false">Other</string>
     <string name="source_original" translatable="false">Original</string>
     <string name="source_manga" translatable="false">Manga</string>
     <string name="source_4_koma_manga" translatable="false">4-koma Manga</string>

@@ -19,7 +19,7 @@ import com.animegatari.hayanime.ui.adapter.AnimeGridAdapter
 import com.animegatari.hayanime.ui.utils.PopupMessage.snackBarShort
 import com.animegatari.hayanime.ui.utils.PopupMessage.toastShort
 import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
-import com.animegatari.hayanime.ui.utils.layout.FabUtils.fabScrollBehavior
+import com.animegatari.hayanime.ui.utils.layout.FabUtils.attachFabScrollListener
 import com.animegatari.hayanime.ui.utils.layout.SpanCalculator.calculateSpanCount
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -40,13 +40,9 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val animeAdapter = animeAdapter()
         with(binding) {
-            loadingIndicator.hide()
-            fabScrollToTop.hide()
-            tvInfoMsg.text = getString(R.string.info_empty_initial_search)
-
-            val animeAdapter = animeAdapter()
-
+            initializeViews()
             setupInteractions(animeAdapter)
             handleSearchInput()
             setupRecyclerView(animeAdapter)
@@ -55,8 +51,14 @@ class SearchFragment : Fragment() {
         }
     }
 
+    private fun FragmentSearchBinding.initializeViews() {
+        attachFabScrollListener(recyclerView, fabScrollToTop)
+        tvInfoMsg.text = getString(R.string.info_empty_initial_search)
+        loadingIndicator.hide()
+        fabScrollToTop.hide()
+    }
+
     private fun FragmentSearchBinding.setupInteractions(animeAdapter: AnimeGridAdapter) {
-        recyclerView.addOnScrollListener(fabScrollBehavior(fabScrollToTop))
         fabScrollToTop.setOnClickListener { recyclerView.smoothScrollToPosition(0) }
         swipeRefresh.setOnRefreshListener {
             animeAdapter.refresh()

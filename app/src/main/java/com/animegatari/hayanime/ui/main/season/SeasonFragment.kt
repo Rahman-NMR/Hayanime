@@ -3,6 +3,7 @@ package com.animegatari.hayanime.ui.main.season
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
@@ -21,7 +22,7 @@ import com.animegatari.hayanime.databinding.FragmentSeasonBinding
 import com.animegatari.hayanime.ui.adapter.AnimeGridAdapter
 import com.animegatari.hayanime.ui.utils.PopupMessage.toastShort
 import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
-import com.animegatari.hayanime.ui.utils.layout.FabUtils.fabScrollBehavior
+import com.animegatari.hayanime.ui.utils.layout.FabUtils.attachFabScrollListener
 import com.animegatari.hayanime.ui.utils.layout.SpanCalculator.calculateSpanCount
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -42,12 +43,9 @@ class SeasonFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val animeAdapter = animeAdapter()
         with(binding) {
-            loadingIndicator.hide()
-            fabScrollToTop.hide()
-
-            val animeAdapter = animeAdapter()
-
+            initializeViews()
             setupInteractions(animeAdapter)
             observeSelectedSeason()
             observeSelectedYear()
@@ -58,8 +56,16 @@ class SeasonFragment : Fragment() {
         }
     }
 
+    private fun FragmentSeasonBinding.initializeViews() {
+        val thisSeason = getString(R.string.label_this_season)
+
+        attachFabScrollListener(recyclerView, fabScrollToTop)
+        tvInfoMsg.text = getString(R.string.info_no_results_found, thisSeason)
+        loadingIndicator.hide()
+        fabScrollToTop.hide()
+    }
+
     private fun FragmentSeasonBinding.setupInteractions(animeAdapter: AnimeGridAdapter) {
-        recyclerView.addOnScrollListener(fabScrollBehavior(fabScrollToTop))
         fabScrollToTop.setOnClickListener { recyclerView.smoothScrollToPosition(0) }
         btnChangeYear.setOnClickListener { displayYearPickerDialog() }
         btnChangeSeason.setOnClickListener { displaySeasonPicker() }
@@ -68,18 +74,19 @@ class SeasonFragment : Fragment() {
             animeAdapter.refresh()
             swipeRefresh.isRefreshing = false
         }
-
         toolBar.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.menu_item_avatar -> {
-                    toastShort(requireContext(), "TODO go to profile")
-
-                    true
-                }
-
-                else -> false
-            }
+            handleMenuItemClick(menuItem)
         }
+    }
+
+    private fun handleMenuItemClick(menuItem: MenuItem?): Boolean = when (menuItem?.itemId) {
+        R.id.menu_item_avatar -> {
+            toastShort(requireContext(), "TODO go to profile")
+
+            true
+        }
+
+        else -> false
     }
 
     private fun displaySeasonPicker() {
@@ -147,11 +154,7 @@ class SeasonFragment : Fragment() {
         animeAdapter.loadStateFlow.collectLatest { loadStates ->
             val refreshState = loadStates.refresh
 
-            val thisSeason = getString(R.string.label_this_season)
-            binding.tvInfoMsg.apply {
-                text = getString(R.string.info_no_results_found, thisSeason)
-                isVisible = refreshState is LoadState.NotLoading && animeAdapter.itemCount == 0
-            }
+            binding.tvInfoMsg.isVisible = refreshState is LoadState.NotLoading && animeAdapter.itemCount == 0
             binding.loadingIndicator.isVisible = when (refreshState) {
                 is LoadState.Loading -> true
                 is LoadState.Error -> {

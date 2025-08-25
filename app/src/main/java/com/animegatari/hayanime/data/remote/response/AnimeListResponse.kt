@@ -55,6 +55,9 @@ data class AnimeNode(
     @field:SerializedName("average_episode_duration")
     val averageEpisodeDuration: Int? = null,
 
+    @field:SerializedName("source")
+    val source: String? = null,
+
     @field:SerializedName("studios")
     val studios: List<StudiosItem?>? = null,
 

@@ -24,6 +24,17 @@
             tools:listitem="@layout/layout_anime_list" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_info_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="32dp"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        tools:text="@string/info_no_results_found" />
+
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/loading_indicator"
         android:layout_width="wrap_content"

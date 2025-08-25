@@ -8,4 +8,5 @@ import kotlinx.coroutines.flow.Flow
 interface AnimeRepository {
     fun searchAnime(query: String, isNsfw: Boolean, limitConfig: Int, commonFields: String): Flow<PagingData<AnimeList>>
     fun seasonalAnime(seasonModel: SeasonModel, limitConfig: Int, commonFields: String): Flow<PagingData<AnimeList>>
+    fun userAnimeList(status: String?, sort: String?, isNsfw: Boolean, limitConfig: Int, commonFields: String): Flow<PagingData<AnimeList>>
 }
