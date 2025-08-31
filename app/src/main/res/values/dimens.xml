@@ -1,4 +1,5 @@
 <resources>
     <dimen name="recyclerview_corner_padding_small">6dp</dimen>
     <dimen name="layout_padding_bottom">80dp</dimen>
+    <item name="alpha_on_image" type="dimen">0.9</item>
 </resources>

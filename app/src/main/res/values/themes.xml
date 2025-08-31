@@ -90,6 +90,10 @@
         <item name="android:statusBarColor">@color/md_theme_surface</item>
         <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
         <!-- Status bar color. -->
+        <!-- Navigation bar color. -->
+        <item name="android:navigationBarColor">@color/md_theme_surface</item>
+        <item name="android:windowLightNavigationBar">?attr/isLightTheme</item>
+        <!-- Navigation bar color. -->
         <!-- text color. -->
         <item name="android:textColorPrimary">@color/text_color_primary</item>
         <item name="android:textColorPrimaryInverse">@color/text_color_primary_inverse</item>

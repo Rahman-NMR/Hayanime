@@ -6,6 +6,7 @@ import com.animegatari.hayanime.data.local.datastore.TokenDataStore
 import com.animegatari.hayanime.data.remote.okhttp.AuthInterceptor
 import com.animegatari.hayanime.data.remote.okhttp.TokenAuthenticator
 import com.animegatari.hayanime.data.remote.api.AnimeApiService
+import com.animegatari.hayanime.data.remote.api.AnimeDetailApiService
 import com.animegatari.hayanime.data.remote.api.AuthApiService
 import com.animegatari.hayanime.data.repository.AnimeRepositoryImpl
 import com.animegatari.hayanime.domain.repository.AuthRepository
@@ -22,6 +23,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Provider
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
@@ -34,6 +36,14 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindAnimeRepository(animeRepositoryImpl: AnimeRepositoryImpl): AnimeRepository
+
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class AuthRetrofit
+
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class ApiRetrofit
 
     companion object {
         @Provides
@@ -78,24 +88,37 @@ abstract class AppModule {
 
         @Provides
         @Singleton
-        fun provideAuthApiService(okHttpClient: OkHttpClient): AuthApiService {
+        @AuthRetrofit
+        fun provideAuthRetrofit(okHttpClient: OkHttpClient): Retrofit {
             return Retrofit.Builder()
                 .baseUrl(BuildConfig.BASE_URL)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
-                .create(AuthApiService::class.java)
         }
 
         @Provides
         @Singleton
-        fun provideAnimeApiService(okHttpClient: OkHttpClient): AnimeApiService {
+        @ApiRetrofit
+        fun provideApiRetrofit(okHttpClient: OkHttpClient): Retrofit {
             return Retrofit.Builder()
                 .baseUrl(BuildConfig.API_URL)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
-                .create(AnimeApiService::class.java)
+        }
+
+        @Provides
+        @Singleton
+        fun provideAuthApiService(@AuthRetrofit retrofit: Retrofit): AuthApiService {
+            return retrofit.create(AuthApiService::class.java)
+        }
+
+        @Provides
+        @Singleton
+        fun provideAnimeApiService(@ApiRetrofit retrofit: Retrofit): AnimeApiService {
+            return retrofit.create(AnimeApiService::class.java)
+            return retrofit.create(AnimeDetailApiService::class.java)
         }
 
         @Provides
