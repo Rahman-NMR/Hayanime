@@ -118,7 +118,6 @@ abstract class AppModule {
         @Singleton
         fun provideAnimeApiService(@ApiRetrofit retrofit: Retrofit): AnimeApiService {
             return retrofit.create(AnimeApiService::class.java)
-            return retrofit.create(AnimeDetailApiService::class.java)
         }
 
         @Provides
