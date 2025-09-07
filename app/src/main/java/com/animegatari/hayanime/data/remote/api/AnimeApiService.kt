@@ -25,14 +25,4 @@ interface AnimeApiService {
         @Query("nsfw") nsfw: Boolean? = true,
         @Query("fields") fields: String? = null,
     ): AnimeListResponse
-
-    @GET("users/@me/animelist")
-    suspend fun getUserAnimeList(
-        @Query("status") status: String? = null,
-        @Query("sort") sort: String? = null,
-        @Query("limit") limit: Int,
-        @Query("offset") offset: Int,
-        @Query("nsfw") nsfw: Boolean? = true,
-        @Query("fields") fields: String? = null,
-    ): AnimeListResponse
 }

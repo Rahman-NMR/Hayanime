@@ -6,12 +6,14 @@ import com.animegatari.hayanime.data.local.datastore.TokenDataStore
 import com.animegatari.hayanime.data.remote.okhttp.AuthInterceptor
 import com.animegatari.hayanime.data.remote.okhttp.TokenAuthenticator
 import com.animegatari.hayanime.data.remote.api.AnimeApiService
-import com.animegatari.hayanime.data.remote.api.AnimeDetailApiService
+import com.animegatari.hayanime.data.remote.api.UserAnimeListApiService
 import com.animegatari.hayanime.data.remote.api.AuthApiService
 import com.animegatari.hayanime.data.repository.AnimeRepositoryImpl
 import com.animegatari.hayanime.domain.repository.AuthRepository
 import com.animegatari.hayanime.data.repository.AuthRepositoryImpl
+import com.animegatari.hayanime.data.repository.UserAnimeListRepositoryImpl
 import com.animegatari.hayanime.domain.repository.AnimeRepository
+import com.animegatari.hayanime.domain.repository.UserAnimeListRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -36,6 +38,10 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindAnimeRepository(animeRepositoryImpl: AnimeRepositoryImpl): AnimeRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserAnimeListRepository(userAnimeListRepositoryImpl: UserAnimeListRepositoryImpl): UserAnimeListRepository
 
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
@@ -118,6 +124,12 @@ abstract class AppModule {
         @Singleton
         fun provideAnimeApiService(@ApiRetrofit retrofit: Retrofit): AnimeApiService {
             return retrofit.create(AnimeApiService::class.java)
+        }
+
+        @Provides
+        @Singleton
+        fun provideUserAnimeListApiService(@ApiRetrofit retrofit: Retrofit): UserAnimeListApiService {
+            return retrofit.create(UserAnimeListApiService::class.java)
         }
 
         @Provides

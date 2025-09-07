@@ -15,7 +15,7 @@ import com.animegatari.hayanime.R
 import com.animegatari.hayanime.core.PKCEUtil.generateCodeVerifier
 import com.animegatari.hayanime.databinding.ActivityAuthBinding
 import com.animegatari.hayanime.ui.main.MainActivity
-import com.animegatari.hayanime.ui.utils.PopupMessage.toastShort
+import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

@@ -16,7 +16,7 @@ import com.animegatari.hayanime.BuildConfig
 import com.animegatari.hayanime.R
 import com.animegatari.hayanime.data.types.WatchingStatus
 import com.animegatari.hayanime.databinding.FragmentMyAnimeListBinding
-import com.animegatari.hayanime.ui.utils.PopupMessage.toastShort
+import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
 import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
 import com.animegatari.hayanime.ui.utils.layout.FabUtils.attachFabScrollListener
 import dagger.hilt.android.AndroidEntryPoint
@@ -78,16 +78,21 @@ class MyAnimeListFragment : Fragment() {
         }
     }
 
-    private fun myListAdapter(): MyListAdapter = MyListAdapter({ anime ->
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            data = "${BuildConfig.BASE_URL}anime/${anime.id}".toUri()
+    private fun myListAdapter(): MyListAdapter = MyListAdapter(
+        onItemClicked = { anime ->
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = "${BuildConfig.BASE_URL}anime/${anime.id}".toUri()
+            }
+            startActivity(intent)
+        },
+        onEditMyListClicked = { anime ->
+            toastShort(requireContext(), "TODO action ${anime.title}")
+
+        },
+        onAddProgressEpisode = {
+            toastShort(requireContext(), "TODO action press again to add progress episode")
         }
-        startActivity(intent)
-    }, { anime ->
-        toastShort(requireContext(), "TODO action ${anime.title}")
-    }, {
-        toastShort(requireContext(), "TODO action press again to add progress episode")
-    })
+    )
 
     private fun FragmentMyAnimeListBinding.setupRecyclerView(myListAdapter: MyListAdapter) {
         val paddingBottom = resources.getDimensionPixelSize(R.dimen.layout_padding_bottom)

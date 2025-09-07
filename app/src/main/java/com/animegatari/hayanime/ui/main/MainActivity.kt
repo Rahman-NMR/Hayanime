@@ -14,7 +14,7 @@ import com.animegatari.hayanime.R
 import com.animegatari.hayanime.databinding.ActivityMainBinding
 import com.animegatari.hayanime.ui.auth.AuthActivity
 import com.animegatari.hayanime.ui.auth.AuthViewModel
-import com.animegatari.hayanime.ui.utils.PopupMessage.toastShort
+import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

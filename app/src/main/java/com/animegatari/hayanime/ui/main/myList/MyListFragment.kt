@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import com.animegatari.hayanime.R
 import com.animegatari.hayanime.databinding.FragmentMyListBinding
 import com.animegatari.hayanime.ui.main.myList.viewPager.ViewPagerAdapter
-import com.animegatari.hayanime.ui.utils.PopupMessage.toastShort
+import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MyListFragment : Fragment() {

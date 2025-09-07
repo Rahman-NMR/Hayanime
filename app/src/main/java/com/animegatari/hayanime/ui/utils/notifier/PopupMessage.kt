@@ -1,4 +1,4 @@
-package com.animegatari.hayanime.ui.utils
+package com.animegatari.hayanime.ui.utils.notifier
 
 import android.content.Context
 import android.view.View

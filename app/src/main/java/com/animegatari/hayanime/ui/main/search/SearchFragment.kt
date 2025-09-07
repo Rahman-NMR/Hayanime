@@ -16,8 +16,8 @@ import com.animegatari.hayanime.BuildConfig
 import com.animegatari.hayanime.R
 import com.animegatari.hayanime.databinding.FragmentSearchBinding
 import com.animegatari.hayanime.ui.adapter.AnimeGridAdapter
-import com.animegatari.hayanime.ui.utils.PopupMessage.snackBarShort
-import com.animegatari.hayanime.ui.utils.PopupMessage.toastShort
+import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.snackBarShort
+import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
 import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
 import com.animegatari.hayanime.ui.utils.layout.FabUtils.attachFabScrollListener
 import com.animegatari.hayanime.ui.utils.layout.SpanCalculator.calculateSpanCount
@@ -84,14 +84,17 @@ class SearchFragment : Fragment() {
         }
     }
 
-    private fun animeAdapter(): AnimeGridAdapter = AnimeGridAdapter({ anime ->
-        toastShort(requireContext(), "TODO action ${anime.title}")
-    }, { anime ->
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            data = "${BuildConfig.BASE_URL}anime/${anime.id}".toUri()
+    private fun animeAdapter(): AnimeGridAdapter = AnimeGridAdapter(
+        onItemClicked = { anime ->
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = "${BuildConfig.BASE_URL}anime/${anime.id}".toUri()
+            }
+            startActivity(intent)
+        },
+        onEditMyListClicked = { anime ->
+            toastShort(requireContext(), "TODO action ${anime.title}")
         }
-        startActivity(intent)
-    })
+    )
 
     private fun FragmentSearchBinding.setupRecyclerView(animeAdapter: AnimeGridAdapter) {
         val paddingBottom = resources.getDimensionPixelSize(R.dimen.layout_padding_bottom)

@@ -7,8 +7,8 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.animegatari.hayanime.R
+import com.animegatari.hayanime.data.model.Anime
 import com.animegatari.hayanime.data.remote.response.AnimeList
-import com.animegatari.hayanime.data.remote.response.AnimeNode
 import com.animegatari.hayanime.data.types.AiringStatus
 import com.animegatari.hayanime.data.types.MediaType
 import com.animegatari.hayanime.data.types.NsfwMedia
@@ -21,9 +21,9 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import kotlin.math.roundToInt
 
 class MyListAdapter(
-    private val onItemClicked: (AnimeNode) -> Unit,
-    private val onEditMyListClicked: (AnimeNode) -> Unit,
-    private val onAddProgressEpisode: (AnimeNode) -> Unit,
+    private val onItemClicked: (Anime) -> Unit,
+    private val onEditMyListClicked: (Anime) -> Unit,
+    private val onAddProgressEpisode: (Anime) -> Unit,
 ) : PagingDataAdapter<AnimeList, MyListAdapter.AnimeViewHolder>(AnimeDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AnimeViewHolder {
         val binding = LayoutAnimeListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -38,9 +38,9 @@ class MyListAdapter(
     class AnimeViewHolder(private val binding: LayoutAnimeListBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(
             animeList: AnimeList,
-            onItemClicked: (AnimeNode) -> Unit,
-            onEditMyListClicked: (AnimeNode) -> Unit,
-            onAddProgressEpisode: (AnimeNode) -> Unit,
+            onItemClicked: (Anime) -> Unit,
+            onEditMyListClicked: (Anime) -> Unit,
+            onAddProgressEpisode: (Anime) -> Unit,
         ) {
             val viewContext = binding.root.context
             val anime = animeList.node ?: return

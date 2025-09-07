@@ -56,25 +56,4 @@ class AnimeRepositoryImpl @Inject constructor(
             }
         ).flow
     }
-
-    override fun userAnimeList(status: String?, sort: String?, isNsfw: Boolean, limitConfig: Int, commonFields: String): Flow<PagingData<AnimeList>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = limitConfig,
-                enablePlaceholders = false
-            ),
-            pagingSourceFactory = {
-                AnimePagingSource { limit, offset ->
-                    apiService.getUserAnimeList(
-                        status = status,
-                        sort = sort,
-                        limit = limit,
-                        offset = offset,
-                        nsfw = isNsfw,
-                        fields = commonFields
-                    )
-                }
-            }
-        ).flow
-    }
 }
