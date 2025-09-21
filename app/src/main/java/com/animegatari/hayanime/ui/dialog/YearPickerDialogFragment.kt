@@ -1,30 +1,30 @@
-package com.animegatari.hayanime.ui.main.season
+package com.animegatari.hayanime.ui.dialog
 
 import android.app.Dialog
 import android.os.Bundle
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.animegatari.hayanime.R
 import com.animegatari.hayanime.databinding.DialogYearPickerBinding
-import com.animegatari.hayanime.ui.utils.layout.SpanCalculator.calculateSpanCount
+import com.animegatari.hayanime.ui.adapter.YearPickerAdapter
+import com.animegatari.hayanime.ui.utils.layout.SpanCalculator
 import com.animegatari.hayanime.utils.TimeUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import dagger.hilt.android.AndroidEntryPoint
-import kotlin.getValue
 
-@AndroidEntryPoint
 class YearPickerDialogFragment : DialogFragment() {
     private var _binding: DialogYearPickerBinding? = null
     private val binding get() = _binding!!
 
-    private val seasonViewModel: SeasonViewModel by activityViewModels()
     private var initialYear: Int = TimeUtils.getCurrentYear()
+    private var dialogTitle: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         arguments?.let {
-            initialYear = it.getInt(ARG_CURRENT_YEAR, TimeUtils.getCurrentYear())
+            initialYear = it.getInt(ARG_INITIAL_YEAR, TimeUtils.getCurrentYear())
+            dialogTitle = it.getString(ARG_DIALOG_TITLE)
         }
     }
 
@@ -34,7 +34,7 @@ class YearPickerDialogFragment : DialogFragment() {
         setupRecyclerView()
 
         val dialog = MaterialAlertDialogBuilder(requireContext())
-            .setTitle(getString(R.string.title_choose_season_year))
+            .setTitle(dialogTitle)
             .setView(binding.root)
             .setCancelable(false)
             .setNegativeButton(getString(R.string.label_cancel)) { _, _ -> dismiss() }
@@ -49,14 +49,14 @@ class YearPickerDialogFragment : DialogFragment() {
         val displayedYears = (startYear..endYear).toList()
 
         val yearPickerAdapter = YearPickerAdapter(displayedYears, initialYear) { selectedYear ->
-            seasonViewModel.changeYear(selectedYear)
+            parentFragmentManager.setFragmentResult(REQUEST_KEY, bundleOf(BUNDLE_KEY_SELECTED_YEAR to selectedYear))
             dismiss()
         }
 
         binding.yearsDialogRecyclerview.apply {
             layoutManager = GridLayoutManager(
                 requireContext(),
-                calculateSpanCount(requireContext(), 120)
+                SpanCalculator.calculateSpanCount(requireContext(), 120)
             )
             adapter = yearPickerAdapter
 
@@ -71,7 +71,18 @@ class YearPickerDialogFragment : DialogFragment() {
     }
 
     companion object {
-        const val ARG_CURRENT_YEAR = "current_year"
+        const val REQUEST_KEY = "YEAR_PICKER_REQUEST"
+        const val BUNDLE_KEY_SELECTED_YEAR = "SELECTED_YEAR"
+
+        const val ARG_INITIAL_YEAR = "initial_year"
+        const val ARG_DIALOG_TITLE = "dialog_title"
         private const val START_YEAR = 1960
+
+        fun newInstance(initialYear: Int, dialogTitle: String) = YearPickerDialogFragment().apply {
+            arguments = Bundle().apply {
+                putInt(ARG_INITIAL_YEAR, initialYear)
+                putString(ARG_DIALOG_TITLE, dialogTitle)
+            }
+        }
     }
 }

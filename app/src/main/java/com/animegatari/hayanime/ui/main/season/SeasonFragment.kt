@@ -20,6 +20,8 @@ import com.animegatari.hayanime.data.types.SeasonStart
 import com.animegatari.hayanime.data.types.SortingAnime
 import com.animegatari.hayanime.databinding.FragmentSeasonBinding
 import com.animegatari.hayanime.ui.adapter.AnimeGridAdapter
+import com.animegatari.hayanime.ui.detail.EditOwnListBottomSheet
+import com.animegatari.hayanime.ui.dialog.YearPickerDialogFragment
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
 import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
 import com.animegatari.hayanime.ui.utils.layout.FabUtils.attachFabScrollListener
@@ -34,6 +36,17 @@ class SeasonFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val seasonViewModel: SeasonViewModel by activityViewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        childFragmentManager.setFragmentResultListener(YearPickerDialogFragment.REQUEST_KEY, this) { requestKey, bundle ->
+            if (requestKey == YearPickerDialogFragment.REQUEST_KEY) {
+                val selectedYear = bundle.getInt(YearPickerDialogFragment.BUNDLE_KEY_SELECTED_YEAR)
+                seasonViewModel.changeYear(selectedYear)
+            }
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSeasonBinding.inflate(inflater, container, false)
@@ -115,12 +128,11 @@ class SeasonFragment : Fragment() {
     }
 
     private fun displayYearPickerDialog() {
-        val currentYear = seasonViewModel.selectedYear.value
-        val dialog = YearPickerDialogFragment().apply {
-            arguments = Bundle().apply {
-                putInt(YearPickerDialogFragment.ARG_CURRENT_YEAR, currentYear)
-            }
-        }
+        val selectedYear = seasonViewModel.selectedYear.value
+        val dialog = YearPickerDialogFragment.newInstance(
+            initialYear = selectedYear,
+            dialogTitle = getString(R.string.title_choose_season_year)
+        )
         dialog.show(childFragmentManager, dialog.tag)
     }
 
@@ -132,7 +144,12 @@ class SeasonFragment : Fragment() {
             startActivity(intent)
         },
         onEditMyListClicked = { anime ->
-            toastShort(requireContext(), "TODO action ${anime.title}")
+            anime.id?.let { animeId ->
+                val editOwnListSheet = EditOwnListBottomSheet.newInstance(animeId)
+                editOwnListSheet.show(childFragmentManager, editOwnListSheet.tag)
+            } ?: run {
+                toastShort(requireContext(), getString(R.string.message_error_missing_anime_id))
+            }
         }
     )
 

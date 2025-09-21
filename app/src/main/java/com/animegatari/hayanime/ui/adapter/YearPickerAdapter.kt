@@ -1,4 +1,4 @@
-package com.animegatari.hayanime.ui.main.season
+package com.animegatari.hayanime.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

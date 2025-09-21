@@ -17,12 +17,12 @@ object TimeUtils {
         return LocalDate.now().year
     }
 
-    fun getCurrentMonthValue(): Int {
+    fun getCurrentMonth(): Int {
         return LocalDate.now().monthValue
     }
 
     fun getCurrentSeason(): String {
-        val currentMonth = getCurrentMonthValue()
+        val currentMonth = getCurrentMonth()
         val seasonForMonth = when (currentMonth) {
             1, 2, 3 -> SeasonStart.WINTER
             4, 5, 6 -> SeasonStart.SPRING

@@ -16,6 +16,7 @@ import com.animegatari.hayanime.BuildConfig
 import com.animegatari.hayanime.R
 import com.animegatari.hayanime.databinding.FragmentSearchBinding
 import com.animegatari.hayanime.ui.adapter.AnimeGridAdapter
+import com.animegatari.hayanime.ui.detail.EditOwnListBottomSheet
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.snackBarShort
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
 import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
@@ -92,7 +93,12 @@ class SearchFragment : Fragment() {
             startActivity(intent)
         },
         onEditMyListClicked = { anime ->
-            toastShort(requireContext(), "TODO action ${anime.title}")
+            anime.id?.let { animeId ->
+                val editOwnListSheet = EditOwnListBottomSheet.newInstance(animeId)
+                editOwnListSheet.show(childFragmentManager, editOwnListSheet.tag)
+            } ?: run {
+                toastShort(requireContext(), getString(R.string.message_error_missing_anime_id))
+            }
         }
     )
 

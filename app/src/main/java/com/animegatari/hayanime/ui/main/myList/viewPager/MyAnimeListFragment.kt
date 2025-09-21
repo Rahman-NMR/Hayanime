@@ -16,6 +16,7 @@ import com.animegatari.hayanime.BuildConfig
 import com.animegatari.hayanime.R
 import com.animegatari.hayanime.data.types.WatchingStatus
 import com.animegatari.hayanime.databinding.FragmentMyAnimeListBinding
+import com.animegatari.hayanime.ui.detail.EditOwnListBottomSheet
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
 import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
 import com.animegatari.hayanime.ui.utils.layout.FabUtils.attachFabScrollListener
@@ -86,8 +87,12 @@ class MyAnimeListFragment : Fragment() {
             startActivity(intent)
         },
         onEditMyListClicked = { anime ->
-            toastShort(requireContext(), "TODO action ${anime.title}")
-
+            anime.id?.let { animeId ->
+                val editOwnListSheet = EditOwnListBottomSheet.newInstance(animeId)
+                editOwnListSheet.show(childFragmentManager, editOwnListSheet.tag)
+            } ?: run {
+                toastShort(requireContext(), getString(R.string.message_error_missing_anime_id))
+            }
         },
         onAddProgressEpisode = {
             toastShort(requireContext(), "TODO action press again to add progress episode")
