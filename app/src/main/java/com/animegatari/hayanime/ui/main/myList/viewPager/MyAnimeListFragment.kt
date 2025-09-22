@@ -9,6 +9,8 @@ import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -39,28 +41,29 @@ class MyAnimeListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val position = arguments?.getInt(ARG_POSITION) ?: 0
-        val watchingStatusValue = when (position) {
-            0 -> null
-            1 -> WatchingStatus.WATCHING.apiValue
-            2 -> WatchingStatus.COMPLETED.apiValue
-            3 -> WatchingStatus.PLAN_TO_WATCH.apiValue
-            4 -> WatchingStatus.ON_HOLD.apiValue
-            5 -> WatchingStatus.DROPPED.apiValue
-            else -> null
-        }
+        val position = arguments?.getInt(ARG_POSITION) ?: DEFAULT_POSITION
+        val watchingStatusValue = getWatchingStatusValueFromPosition(position)
+        val myListAdapter = initializeMyListAdapter()
 
-        val myListAdapter = myListAdapter()
-        with(binding) {
-            initializeViews(watchingStatusValue)
-            setupInteractions(myListAdapter)
-            setupRecyclerView(myListAdapter)
-            adapterDataHandler(myListAdapter)
-            handleLoadState(myListAdapter)
-        }
+        initializeViews(watchingStatusValue)
+        setupInteractions(myListAdapter)
+        setupRecyclerView(myListAdapter)
+
+        observeViewModelStates(myListAdapter)
+        handleLoadState(myListAdapter)
     }
 
-    private fun FragmentMyAnimeListBinding.initializeViews(watchingStatusValue: String?) {
+    private fun getWatchingStatusValueFromPosition(position: Int): String? = when (position) {
+        0 -> null
+        1 -> WatchingStatus.WATCHING.apiValue
+        2 -> WatchingStatus.COMPLETED.apiValue
+        3 -> WatchingStatus.PLAN_TO_WATCH.apiValue
+        4 -> WatchingStatus.ON_HOLD.apiValue
+        5 -> WatchingStatus.DROPPED.apiValue
+        else -> null
+    }
+
+    private fun initializeViews(watchingStatusValue: String?) = with(binding) {
         myAnimeListViewModel.getAnimeList(watchingStatusValue)
 
         val watchingStatusString = WatchingStatus.fromApiValue(watchingStatusValue).stringResId
@@ -71,7 +74,7 @@ class MyAnimeListFragment : Fragment() {
         fabScrollToTop.hide()
     }
 
-    private fun FragmentMyAnimeListBinding.setupInteractions(myListAdapter: MyListAdapter) {
+    private fun setupInteractions(myListAdapter: MyListAdapter) = with(binding) {
         fabScrollToTop.setOnClickListener { recyclerView.smoothScrollToPosition(0) }
         swipeRefresh.setOnRefreshListener {
             myListAdapter.refresh()
@@ -79,7 +82,7 @@ class MyAnimeListFragment : Fragment() {
         }
     }
 
-    private fun myListAdapter(): MyListAdapter = MyListAdapter(
+    private fun initializeMyListAdapter(): MyListAdapter = MyListAdapter(
         onItemClicked = { anime ->
             val intent = Intent(Intent.ACTION_VIEW).apply {
                 data = "${BuildConfig.BASE_URL}anime/${anime.id}".toUri()
@@ -99,7 +102,7 @@ class MyAnimeListFragment : Fragment() {
         }
     )
 
-    private fun FragmentMyAnimeListBinding.setupRecyclerView(myListAdapter: MyListAdapter) {
+    private fun setupRecyclerView(myListAdapter: MyListAdapter) = with(binding) {
         val paddingBottom = resources.getDimensionPixelSize(R.dimen.layout_padding_bottom)
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -107,13 +110,7 @@ class MyAnimeListFragment : Fragment() {
         recyclerView.adapter = myListAdapter
     }
 
-    private fun adapterDataHandler(myListAdapter: MyListAdapter) = lifecycleScope.launch {
-        myAnimeListViewModel.myAnimeList.collectLatest { pagingData ->
-            myListAdapter.submitData(pagingData)
-        }
-    }
-
-    private fun handleLoadState(myListAdapter: MyListAdapter) = lifecycleScope.launch {
+    private fun handleLoadState(myListAdapter: MyListAdapter) = viewLifecycleOwner.lifecycleScope.launch {
         myListAdapter.loadStateFlow.collectLatest { loadStates ->
             val refreshState = loadStates.refresh
 
@@ -130,6 +127,14 @@ class MyAnimeListFragment : Fragment() {
         }
     }
 
+    private fun observeViewModelStates(myListAdapter: MyListAdapter) = with(binding) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            myAnimeListViewModel.myAnimeList
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collectLatest { myListAdapter.submitData(it) }
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -137,12 +142,11 @@ class MyAnimeListFragment : Fragment() {
 
     companion object {
         private const val ARG_POSITION = "position"
+        private const val DEFAULT_POSITION = 0
         const val NUM_TABS = 6
 
-        fun newInstance(position: Int): MyAnimeListFragment {
-            val fragment = MyAnimeListFragment()
-            fragment.arguments = Bundle().apply { putInt(ARG_POSITION, position) }
-            return fragment
+        fun newInstance(position: Int) = MyAnimeListFragment().apply {
+            arguments = Bundle().apply { putInt(ARG_POSITION, position) }
         }
     }
 }

@@ -5,10 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -17,11 +20,11 @@ import com.animegatari.hayanime.R
 import com.animegatari.hayanime.databinding.FragmentSearchBinding
 import com.animegatari.hayanime.ui.adapter.AnimeGridAdapter
 import com.animegatari.hayanime.ui.detail.EditOwnListBottomSheet
-import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.snackBarShort
-import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
 import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
 import com.animegatari.hayanime.ui.utils.layout.FabUtils.attachFabScrollListener
 import com.animegatari.hayanime.ui.utils.layout.SpanCalculator.calculateSpanCount
+import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.snackBarShort
+import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -41,25 +44,25 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val animeAdapter = animeAdapter()
-        with(binding) {
-            initializeViews()
-            setupInteractions(animeAdapter)
-            handleSearchInput()
-            setupRecyclerView(animeAdapter)
-            adapterDataHandler(animeAdapter)
-            handleLoadState(animeAdapter)
-        }
+        val animeAdapter = initializeAnimeAdapter()
+
+        initializeViews()
+        setupInteractions(animeAdapter)
+        setupRecyclerView(animeAdapter)
+        handleSearchInput()
+
+        observeViewModelStates(animeAdapter)
+        handleLoadState(animeAdapter)
     }
 
-    private fun FragmentSearchBinding.initializeViews() {
+    private fun initializeViews() = with(binding) {
         attachFabScrollListener(recyclerView, fabScrollToTop)
         tvInfoMsg.text = getString(R.string.info_empty_initial_search)
         loadingIndicator.hide()
         fabScrollToTop.hide()
     }
 
-    private fun FragmentSearchBinding.setupInteractions(animeAdapter: AnimeGridAdapter) {
+    private fun setupInteractions(animeAdapter: AnimeGridAdapter) = with(binding) {
         fabScrollToTop.setOnClickListener { recyclerView.smoothScrollToPosition(0) }
         swipeRefresh.setOnRefreshListener {
             animeAdapter.refresh()
@@ -67,25 +70,27 @@ class SearchFragment : Fragment() {
         }
     }
 
-    private fun FragmentSearchBinding.handleSearchInput() {
+    private fun handleSearchInput() = with(binding) {
         searchView.setupWithSearchBar(binding.searchBar)
-        searchView.editText.setOnEditorActionListener { searchItem, _, _ ->
-            searchBar.setText(searchItem.text.trim())
+        searchView.editText.setOnEditorActionListener { textView, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                val searchQuery = textView.text.toString().trim()
+                searchBar.setText(searchQuery)
 
-            val searchQuery = searchItem.text.toString().trim()
-            if (searchQuery.length >= 3) {
-                searchView.hide()
-                searchViewModel.getAnimeList(searchQuery)
-                tvInfoMsg.text = getString(R.string.info_no_results_found, searchQuery)
-                false
-            } else {
-                snackBarShort(root, getString(R.string.message_query_short))
-                true
+                if (searchQuery.length >= MIN_QUERY_LENGTH) {
+                    searchView.hide()
+                    searchViewModel.getAnimeList(searchQuery)
+                    tvInfoMsg.text = getString(R.string.info_no_results_found, searchQuery)
+                } else {
+                    snackBarShort(root, getString(R.string.message_query_short))
+                }
+                return@setOnEditorActionListener true
             }
+            false
         }
     }
 
-    private fun animeAdapter(): AnimeGridAdapter = AnimeGridAdapter(
+    private fun initializeAnimeAdapter(): AnimeGridAdapter = AnimeGridAdapter(
         onItemClicked = { anime ->
             val intent = Intent(Intent.ACTION_VIEW).apply {
                 data = "${BuildConfig.BASE_URL}anime/${anime.id}".toUri()
@@ -102,7 +107,7 @@ class SearchFragment : Fragment() {
         }
     )
 
-    private fun FragmentSearchBinding.setupRecyclerView(animeAdapter: AnimeGridAdapter) {
+    private fun setupRecyclerView(animeAdapter: AnimeGridAdapter) = with(binding) {
         val paddingBottom = resources.getDimensionPixelSize(R.dimen.layout_padding_bottom)
 
         recyclerView.layoutManager = StaggeredGridLayoutManager(
@@ -113,13 +118,7 @@ class SearchFragment : Fragment() {
         recyclerView.adapter = animeAdapter
     }
 
-    private fun adapterDataHandler(animeAdapter: AnimeGridAdapter) = lifecycleScope.launch {
-        searchViewModel.animeList.collectLatest { pagingData ->
-            animeAdapter.submitData(pagingData)
-        }
-    }
-
-    private fun handleLoadState(animeAdapter: AnimeGridAdapter) = lifecycleScope.launch {
+    private fun handleLoadState(animeAdapter: AnimeGridAdapter) = viewLifecycleOwner.lifecycleScope.launch {
         animeAdapter.loadStateFlow.collectLatest { loadStates ->
             val refreshState = loadStates.refresh
 
@@ -136,6 +135,14 @@ class SearchFragment : Fragment() {
         }
     }
 
+    private fun observeViewModelStates(animeAdapter: AnimeGridAdapter) = with(binding) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            searchViewModel.animeList
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collectLatest { animeAdapter.submitData(it) }
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -143,6 +150,10 @@ class SearchFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        binding.searchView.hide()
+        _binding?.searchView?.hide()
+    }
+
+    companion object {
+        private const val MIN_QUERY_LENGTH = 3
     }
 }
