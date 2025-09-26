@@ -18,6 +18,7 @@ class YearPickerDialogFragment : DialogFragment() {
 
     private var initialYear: Int = TimeUtils.getCurrentYear()
     private var dialogTitle: String? = null
+    private var requestKey: String = YEAR_PICKER_REQUEST_KEY
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +26,7 @@ class YearPickerDialogFragment : DialogFragment() {
         arguments?.let {
             initialYear = it.getInt(ARG_INITIAL_YEAR, TimeUtils.getCurrentYear())
             dialogTitle = it.getString(ARG_DIALOG_TITLE)
+            requestKey = it.getString(ARG_REQUEST_KEY, YEAR_PICKER_REQUEST_KEY)
         }
     }
 
@@ -44,12 +46,12 @@ class YearPickerDialogFragment : DialogFragment() {
 
     private fun setupRecyclerView() {
         val systemCurrentYear = TimeUtils.getCurrentYear()
-        val startYear = START_YEAR
+        val startYear = DEFAULT_START_YEAR
         val endYear = systemCurrentYear
-        val displayedYears = (startYear..endYear).toList()
+        val displayedYears = (startYear..endYear).toList().reversed()
 
         val yearPickerAdapter = YearPickerAdapter(displayedYears, initialYear) { selectedYear ->
-            parentFragmentManager.setFragmentResult(REQUEST_KEY, bundleOf(BUNDLE_KEY_SELECTED_YEAR to selectedYear))
+            parentFragmentManager.setFragmentResult(requestKey, bundleOf(BUNDLE_KEY_SELECTED_YEAR to selectedYear))
             dismiss()
         }
 
@@ -71,17 +73,20 @@ class YearPickerDialogFragment : DialogFragment() {
     }
 
     companion object {
-        const val REQUEST_KEY = "YEAR_PICKER_REQUEST"
-        const val BUNDLE_KEY_SELECTED_YEAR = "SELECTED_YEAR"
+        const val YEAR_PICKER_REQUEST_KEY = "YEAR_PICKER_REQUEST_KEY"
+        const val BUNDLE_KEY_SELECTED_YEAR = "SELECTED_YEAR_BUNDLE_KEY"
 
-        const val ARG_INITIAL_YEAR = "initial_year"
-        const val ARG_DIALOG_TITLE = "dialog_title"
-        private const val START_YEAR = 1960
+        private const val ARG_INITIAL_YEAR = "ARG_INITIAL_YEAR"
+        private const val ARG_DIALOG_TITLE = "ARG_DIALOG_TITLE"
+        private const val ARG_REQUEST_KEY = "ARG_REQUEST_KEY"
 
-        fun newInstance(initialYear: Int, dialogTitle: String) = YearPickerDialogFragment().apply {
+        private const val DEFAULT_START_YEAR = 1960
+
+        fun newInstance(initialYear: Int, dialogTitle: String, requestKey: String) = YearPickerDialogFragment().apply {
             arguments = Bundle().apply {
                 putInt(ARG_INITIAL_YEAR, initialYear)
                 putString(ARG_DIALOG_TITLE, dialogTitle)
+                putString(ARG_REQUEST_KEY, requestKey)
             }
         }
     }

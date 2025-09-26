@@ -4,30 +4,44 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
 import com.animegatari.hayanime.databinding.BottomSheetEditOwnListBinding
 import com.animegatari.hayanime.ui.dialog.YearPickerDialogFragment
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class EditOwnListBottomSheet : BottomSheetDialogFragment() {
+class EditOwnListBottomSheet : Fragment() {
     private var _binding: BottomSheetEditOwnListBinding? = null
     private val binding get() = _binding!!
+
     private var initialAnimeId: Int? = INVALID_ANIME_ID
+    private var requestKey: String = DETAIL_REQUEST_KEY
+    private val args: EditOwnListBottomSheetArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        arguments?.let {
-            initialAnimeId = it.getInt(ARG_ANIME_ID, INVALID_ANIME_ID)
+        initialAnimeId = args.animeId
+        requestKey = args.requestKey
+
+        setupYearPickerListener()
+    }
+
+    private fun setupYearPickerListener() {
+        setYearPickerListener(START_DATE_YEAR_REQUEST_KEY) { selectedYear ->
         }
 
-        childFragmentManager.setFragmentResultListener(YearPickerDialogFragment.REQUEST_KEY, this) { requestKey, bundle ->
-            if (requestKey == YearPickerDialogFragment.REQUEST_KEY) {
-                val selectedYear = bundle.getInt(YearPickerDialogFragment.BUNDLE_KEY_SELECTED_YEAR)
-                toastShort(requireContext(), "Selected year: $selectedYear")
-            }
+        setYearPickerListener(FINISH_DATE_YEAR_REQUEST_KEY) { selectedYear ->
+        }
+    }
+
+    private fun setYearPickerListener(requestKey: String, onYearSelected: (Int) -> Unit) {
+        childFragmentManager.setFragmentResultListener(requestKey, this) { _, bundle ->
+            val selectedYear = bundle.getInt(YearPickerDialogFragment.BUNDLE_KEY_SELECTED_YEAR)
+            onYearSelected(selectedYear)
         }
     }
 
@@ -37,11 +51,13 @@ class EditOwnListBottomSheet : BottomSheetDialogFragment() {
     }
 
     companion object {
-        private const val ARG_ANIME_ID = "anime_id"
         private const val INVALID_ANIME_ID = 0
 
-        fun newInstance(animeId: Int) = EditOwnListBottomSheet().apply {
-            arguments = Bundle().apply { putInt(ARG_ANIME_ID, animeId) }
-        }
+        const val DETAIL_REQUEST_KEY = "DETAIL_REQUEST_KEY"
+        const val BUNDLE_KEY_DELETED = "BUNDLE_KEY_DELETED"
+        const val BUNDLE_KEY_UPDATED = "BUNDLE_KEY_UPDATED"
+
+        const val START_DATE_YEAR_REQUEST_KEY = "START_DATE_YEAR_REQUEST"
+        const val FINISH_DATE_YEAR_REQUEST_KEY = "FINISH_DATE_YEAR_REQUEST"
     }
 }

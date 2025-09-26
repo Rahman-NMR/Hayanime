@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.devtools.ksp)
+    alias(libs.plugins.androidx.navigation.safeargs.kotlin)
 }
 
 kotlin {
@@ -24,8 +25,8 @@ android {
         applicationId = "com.animegatari.hayanime"
         minSdk = 28
         targetSdk = 36
-        versionCode = 19
-        versionName = "0.1.3"
+        versionCode = 20
+        versionName = "0.1.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

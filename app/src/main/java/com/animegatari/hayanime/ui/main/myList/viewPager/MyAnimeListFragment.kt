@@ -12,22 +12,24 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.animegatari.hayanime.BuildConfig
 import com.animegatari.hayanime.R
 import com.animegatari.hayanime.data.types.WatchingStatus
 import com.animegatari.hayanime.databinding.FragmentMyAnimeListBinding
+import com.animegatari.hayanime.ui.base.ReselectableFragment
 import com.animegatari.hayanime.ui.detail.EditOwnListBottomSheet
-import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
+import com.animegatari.hayanime.ui.main.myList.MyListFragmentDirections
 import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
-import com.animegatari.hayanime.ui.utils.layout.FabUtils.attachFabScrollListener
+import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MyAnimeListFragment : Fragment() {
+class MyAnimeListFragment : Fragment(), ReselectableFragment {
     private var _binding: FragmentMyAnimeListBinding? = null
     private val binding get() = _binding!!
 
@@ -68,14 +70,11 @@ class MyAnimeListFragment : Fragment() {
 
         val watchingStatusString = WatchingStatus.fromApiValue(watchingStatusValue).stringResId
 
-        attachFabScrollListener(recyclerView, fabScrollToTop)
         tvInfoMsg.text = getString(R.string.info_no_results_found, getString(watchingStatusString))
         loadingIndicator.hide()
-        fabScrollToTop.hide()
     }
 
     private fun setupInteractions(myListAdapter: MyListAdapter) = with(binding) {
-        fabScrollToTop.setOnClickListener { recyclerView.smoothScrollToPosition(0) }
         swipeRefresh.setOnRefreshListener {
             myListAdapter.refresh()
             swipeRefresh.isRefreshing = false
@@ -91,8 +90,11 @@ class MyAnimeListFragment : Fragment() {
         },
         onEditMyListClicked = { anime ->
             anime.id?.let { animeId ->
-                val editOwnListSheet = EditOwnListBottomSheet.newInstance(animeId)
-                editOwnListSheet.show(childFragmentManager, editOwnListSheet.tag)
+                val action = MyListFragmentDirections.actionNavigationToNavigationEditAnime(
+                    animeId = animeId,
+                    requestKey = EditOwnListBottomSheet.DETAIL_REQUEST_KEY
+                )
+                findNavController().navigate(action)
             } ?: run {
                 toastShort(requireContext(), getString(R.string.message_error_missing_anime_id))
             }
@@ -133,6 +135,10 @@ class MyAnimeListFragment : Fragment() {
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collectLatest { myListAdapter.submitData(it) }
         }
+    }
+
+    override fun onReselected() {
+        binding.recyclerView.smoothScrollToPosition(0)
     }
 
     override fun onDestroyView() {

@@ -8,11 +8,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.animegatari.hayanime.R
 import com.animegatari.hayanime.databinding.FragmentMyListBinding
+import com.animegatari.hayanime.ui.base.ReselectableFragment
 import com.animegatari.hayanime.ui.main.myList.viewPager.ViewPagerAdapter
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
 import com.google.android.material.tabs.TabLayoutMediator
 
-class MyListFragment : Fragment() {
+class MyListFragment : Fragment(), ReselectableFragment {
     private var _binding: FragmentMyListBinding? = null
     private val binding get() = _binding!!
 
@@ -54,6 +55,17 @@ class MyListFragment : Fragment() {
                 else -> getString(R.string.label_unknown)
             }
         }.attach()
+    }
+
+    override fun onReselected() {
+        val viewPagerAdapter = binding.viewPager.adapter as? ViewPagerAdapter
+        if (viewPagerAdapter != null) {
+            val currentPosition = binding.viewPager.currentItem
+            val currentFragment = childFragmentManager.findFragmentByTag("f$currentPosition")
+            if (currentFragment is ReselectableFragment) {
+                currentFragment.onReselected()
+            }
+        }
     }
 
     override fun onDestroyView() {

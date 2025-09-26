@@ -27,7 +27,6 @@
     <string name="info_empty_initial_search">Oops! You haven\'t performed any searches yet.</string>
     <string name="info_no_results_found">No results found for %1$s.</string>
 
-    <string name="description_fab_scroll_to_top">Scroll to top</string>
     <string name="description_profile">Profile</string>
     <string name="description_edit_this_anime">Edit this anime</string>
     <string name="description_add_one_episode">Add one episode</string>
@@ -36,5 +35,5 @@
     <string name="message_no_internet">No internet connection</string>
     <string name="message_error_occurred">An error occurred</string>
     <string name="message_query_short">Search query is too short.</string>
-    <string name="message_error_missing_anime_id">Anime ID is missing.</string>
+    <string name="message_error_missing_anime_id">Error: Anime ID is missing. Please try again.</string>
 </resources>

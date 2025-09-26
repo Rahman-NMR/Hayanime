@@ -1,11 +1,13 @@
 package com.animegatari.hayanime.ui.main.search
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.activity.OnBackPressedCallback
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -13,28 +15,34 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.animegatari.hayanime.BuildConfig
 import com.animegatari.hayanime.R
 import com.animegatari.hayanime.databinding.FragmentSearchBinding
 import com.animegatari.hayanime.ui.adapter.AnimeGridAdapter
+import com.animegatari.hayanime.ui.base.ReselectableFragment
+import com.animegatari.hayanime.ui.base.ViewActionListener
 import com.animegatari.hayanime.ui.detail.EditOwnListBottomSheet
 import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
-import com.animegatari.hayanime.ui.utils.layout.FabUtils.attachFabScrollListener
 import com.animegatari.hayanime.ui.utils.layout.SpanCalculator.calculateSpanCount
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.snackBarShort
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
+import com.google.android.material.search.SearchView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SearchFragment : Fragment() {
+class SearchFragment : Fragment(), ReselectableFragment {
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
     private val searchViewModel: SearchViewModel by viewModels()
+
+    private var viewActionListener: ViewActionListener? = null
+    private lateinit var searchViewBackCallback: OnBackPressedCallback
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
@@ -43,6 +51,9 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setupSearchViewBackCallback()
+        setupSearchViewTransitionListener()
 
         val animeAdapter = initializeAnimeAdapter()
 
@@ -56,14 +67,11 @@ class SearchFragment : Fragment() {
     }
 
     private fun initializeViews() = with(binding) {
-        attachFabScrollListener(recyclerView, fabScrollToTop)
         tvInfoMsg.text = getString(R.string.info_empty_initial_search)
         loadingIndicator.hide()
-        fabScrollToTop.hide()
     }
 
     private fun setupInteractions(animeAdapter: AnimeGridAdapter) = with(binding) {
-        fabScrollToTop.setOnClickListener { recyclerView.smoothScrollToPosition(0) }
         swipeRefresh.setOnRefreshListener {
             animeAdapter.refresh()
             swipeRefresh.isRefreshing = false
@@ -99,8 +107,11 @@ class SearchFragment : Fragment() {
         },
         onEditMyListClicked = { anime ->
             anime.id?.let { animeId ->
-                val editOwnListSheet = EditOwnListBottomSheet.newInstance(animeId)
-                editOwnListSheet.show(childFragmentManager, editOwnListSheet.tag)
+                val action = SearchFragmentDirections.actionNavigationToNavigationEditAnime(
+                    animeId = animeId,
+                    requestKey = EditOwnListBottomSheet.DETAIL_REQUEST_KEY
+                )
+                findNavController().navigate(action)
             } ?: run {
                 toastShort(requireContext(), getString(R.string.message_error_missing_anime_id))
             }
@@ -141,6 +152,58 @@ class SearchFragment : Fragment() {
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collectLatest { animeAdapter.submitData(it) }
         }
+    }
+
+    private fun setupSearchViewBackCallback() {
+        searchViewBackCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (binding.searchView.isShowing) {
+                    binding.searchView.hide()
+                } else {
+                    isEnabled = false
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, searchViewBackCallback)
+    }
+
+    private fun setupSearchViewTransitionListener() {
+        binding.searchView.addTransitionListener { _, _, newState ->
+            when (newState) {
+                SearchView.TransitionState.SHOWN -> viewActionListener?.onViewShown()
+                SearchView.TransitionState.HIDDEN -> viewActionListener?.onViewHidden()
+                else -> Unit
+            }
+        }
+    }
+
+    override fun onReselected() {
+        if (binding.recyclerView.computeVerticalScrollOffset() > 0) {
+            binding.recyclerView.smoothScrollToPosition(0)
+        } else {
+            toggleSearchViewVisibility()
+        }
+    }
+
+    private fun toggleSearchViewVisibility() = with(binding) {
+        if (searchView.isShowing) {
+            searchView.editText.clearFocus()
+            searchView.hide()
+        } else {
+            searchView.show()
+            searchView.editText.requestFocus()
+        }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        viewActionListener = context as? ViewActionListener
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        viewActionListener = null
     }
 
     override fun onDestroyView() {

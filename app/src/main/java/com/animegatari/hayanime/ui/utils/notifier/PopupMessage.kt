@@ -10,7 +10,7 @@ object PopupMessage {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
-    fun snackBarShort(view: View, message: String) {
-        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
+    fun snackBarShort(view: View, message: String, anchorView: View? = null) {
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).setAnchorView(anchorView).show()
     }
 }

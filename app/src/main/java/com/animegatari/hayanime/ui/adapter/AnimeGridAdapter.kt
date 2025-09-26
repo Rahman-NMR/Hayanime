@@ -20,7 +20,6 @@ import com.animegatari.hayanime.utils.FormatterUtils.digitNumberFormatter
 import com.animegatari.hayanime.utils.FormatterUtils.formatApiDate
 import com.animegatari.hayanime.utils.TimeUtils
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 
 class AnimeGridAdapter(
     private val onEditMyListClicked: (Anime) -> Unit,
@@ -47,7 +46,6 @@ class AnimeGridAdapter(
                     .load(pictureUrl?.medium ?: pictureUrl?.large)
                     .placeholder(R.drawable.img_placeholder)
                     .error(R.drawable.img_error)
-                    .transition(DrawableTransitionOptions.withCrossFade(333))
                     .into(mainPicture)
 
                 mediaType.text = viewContext.getString(MediaType.fromApiValue(anime.mediaType).stringResId)

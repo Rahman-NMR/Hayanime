@@ -14,6 +14,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.animegatari.hayanime.BuildConfig
@@ -22,10 +23,10 @@ import com.animegatari.hayanime.data.types.SeasonStart
 import com.animegatari.hayanime.data.types.SortingAnime
 import com.animegatari.hayanime.databinding.FragmentSeasonBinding
 import com.animegatari.hayanime.ui.adapter.AnimeGridAdapter
+import com.animegatari.hayanime.ui.base.ReselectableFragment
 import com.animegatari.hayanime.ui.detail.EditOwnListBottomSheet
 import com.animegatari.hayanime.ui.dialog.YearPickerDialogFragment
 import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
-import com.animegatari.hayanime.ui.utils.layout.FabUtils.attachFabScrollListener
 import com.animegatari.hayanime.ui.utils.layout.SpanCalculator.calculateSpanCount
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,27 +34,41 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SeasonFragment : Fragment() {
+class SeasonFragment : Fragment(), ReselectableFragment {
     private var _binding: FragmentSeasonBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var animeAdapter: AnimeGridAdapter
     private val seasonViewModel: SeasonViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setupYearPickerListener()
+        setupAdapterRefreshListener()
     }
 
     private fun setupYearPickerListener() {
         childFragmentManager.setFragmentResultListener(
-            YearPickerDialogFragment.REQUEST_KEY,
+            YearPickerDialogFragment.YEAR_PICKER_REQUEST_KEY,
             this
-        ) { requestKey, bundle ->
-            if (requestKey == YearPickerDialogFragment.REQUEST_KEY) {
-                val selectedYear = bundle.getInt(YearPickerDialogFragment.BUNDLE_KEY_SELECTED_YEAR)
-                seasonViewModel.changeYear(selectedYear)
-            }
+        ) { _, bundle ->
+            val selectedYear = bundle.getInt(YearPickerDialogFragment.BUNDLE_KEY_SELECTED_YEAR)
+            seasonViewModel.changeYear(selectedYear)
+        }
+    }
+
+    private fun setupAdapterRefreshListener() {
+        childFragmentManager.setFragmentResultListener(
+            EditOwnListBottomSheet.DETAIL_REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            val resultUpdate = bundle.getBoolean(EditOwnListBottomSheet.BUNDLE_KEY_UPDATED)
+            val resulDelete = bundle.getBoolean(EditOwnListBottomSheet.BUNDLE_KEY_DELETED)
+
+            if (resultUpdate || resulDelete) animeAdapter.refresh()
+            if (resultUpdate) toastShort(requireContext(), "Anime updated")
+            if (resulDelete) toastShort(requireContext(), "Anime deleted")
         }
     }
 
@@ -65,7 +80,7 @@ class SeasonFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val animeAdapter = initializeAnimeAdapter()
+        animeAdapter = initializeAnimeAdapter()
 
         initializeViews()
         setupInteractions(animeAdapter)
@@ -78,14 +93,11 @@ class SeasonFragment : Fragment() {
     private fun initializeViews() = with(binding) {
         val thisSeason = getString(R.string.label_this_season)
 
-        attachFabScrollListener(recyclerView, fabScrollToTop)
         tvInfoMsg.text = getString(R.string.info_no_results_found, thisSeason)
         loadingIndicator.hide()
-        fabScrollToTop.hide()
     }
 
     private fun setupInteractions(animeAdapter: AnimeGridAdapter) = with(binding) {
-        fabScrollToTop.setOnClickListener { recyclerView.smoothScrollToPosition(0) }
         btnChangeYear.setOnClickListener { displayYearPickerDialog() }
         btnChangeSeason.setOnClickListener { displaySeasonPicker() }
         btnSortBy.setOnClickListener { seasonViewModel.toggleSortKey() }
@@ -137,6 +149,7 @@ class SeasonFragment : Fragment() {
         val selectedYear = seasonViewModel.selectedYear.value
         val dialog = YearPickerDialogFragment.newInstance(
             initialYear = selectedYear,
+            requestKey = YearPickerDialogFragment.YEAR_PICKER_REQUEST_KEY,
             dialogTitle = getString(R.string.title_choose_season_year)
         )
         dialog.show(childFragmentManager, dialog.tag)
@@ -151,8 +164,11 @@ class SeasonFragment : Fragment() {
         },
         onEditMyListClicked = { anime ->
             anime.id?.let { animeId ->
-                val editOwnListSheet = EditOwnListBottomSheet.newInstance(animeId)
-                editOwnListSheet.show(childFragmentManager, editOwnListSheet.tag)
+                val action = SeasonFragmentDirections.actionNavigationToNavigationEditAnime(
+                    animeId = animeId,
+                    requestKey = EditOwnListBottomSheet.DETAIL_REQUEST_KEY
+                )
+                findNavController().navigate(action)
             } ?: run {
                 toastShort(requireContext(), getString(R.string.message_error_missing_anime_id))
             }
@@ -211,6 +227,10 @@ class SeasonFragment : Fragment() {
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collectLatest { animeAdapter.submitData(it) }
         }
+    }
+
+    override fun onReselected() {
+        binding.recyclerView.smoothScrollToPosition(0)
     }
 
     override fun onDestroyView() {

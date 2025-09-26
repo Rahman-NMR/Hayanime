@@ -22,4 +22,27 @@
         android:name="com.animegatari.hayanime.ui.main.myList.MyListFragment"
         android:label="@string/title_my_list"
         tools:layout="@layout/fragment_my_list" />
+
+    <fragment
+        android:id="@+id/navigation_edit_anime"
+        android:name="com.animegatari.hayanime.ui.detail.EditOwnListBottomSheet"
+        android:label="@string/title_edit_anime"
+        tools:layout="@layout/bottom_sheet_edit_own_list">
+
+        <argument
+            android:name="animeId"
+            app:argType="integer" />
+
+        <argument
+            android:name="requestKey"
+            app:argType="string" />
+    </fragment>
+
+    <action
+        android:id="@+id/action_navigation_to_navigation_edit_anime"
+        app:destination="@id/navigation_edit_anime"
+        app:enterAnim="@anim/fade_in"
+        app:exitAnim="@anim/fade_out"
+        app:popEnterAnim="@anim/fade_in"
+        app:popExitAnim="@anim/fade_out" />
 </navigation>

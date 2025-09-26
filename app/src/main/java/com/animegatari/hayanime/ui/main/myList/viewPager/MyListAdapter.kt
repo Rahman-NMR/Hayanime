@@ -17,7 +17,6 @@ import com.animegatari.hayanime.data.types.SeasonStart
 import com.animegatari.hayanime.data.types.SourceOfRefference
 import com.animegatari.hayanime.databinding.LayoutAnimeListBinding
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import kotlin.math.roundToInt
 
 class MyListAdapter(
@@ -53,7 +52,6 @@ class MyListAdapter(
                     .load(pictureUrl?.medium ?: pictureUrl?.large)
                     .placeholder(R.drawable.img_placeholder)
                     .error(R.drawable.img_error)
-                    .transition(DrawableTransitionOptions.withCrossFade(333))
                     .into(mainPicture)
 
                 val myScore = anime.myListStatus?.score
