@@ -21,6 +21,10 @@ object TimeUtils {
         return LocalDate.now().monthValue
     }
 
+    fun getCurrentDay(): Int {
+        return LocalDate.now().dayOfMonth
+    }
+
     fun getCurrentSeason(): String {
         val currentMonth = getCurrentMonth()
         val seasonForMonth = when (currentMonth) {

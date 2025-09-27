@@ -25,4 +25,10 @@ interface AnimeApiService {
         @Query("nsfw") nsfw: Boolean? = true,
         @Query("fields") fields: String? = null,
     ): AnimeListResponse
+
+    @GET("anime/{id}")
+    suspend fun getShortAnimeDetail(
+        @Path("id") id: Int,
+        @Query("fields") fields: String? = null,
+    ): AnimeMinimum
 }

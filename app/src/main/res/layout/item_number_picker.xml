@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.textview.MaterialTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tv_number"
+    android:layout_width="@dimen/item_rv_scrolling_width"
+    android:layout_height="@dimen/item_rv_scrolling_width"
+    android:gravity="center"
+    android:text="@string/nothing"
+    android:textAlignment="center"
+    android:textSize="20sp" />

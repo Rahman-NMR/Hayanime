@@ -61,4 +61,29 @@
     <string name="season_spring" translatable="false">Spring</string>
     <string name="season_summer" translatable="false">Summer</string>
     <string name="season_fall" translatable="false">Fall</string>
+
+    <!-- watch priority -->
+    <string name="watch_priority_low">Low</string>
+    <string name="watch_priority_medium">Medium</string>
+    <string name="watch_priority_high">High</string>
+
+    <!-- rewatch possibility -->
+    <string name="rewatch_possibility_very_low">Very Low</string>
+    <string name="rewatch_possibility_low">Low</string>
+    <string name="rewatch_possibility_medium">Medium</string>
+    <string name="rewatch_possibility_high">High</string>
+    <string name="rewatch_possibility_very_high">Very High</string>
+
+    <!-- my score -->
+    <string name="my_score_not_yet_scored">Not Yet Scored</string>
+    <string name="my_score_masterpiece">Masterpiece</string>
+    <string name="my_score_great">Great</string>
+    <string name="my_score_very_good">Very Good</string>
+    <string name="my_score_good">Good</string>
+    <string name="my_score_fine">Fine</string>
+    <string name="my_score_average">Average</string>
+    <string name="my_score_bad">Bad</string>
+    <string name="my_score_very_bad">Very Bad</string>
+    <string name="my_score_horrible">Horrible</string>
+    <string name="my_score_appalling">Appalling</string>
 </resources>

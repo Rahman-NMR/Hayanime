@@ -89,12 +89,16 @@
         <item name="android:textColorSecondaryInverse">@color/text_color_secondary_inverse</item>
         <item name="android:textColorTertiary">@color/text_color_secondary</item>
         <item name="android:textColorTertiaryInverse">@color/text_color_secondary_inverse</item>
-
+        <item name="android:textColorPrimaryDisableOnly">@color/text_color_disable_only</item>
+        <item name="android:textColorPrimaryInverseDisableOnly">@color/text_color_disable_only</item>
         <item name="android:textColorHighlight">@color/text_color_highlight</item>
         <item name="android:textColorHighlightInverse">@color/text_color_highlight_inverse</item>
         <item name="android:textColorLink">?attr/colorPrimary</item>
         <item name="android:textColorLinkInverse">?attr/colorPrimaryInverse</item>
         <item name="android:textColorAlertDialogListItem">@color/text_color_primary</item>
         <!-- text color. -->
+
+        <!-- costume. -->
+        <item name="chipStyle">@style/Material.Chip</item>
     </style>
 </resources>

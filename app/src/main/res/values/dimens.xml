@@ -1,5 +1,9 @@
 <resources>
     <dimen name="recyclerview_corner_padding_small">6dp</dimen>
     <dimen name="layout_padding_bottom">80dp</dimen>
+    <dimen name="normal_dp">16dp</dimen>
+    <dimen name="item_rv_scrolling_width">50dp</dimen>
+
     <item name="alpha_on_image" type="dimen">0.9</item>
+    <integer name="text_max_length">255</integer>
 </resources>

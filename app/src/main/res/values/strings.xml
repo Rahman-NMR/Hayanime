@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Hayanime</string>
     <string name="label_unknown">Unknown</string>
+    <string name="label_unknown_date">Unknown Date</string>
     <string name="unknown_symbol">\??</string>
     <string name="empty_number">0</string>
     <string name="not_available">N/A</string>
@@ -10,6 +11,10 @@
     <string name="title_search">Search</string>
     <string name="title_my_list">My List</string>
     <string name="title_choose_season_year">Choose Season Year</string>
+    <string name="title_choose_x_year">Choose %1$s Year</string>
+    <string name="title_edit_anime">Edit Anime Details</string>
+    <string name="title_delete_anime_confirmation">Delete Anime from the List?</string>
+
     <string name="search_hint">Search anime from MyAnimeList</string>
 
     <string name="label_login_with_mal">Login with MyAnimeList</string>
@@ -23,6 +28,28 @@
     <string name="label_source_studio">Source : %1$s\nStudio : %2$s</string>
     <string name="label_source">Source: %1$s</string>
     <string name="label_studio">Studio: %1$s</string>
+    <string name="label_priority_watch">Priority watch this anime</string>
+    <string name="label_rewatching">Rewatching this anime</string>
+    <string name="label_total_rewatch">Total time rewatch this anime</string>
+    <string name="label_possibility_rewatch">Possibility rewatch this anime</string>
+    <string name="label_progress">Progress</string>
+    <string name="label_num_episodes">%1$s Episodes</string>
+    <string name="label_start_date">Start Date</string>
+    <string name="label_finish_date">Finish Date</string>
+    <string name="label_year">Year</string>
+    <string name="label_month">Month</string>
+    <string name="label_day">Day</string>
+    <string name="label_today">Today</string>
+    <string name="label_score">Score</string>
+    <string name="label_comments">Comments</string>
+    <string name="label_tags">Tags</string>
+    <string name="label_remove_from_list">Remove from List</string>
+    <string name="label_save_changes">Save Changes</string>
+    <string name="label_select">Select…</string>
+    <string name="label_show_advanced">Show Advanced</string>
+    <string name="label_hide_advanced">Hide Advanced</string>
+
+    <string name="action_delete">Delete</string>
 
     <string name="info_empty_initial_search">Oops! You haven\'t performed any searches yet.</string>
     <string name="info_no_results_found">No results found for %1$s.</string>
@@ -36,4 +63,6 @@
     <string name="message_error_occurred">An error occurred</string>
     <string name="message_query_short">Search query is too short.</string>
     <string name="message_error_missing_anime_id">Error: Anime ID is missing. Please try again.</string>
+    <string name="message_delete_anime_confirmation">Remove the anime data details from your list. This action cannot be undone.</string>
+    <string name="message_failed_save_changes">Failed to save changes</string>
 </resources>

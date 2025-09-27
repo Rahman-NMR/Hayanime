@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/switch_rewatching"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:letterSpacing="0"
+        android:text="@string/label_rewatching"
+        android:textColor="@color/text_color_secondary"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.helper.widget.Flow
+        android:id="@+id/flow_total_rewatch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:constraint_referenced_ids="label_total_rewatch, layout_total_rewatch"
+        app:flow_horizontalGap="8dp"
+        app:flow_horizontalStyle="spread_inside"
+        app:flow_verticalAlign="center"
+        app:flow_wrapMode="chain"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/switch_rewatching"
+        tools:visibility="visible" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/label_total_rewatch"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/label_total_rewatch"
+        android:textSize="16sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_total_rewatch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:endIconMode="clear_text"
+        app:hintEnabled="false">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/total_rewatch_input_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/empty_number"
+            android:inputType="number|numberSigned"
+            android:maxLength="3"
+            android:maxLines="1"
+            android:minWidth="80dp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.constraintlayout.helper.widget.Flow
+        android:id="@+id/flow_possibility_rewatch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        app:constraint_referenced_ids="label_possibility_rewatch, layout_possibility_rewatch"
+        app:flow_horizontalGap="8dp"
+        app:flow_horizontalStyle="spread_inside"
+        app:flow_verticalAlign="center"
+        app:flow_wrapMode="chain"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/flow_total_rewatch" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/label_possibility_rewatch"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/label_possibility_rewatch"
+        android:textSize="16sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_possibility_rewatch"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="48dp">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/dropdown_possibility_rewatch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:inputType="none"
+            android:minWidth="48dp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.constraintlayout.helper.widget.Flow
+        android:id="@+id/flow_watch_priority"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        app:constraint_referenced_ids="label_watch_priority, layout_watch_priority"
+        app:flow_horizontalGap="8dp"
+        app:flow_horizontalStyle="spread_inside"
+        app:flow_verticalAlign="center"
+        app:flow_wrapMode="chain"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/flow_possibility_rewatch" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/label_watch_priority"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/label_priority_watch"
+        android:textSize="16sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_watch_priority"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="48dp">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/dropdown_watch_priority"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:inputType="none"
+            android:minWidth="48dp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/TextInputLayout_comments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="@string/label_comments"
+        app:counterEnabled="true"
+        app:counterMaxLength="@integer/text_max_length"
+        app:expandedHintEnabled="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/flow_watch_priority">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/comments_input_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:inputType="text|textAutoCorrect|textCapSentences|textImeMultiLine|textMultiLine"
+            android:maxLength="@integer/text_max_length"
+            android:minLines="3"
+            android:scrollbars="vertical" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/TextInputLayout_tags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="@string/label_tags"
+        app:counterEnabled="true"
+        app:counterMaxLength="@integer/text_max_length"
+        app:expandedHintEnabled="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/TextInputLayout_comments">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tags_input_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:inputType="text|textAutoCorrect|textCapWords|textImeMultiLine|textMultiLine"
+            android:maxLength="@integer/text_max_length"
+            android:minLines="3"
+            android:scrollbars="vertical" />
+    </com.google.android.material.textfield.TextInputLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
