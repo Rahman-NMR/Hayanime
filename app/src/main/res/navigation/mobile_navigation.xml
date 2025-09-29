@@ -25,9 +25,9 @@
 
     <fragment
         android:id="@+id/navigation_edit_anime"
-        android:name="com.animegatari.hayanime.ui.detail.EditOwnListBottomSheet"
+        android:name="com.animegatari.hayanime.ui.detail.EditOwnListFragment"
         android:label="@string/title_edit_anime"
-        tools:layout="@layout/bottom_sheet_edit_own_list">
+        tools:layout="@layout/fragment_edit_own_list">
 
         <argument
             android:name="animeId"

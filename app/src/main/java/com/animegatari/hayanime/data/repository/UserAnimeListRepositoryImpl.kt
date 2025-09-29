@@ -50,20 +50,20 @@ class UserAnimeListRepositoryImpl @Inject constructor(
         return animeService.getShortAnimeDetail(animeID, fields)
     }
 
-    override suspend fun updateMyAnimeListStatus(animeId: Int, myListStatus: MyListStatus) {
+    override suspend fun updateMyAnimeListStatus(animeId: Int, myListStatus: MyListStatus?) {
         userAnimeService.updateAnimeListStatus(
             animeId = animeId,
-            status = myListStatus.status,
-            numWatchedEpisodes = myListStatus.numWatchedEpisodes,
-            startDate = myListStatus.startDate,
-            finishDate = myListStatus.finishDate,
-            score = myListStatus.score,
-            isRewatching = myListStatus.isRewatching,
-            numTimesRewatched = myListStatus.numTimesRewatched,
-            priority = myListStatus.priority,
-            rewatchValue = myListStatus.rewatchValue,
-            tags = myListStatus.tags?.joinToString(","), //todo: pay attention to list separation
-            comments = myListStatus.comments
+            status = myListStatus?.status,
+            numWatchedEpisodes = myListStatus?.numWatchedEpisodes,
+            startDate = myListStatus?.startDate,
+            finishDate = myListStatus?.finishDate,
+            score = myListStatus?.score,
+            isRewatching = myListStatus?.isRewatching,
+            numTimesRewatched = myListStatus?.numTimesRewatched,
+            priority = myListStatus?.priority,
+            rewatchValue = myListStatus?.rewatchValue,
+            tags = myListStatus?.tags?.joinToString(","),
+            comments = myListStatus?.comments
         )
     }
 

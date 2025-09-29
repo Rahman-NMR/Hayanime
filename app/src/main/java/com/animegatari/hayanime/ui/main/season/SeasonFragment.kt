@@ -24,13 +24,16 @@ import com.animegatari.hayanime.data.types.SortingAnime
 import com.animegatari.hayanime.databinding.FragmentSeasonBinding
 import com.animegatari.hayanime.ui.adapter.AnimeGridAdapter
 import com.animegatari.hayanime.ui.base.ReselectableFragment
-import com.animegatari.hayanime.ui.detail.EditOwnListBottomSheet
+import com.animegatari.hayanime.ui.detail.EditOwnListFragment
 import com.animegatari.hayanime.ui.dialog.YearPickerDialogFragment
+import com.animegatari.hayanime.ui.main.MainViewModel
+import com.animegatari.hayanime.ui.utils.animation.ViewSlideInOutAnimation.ANIMATION_DURATION
 import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
 import com.animegatari.hayanime.ui.utils.layout.SpanCalculator.calculateSpanCount
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -38,14 +41,13 @@ class SeasonFragment : Fragment(), ReselectableFragment {
     private var _binding: FragmentSeasonBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var animeAdapter: AnimeGridAdapter
     private val seasonViewModel: SeasonViewModel by activityViewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setupYearPickerListener()
-        setupAdapterRefreshListener()
     }
 
     private fun setupYearPickerListener() {
@@ -58,17 +60,23 @@ class SeasonFragment : Fragment(), ReselectableFragment {
         }
     }
 
-    private fun setupAdapterRefreshListener() {
-        childFragmentManager.setFragmentResultListener(
-            EditOwnListBottomSheet.DETAIL_REQUEST_KEY,
+    private fun setupAdapterRefreshListener(animeAdapter: AnimeGridAdapter) {
+        parentFragmentManager.setFragmentResultListener(
+            EditOwnListFragment.DETAIL_REQUEST_KEY,
             this
         ) { _, bundle ->
-            val resultUpdate = bundle.getBoolean(EditOwnListBottomSheet.BUNDLE_KEY_UPDATED)
-            val resulDelete = bundle.getBoolean(EditOwnListBottomSheet.BUNDLE_KEY_DELETED)
+            val resultUpdate = bundle.getBoolean(EditOwnListFragment.BUNDLE_KEY_UPDATED)
+            val resulDelete = bundle.getBoolean(EditOwnListFragment.BUNDLE_KEY_DELETED)
 
-            if (resultUpdate || resulDelete) animeAdapter.refresh()
-            if (resultUpdate) toastShort(requireContext(), "Anime updated")
-            if (resulDelete) toastShort(requireContext(), "Anime deleted")
+            if (resultUpdate || resulDelete) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    delay(ANIMATION_DURATION)
+                    animeAdapter.refresh()
+
+                    if (resultUpdate) mainViewModel.showSnackbar(getString(R.string.message_anime_updated_successfully))
+                    if (resulDelete) mainViewModel.showSnackbar(getString(R.string.message_anime_deleted_successfully))
+                }
+            }
         }
     }
 
@@ -80,8 +88,9 @@ class SeasonFragment : Fragment(), ReselectableFragment {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        animeAdapter = initializeAnimeAdapter()
+        val animeAdapter = initializeAnimeAdapter()
 
+        setupAdapterRefreshListener(animeAdapter)
         initializeViews()
         setupInteractions(animeAdapter)
         setupRecyclerView(animeAdapter)
@@ -166,7 +175,7 @@ class SeasonFragment : Fragment(), ReselectableFragment {
             anime.id?.let { animeId ->
                 val action = SeasonFragmentDirections.actionNavigationToNavigationEditAnime(
                     animeId = animeId,
-                    requestKey = EditOwnListBottomSheet.DETAIL_REQUEST_KEY
+                    requestKey = EditOwnListFragment.DETAIL_REQUEST_KEY
                 )
                 findNavController().navigate(action)
             } ?: run {

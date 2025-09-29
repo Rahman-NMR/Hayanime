@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -17,21 +18,26 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.animegatari.hayanime.R
+import com.animegatari.hayanime.data.local.datamodel.DateComponents
 import com.animegatari.hayanime.data.model.AnimeMinimum
-import com.animegatari.hayanime.data.model.DateComponents
 import com.animegatari.hayanime.data.model.MyListStatus
 import com.animegatari.hayanime.data.types.AiringStatus
 import com.animegatari.hayanime.data.types.RewatchPossibility
 import com.animegatari.hayanime.data.types.WatchingPriority
 import com.animegatari.hayanime.data.types.WatchingStatus
-import com.animegatari.hayanime.databinding.BottomSheetEditOwnListBinding
+import com.animegatari.hayanime.databinding.FragmentEditOwnListBinding
 import com.animegatari.hayanime.databinding.IncludeInputDateBinding
+import com.animegatari.hayanime.domain.utils.onError
+import com.animegatari.hayanime.domain.utils.onSuccess
 import com.animegatari.hayanime.ui.adapter.NumberAdapter
 import com.animegatari.hayanime.ui.dialog.YearPickerDialogFragment
 import com.animegatari.hayanime.ui.utils.animation.ItemScaleAnimator
 import com.animegatari.hayanime.ui.utils.extension.AutoCompleteTextViewExtensions.setupDropdownWithEnum
 import com.animegatari.hayanime.ui.utils.extension.AutoCompleteTextViewExtensions.setupSimpleDropdown
+import com.animegatari.hayanime.ui.utils.interfaces.UiUtils.handleTextChange
+import com.animegatari.hayanime.ui.utils.interfaces.UiUtils.hideKeyboardAndClearFocus
 import com.animegatari.hayanime.ui.utils.interfaces.UiUtils.scoreStringMap
+import com.animegatari.hayanime.ui.utils.interfaces.UiUtils.shouldUpdateInputText
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.snackBarShort
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
 import com.animegatari.hayanime.ui.utils.recyclerview.CenterSnapScrollListener
@@ -48,8 +54,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class EditOwnListBottomSheet : Fragment() {
-    private var _binding: BottomSheetEditOwnListBinding? = null
+class EditOwnListFragment : Fragment() {
+    private var _binding: FragmentEditOwnListBinding? = null
     private val binding get() = _binding!!
 
     private val ownListViewModel: OwnListViewModel by viewModels()
@@ -60,7 +66,7 @@ class EditOwnListBottomSheet : Fragment() {
     private val activeScrollListeners = mutableMapOf<RecyclerView, MutableList<RecyclerView.OnScrollListener>>()
     private var initialAnimeId: Int? = INVALID_ANIME_ID
     private var requestKey: String = DETAIL_REQUEST_KEY
-    private val args: EditOwnListBottomSheetArgs by navArgs()
+    private val args: EditOwnListFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,7 +95,7 @@ class EditOwnListBottomSheet : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _binding = BottomSheetEditOwnListBinding.inflate(inflater, container, false)
+        _binding = FragmentEditOwnListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -157,27 +163,26 @@ class EditOwnListBottomSheet : Fragment() {
 
     private fun setupExtraFieldInteraction() = with(binding.extraFields) {
         switchRewatching.setOnCheckedChangeListener { _, isChecked -> handleRewatchToggle(isChecked) }
-//        totalRewatchInputText.doAfterTextChanged { handleTextChange(it) { text -> ownListViewModel.updateRewatchedCount(text.toIntOrNull()) } }
-//        commentsInputText.doAfterTextChanged { handleTextChange(it) { text -> ownListViewModel.updateComments(text) } }
-//        tagsInputText.doAfterTextChanged { handleTextChange(it) { text -> ownListViewModel.updateTags(text) } }
-    } // todo: adjust listener text change
+        totalRewatchInputText.doAfterTextChanged { handleTextChange(it) { text -> ownListViewModel.updateRewatchedCount(text) } }
+        commentsInputText.doAfterTextChanged { handleTextChange(it) { text -> ownListViewModel.updateComments(text) } }
+        tagsInputText.doAfterTextChanged { handleTextChange(it) { text -> ownListViewModel.updateTags(text) } }
+    }
 
     private fun saveChanges() = with(binding.btnActionSave) {
-        // PATCH data to the API using only the data that is different from the GET data
-
-        // first, do: ownListViewModel.saveChanges(initialAnimeId ?: INVALID_ANIME_ID)
-        // second,loading, after done do : {
-        //      parentFragmentManager.setFragmentResult(requestKey, bundleOf(BUNDLE_KEY_UPDATED to true))
-        //      dismiss()
-        // }
-
+        hideKeyboardAndClearFocus(requireView())
         if (isExtended) {
-            try {
-                ownListViewModel.saveChanges(initialAnimeId ?: INVALID_ANIME_ID)
-                parentFragmentManager.setFragmentResult(requestKey, bundleOf(BUNDLE_KEY_UPDATED to true))
-                dismiss()
-            } catch (_: Exception) {
-                snackBarShort(requireView(), getString(R.string.message_failed_save_changes))
+            ownListViewModel.saveChanges(initialAnimeId) { response ->
+                response.onSuccess { isSaved ->
+                    if (isSaved == true) {
+                        parentFragmentManager.setFragmentResult(requestKey, bundleOf(BUNDLE_KEY_UPDATED to true))
+                        dismiss()
+                    } else {
+                        snackBarShort(requireView(), getString(R.string.message_same_data))
+                    }
+                }
+                response.onError { message ->
+                    snackBarShort(requireView(), message ?: getString(R.string.message_failed_save_changes))
+                }
             }
         } else {
             extend()
@@ -200,10 +205,15 @@ class EditOwnListBottomSheet : Fragment() {
             .setTitle(getString(R.string.title_delete_anime_confirmation))
             .setMessage(getString(R.string.message_delete_anime_confirmation))
             .setPositiveButton(getString(R.string.action_delete)) { _, _ ->
-                toastShort(requireContext(), "TODO: Anime deleted")
-                // ownListViewModel.deleteThisSeries(initialAnimeId ?: INVALID_ANIME_ID)
-                parentFragmentManager.setFragmentResult(requestKey, bundleOf(BUNDLE_KEY_DELETED to true))
-                dismiss()
+                ownListViewModel.deleteThisSeries(initialAnimeId) { response ->
+                    response.onSuccess {
+                        parentFragmentManager.setFragmentResult(requestKey, bundleOf(BUNDLE_KEY_DELETED to true))
+                        dismiss()
+                    }
+                    response.onError { message ->
+                        snackBarShort(requireView(), message ?: getString(R.string.message_failed_delete_anime))
+                    }
+                }
             }
             .setNegativeButton(getString(R.string.label_cancel), null)
             .show()
@@ -342,6 +352,10 @@ class EditOwnListBottomSheet : Fragment() {
         val initialYear = dateComponents?.year
         val initialMonth = dateComponents?.month
         val initialDay = dateComponents?.day
+
+        layoutMonth.isEnabled = initialYear != null
+        layoutDay.isEnabled = initialMonth != null && initialYear != null
+
         val showYearDialogAction = {
             val dialog = YearPickerDialogFragment.newInstance(
                 initialYear = initialYear?.toInt() ?: 0,
@@ -374,11 +388,20 @@ class EditOwnListBottomSheet : Fragment() {
 
     private fun setupExtraFieldsViews(myListStatus: MyListStatus?) = with(binding.extraFields) {
         switchRewatching.isChecked = myListStatus?.isRewatching ?: false
-        totalRewatchInputText.setText(myListStatus?.rewatchValue?.takeIf { it > 0 }?.toString() ?: "")
+
+        val rewatchCount = myListStatus?.numTimesRewatched?.takeIf { it > 0 }?.toString() ?: ""
+        if (shouldUpdateInputText(totalRewatchInputText, rewatchCount)) {
+            totalRewatchInputText.setText(rewatchCount)
+        }
 
         val tags = myListStatus?.tags?.joinToString(", ")
-        tagsInputText.setText(tags)
-        commentsInputText.setText(myListStatus?.comments)
+        if (shouldUpdateInputText(tagsInputText, tags)) {
+            tagsInputText.setText(tags)
+        }
+
+        if (shouldUpdateInputText(commentsInputText, myListStatus?.comments)) {
+            commentsInputText.setText(myListStatus?.comments)
+        }
 
         setupExtraFieldDropdowns(myListStatus)
     }
@@ -404,12 +427,12 @@ class EditOwnListBottomSheet : Fragment() {
         val itemWidthPx = resources.getDimensionPixelSize(R.dimen.item_rv_scrolling_width)
         val paddingView = resources.getDimensionPixelSize(R.dimen.normal_dp) * 2
 
-        val numEpisodesWatched = myListStatus?.numEpisodesWatched ?: 0
+        val numWatchedEpisodes = myListStatus?.numWatchedEpisodes ?: 0
         val stringTotalEpisode = anime?.numEpisodes?.takeIf { it > 0 }?.toString() ?: getString(R.string.unknown_symbol)
-        progress.extraTitle.text = getString(R.string.label_num_episodes, "$numEpisodesWatched/$stringTotalEpisode")
+        progress.extraTitle.text = getString(R.string.label_num_episodes, "$numWatchedEpisodes/$stringTotalEpisode")
 
         progress.recyclerView.post {
-            progress.recyclerView.applyHorizontalPadding(numEpisodesWatched, root.width, itemWidthPx, paddingView)
+            progress.recyclerView.applyHorizontalPadding(numWatchedEpisodes, root.width, itemWidthPx, paddingView)
         }
 
         val currentScore = myListStatus?.score ?: 0
@@ -432,12 +455,8 @@ class EditOwnListBottomSheet : Fragment() {
             dateComponents = valueStartDate,
             title = getString(R.string.label_start_date),
             requestKey = START_DATE_YEAR_REQUEST_KEY,
-            onMonth = {
-                ownListViewModel.saveStartDateMonth(it)
-            },
-            onDay = {
-                ownListViewModel.saveStartDateDay(it)
-            })
+            onMonth = { ownListViewModel.saveStartDateMonth(it) },
+            onDay = { ownListViewModel.saveStartDateDay(it) })
     }
 
     private fun finishDateObserver(valuefinishDate: DateComponents?) = with(binding) {
@@ -446,12 +465,8 @@ class EditOwnListBottomSheet : Fragment() {
             dateComponents = valuefinishDate,
             title = getString(R.string.label_finish_date),
             requestKey = FINISH_DATE_YEAR_REQUEST_KEY,
-            onMonth = {
-                ownListViewModel.saveFinishDateMonth(it)
-            },
-            onDay = {
-                ownListViewModel.saveFinishDateDay(it)
-            })
+            onMonth = { ownListViewModel.saveFinishDateMonth(it) },
+            onDay = { ownListViewModel.saveFinishDateDay(it) })
     }
 
     private fun observeUIState(anime: AnimeMinimum?) = with(binding) {
@@ -467,11 +482,9 @@ class EditOwnListBottomSheet : Fragment() {
     private fun updateLoadingState(isLoading: Boolean) = with(binding) {
         if (!isAdded || _binding == null) return
 
-//        if (isLoading) progressIndicator.show() else progressIndicator.hide()
         loadingIndicator.isVisible = isLoading
         nestedScrollView.isVisible = !isLoading
         btnActionSave.isEnabled = !isLoading
-//        btnActionDelete.isEnabled = !isLoading
         toolBar.menu.findItem(R.id.menu_delete_anime)?.isEnabled = !isLoading
     }
 
@@ -503,12 +516,18 @@ class EditOwnListBottomSheet : Fragment() {
     }
 
     private fun loadThisAnime() {
-        val animeId = initialAnimeId?.takeIf { it != INVALID_ANIME_ID }
-        if (animeId != null) {
-            ownListViewModel.loadMyAnimeDetail(animeId)
-        } else {
+        val currentAnimeId = initialAnimeId
+        if (currentAnimeId == null || currentAnimeId == INVALID_ANIME_ID) {
             toastShort(requireContext(), getString(R.string.message_error_missing_anime_id))
             dismiss()
+            return
+        }
+
+        ownListViewModel.loadMyAnimeDetail(currentAnimeId) { response ->
+            response.onError {
+                toastShort(requireContext(), getString(R.string.message_failed_load_data))
+                dismiss()
+            }
         }
     }
 
@@ -527,8 +546,7 @@ class EditOwnListBottomSheet : Fragment() {
         episodesSnapHelper.attachToRecyclerView(null)
         scoreSnapHelper.attachToRecyclerView(null)
         _binding = null
-    }   // kalau bisa fungsi di class ini tidak ada memory leak,
-    // dan memulai dari keadaan bersih setiap digunakan
+    }
 
     companion object {
         private const val INVALID_ANIME_ID = 0

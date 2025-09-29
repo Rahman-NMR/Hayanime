@@ -5,9 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.animegatari.hayanime.core.Config
 import com.animegatari.hayanime.data.model.AnimeMinimum
-import com.animegatari.hayanime.data.model.DateComponents
+import com.animegatari.hayanime.data.local.datamodel.DateComponents
 import com.animegatari.hayanime.data.model.MyListStatus
 import com.animegatari.hayanime.domain.repository.UserAnimeListRepository
+import com.animegatari.hayanime.domain.utils.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,6 +20,8 @@ import javax.inject.Inject
 class OwnListViewModel @Inject constructor(
     private val userAnimeListRepository: UserAnimeListRepository,
 ) : ViewModel() {
+    private val missingAnimeIdError = "Missing anime ID. Please re-open this page"
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> get() = _isLoading.asStateFlow()
 
@@ -41,7 +44,7 @@ class OwnListViewModel @Inject constructor(
         )
     }
 
-    fun loadMyAnimeDetail(animeId: Int) = viewModelScope.launch {
+    fun loadMyAnimeDetail(animeId: Int, onResponse: (Response<Boolean>) -> Unit) = viewModelScope.launch {
         _isLoading.value = true
         try {
             val animeDetails = fetchMyAnimeData(animeId)
@@ -51,21 +54,57 @@ class OwnListViewModel @Inject constructor(
             _startDateComponents.value = DateComponents.fromFormattedString(animeDetails?.myListStatus?.startDate)
             _finishDateComponents.value = DateComponents.fromFormattedString(animeDetails?.myListStatus?.finishDate)
             _maxEpisodes.value = animeDetails?.numEpisodes
+
+            onResponse(Response.Success(true))
         } catch (_: Exception) {
+            onResponse(Response.Error())
         } finally {
             _isLoading.value = false
         }
     }
 
-    fun saveChanges(animeId: Int) {
-        Log.e("Hayanimex changes", "animeId: $animeId,\nvalue: ${animeUIState.value?.myListStatus}")
-    }
+    fun saveChanges(animeId: Int?, onResponse: (Response<Boolean>) -> Unit) = viewModelScope.launch {
+        if (animeId == null) {
+            onResponse(Response.Error(missingAnimeIdError))
+            return@launch
+        }
 
-    fun deleteThisSeries(animeId: Int) = viewModelScope.launch {
+        val currentStatus = _newestAnimeData.value?.myListStatus
+        val originalStatus = _originalAnimeData.value?.myListStatus
+
+        if (currentStatus == originalStatus) {
+            onResponse(Response.Success(false))
+            return@launch
+        }
+
         _isLoading.value = true
         try {
-            // userAnimeListRepository.deleteAnime(animeId)
-        } catch (_: Exception) {
+            userAnimeListRepository.updateMyAnimeListStatus(animeId = animeId, myListStatus = currentStatus)
+            onResponse(Response.Success(true))
+        } catch (e: Exception) {
+            onResponse(Response.Error(e.localizedMessage))
+        } finally {
+            _isLoading.value = false
+            Log.i(
+                "Hayanime update", "title: ${_originalAnimeData.value?.title}\n" +
+                        "ori: ${_originalAnimeData.value?.myListStatus}\n" +
+                        "new: ${_newestAnimeData.value?.myListStatus}"
+            )
+        }
+    }
+
+    fun deleteThisSeries(animeId: Int?, onResponse: (Response<Boolean>) -> Unit) = viewModelScope.launch {
+        if (animeId == null) {
+            onResponse(Response.Error(missingAnimeIdError))
+            return@launch
+        }
+
+        _isLoading.value = true
+        try {
+            userAnimeListRepository.deleteAnime(animeId)
+            onResponse(Response.Success(true))
+        } catch (e: Exception) {
+            onResponse(Response.Error(e.localizedMessage))
         } finally {
             _isLoading.value = false
         }
@@ -80,11 +119,11 @@ class OwnListViewModel @Inject constructor(
     }
 
     fun updateWatchingStatus(selectedChip: String?) = updateMyListStatus {
-        copy(status = selectedChip)
+        copy(status = selectedChip.orEmpty())
     }
 
     fun updateSelectedEpisode(selectedEpisode: Int) = updateMyListStatus {
-        copy(numEpisodesWatched = selectedEpisode)
+        copy(numWatchedEpisodes = selectedEpisode)
     }
 
     fun updateSelectedScore(selectedScore: Int) = updateMyListStatus {
@@ -103,17 +142,23 @@ class OwnListViewModel @Inject constructor(
         copy(isRewatching = isRewatching)
     }
 
-    fun updateRewatchedCount(rewatchedCount: Int?) = updateMyListStatus {
-        copy(numTimesRewatched = rewatchedCount)
+    fun updateRewatchedCount(rewatchedCount: String?) = updateMyListStatus {
+        val totalRewatches = rewatchedCount?.toIntOrNull() ?: 0
+        copy(numTimesRewatched = totalRewatches)
     }
 
     fun updateComments(updatedComments: String?) = updateMyListStatus {
-        copy(comments = updatedComments)
+        copy(comments = updatedComments.orEmpty())
     }
 
-    fun updateTags(tagsListString: String) = updateMyListStatus {
-        copy(tags = tagsListString.split(",").map { it.trim() }.filter { it.isNotEmpty() })
-    } // todo: pay attention to list separation
+    fun updateTags(tagsListString: String?) = updateMyListStatus {
+        val tags = if (tagsListString.isNullOrBlank()) {
+            emptyList()
+        } else {
+            tagsListString.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+        }
+        copy(tags = tags)
+    }
 
     private val _startDateComponents = MutableStateFlow<DateComponents?>(DateComponents())
     val startDateComponents: StateFlow<DateComponents?> get() = _startDateComponents.asStateFlow()
@@ -149,12 +194,12 @@ class OwnListViewModel @Inject constructor(
 
     fun updateStartDateUnknown(isUnknown: Boolean) = updateMyListStatus {
         val dateString = _startDateComponents.value?.toFormattedString()
-        copy(startDate = if (isUnknown) null else dateString)
+        copy(startDate = if (isUnknown) "" else dateString)
     }
 
     fun updateFinishDateUnknown(isUnknown: Boolean) = updateMyListStatus {
         val dateString = _finishDateComponents.value?.toFormattedString()
-        copy(finishDate = if (isUnknown) null else dateString)
+        copy(finishDate = if (isUnknown) "" else dateString)
     }
 
     fun saveStartDateYear(year: String?) {

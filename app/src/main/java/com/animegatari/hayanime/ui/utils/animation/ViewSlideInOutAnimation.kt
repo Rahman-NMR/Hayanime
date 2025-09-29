@@ -5,7 +5,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 
 object ViewSlideInOutAnimation {
-    private const val ANIMATION_DURATION = 400L
+    const val ANIMATION_DURATION = 400L
 
     fun View.animateSlideDownAndHide() {
         this.animate()

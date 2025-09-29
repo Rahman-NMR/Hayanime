@@ -2,6 +2,7 @@ package com.animegatari.hayanime.ui.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +21,7 @@ import com.animegatari.hayanime.ui.utils.animation.ViewSlideInOutAnimation.anima
 import com.animegatari.hayanime.ui.utils.animation.ViewSlideInOutAnimation.animateSlideUpAndShow
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.snackBarShort
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -29,6 +31,7 @@ class MainActivity : AppCompatActivity(), ViewActionListener {
     private var backPressedTime: Long = 0
 
     private val authViewModel: AuthViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +47,7 @@ class MainActivity : AppCompatActivity(), ViewActionListener {
         setupDestinationChangedListener()
         setupReselectBottomNavListener(navHostFragment)
         observeLoginStatus()
+        observeSnackbarEvents()
     }
 
     override fun onViewShown() {
@@ -99,19 +103,31 @@ class MainActivity : AppCompatActivity(), ViewActionListener {
             if (backPressedTime + 2000 > System.currentTimeMillis()) {
                 finish()
             } else {
-                snackBarShort(binding.root, getString(R.string.message_back_pressed),binding.navView)
+                showSnackbarActivity(binding.root, getString(R.string.message_back_pressed), binding.navView)
                 backPressedTime = System.currentTimeMillis()
             }
         }
     }
 
     private fun observeLoginStatus() = lifecycleScope.launch {
-        authViewModel.isLoggedIn.collect { isLoggedIn ->
+        authViewModel.isLoggedIn.collectLatest { isLoggedIn ->
             if (isLoggedIn == false) {
-                startActivity(Intent(this@MainActivity, AuthActivity::class.java))
+                val intent = Intent(this@MainActivity, AuthActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
                 finish()
             }
         }
+    }
+
+    private fun observeSnackbarEvents() = lifecycleScope.launch {
+        mainViewModel.snackbarEvent.collectLatest { message ->
+            showSnackbarActivity(binding.root, message, binding.navView)
+        }
+    }
+
+    private fun showSnackbarActivity(view: View, message: String, anchorView: View? = null) {
+        snackBarShort(view, message, anchorView)
     }
 
     override fun onResume() {

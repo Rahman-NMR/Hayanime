@@ -10,7 +10,7 @@ enum class WatchingStatus(@StringRes val stringResId: Int, val apiValue: String)
     ON_HOLD(R.string.watching_status_on_hold, "on_hold"),
     DROPPED(R.string.watching_status_dropped, "dropped"),
     ALL_ANIME(R.string.watching_status_all_anime, "all_anime"),
-    UNKNOWN(R.string.label_unknown, "unknown");
+    UNKNOWN(R.string.label_no_status, "unknown");
 
     companion object {
         fun fromApiValue(apiValue: String?): WatchingStatus {

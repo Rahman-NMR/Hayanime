@@ -48,12 +48,12 @@
     <string name="label_select">Select…</string>
     <string name="label_show_advanced">Show Advanced</string>
     <string name="label_hide_advanced">Hide Advanced</string>
+    <string name="label_no_status">No Status</string>
 
     <string name="action_delete">Delete</string>
 
-    <string name="info_empty_initial_search">Oops! You haven\'t performed any searches yet.</string>
-    <string name="info_no_results_found">No results found for %1$s.</string>
-
+    <string name="info_empty_initial_search">Oops! You haven\'t performed any searches yet</string>
+    <string name="info_no_results_found">No results found for %1$s</string>
     <string name="description_profile">Profile</string>
     <string name="description_edit_this_anime">Edit this anime</string>
     <string name="description_add_one_episode">Add one episode</string>
@@ -61,8 +61,14 @@
     <string name="message_back_pressed">Press back again to exit</string>
     <string name="message_no_internet">No internet connection</string>
     <string name="message_error_occurred">An error occurred</string>
-    <string name="message_query_short">Search query is too short.</string>
-    <string name="message_error_missing_anime_id">Error: Anime ID is missing. Please try again.</string>
-    <string name="message_delete_anime_confirmation">Remove the anime data details from your list. This action cannot be undone.</string>
+    <string name="message_invalid_redirect">Invalid redirect</string>
+    <string name="message_query_short">Search query is too short</string>
+    <string name="message_error_missing_anime_id">Anime ID missing. Please try again later</string>
+    <string name="message_failed_load_data">Failed to load data, please try again later!</string>
+    <string name="message_delete_anime_confirmation">Remove the anime data details from your list. This action cannot be undone</string>
     <string name="message_failed_save_changes">Failed to save changes</string>
+    <string name="message_failed_delete_anime">Failed to delete anime</string>
+    <string name="message_anime_updated_successfully">Anime details updated successfully</string>
+    <string name="message_anime_deleted_successfully">Anime removed from your list</string>
+    <string name="message_same_data">The data is totally same</string>
 </resources>

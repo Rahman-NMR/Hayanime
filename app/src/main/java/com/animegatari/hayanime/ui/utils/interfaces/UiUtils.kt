@@ -2,7 +2,10 @@ package com.animegatari.hayanime.ui.utils.interfaces
 
 import android.content.Context
 import android.text.Editable
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import com.animegatari.hayanime.R
+import com.google.android.material.textfield.TextInputEditText
 
 object UiUtils {
     fun scoreStringMap(context: Context): Map<Int, String> = mapOf(
@@ -20,6 +23,19 @@ object UiUtils {
     ).toSortedMap(compareByDescending { it })
 
     fun handleTextChange(editable: Editable?, action: (String) -> Unit) {
-        editable?.toString()?.trim()?.takeIf { it.isNotBlank() }?.let(action)
+        action(editable?.toString()?.trim() ?: "")
+    }
+
+    fun shouldUpdateInputText(textInputEditText: TextInputEditText, newValue: String?): Boolean {
+        return !textInputEditText.isFocused && textInputEditText.text.toString() != newValue
+    }
+
+    fun hideKeyboardAndClearFocus(view: View?) {
+        view?.let {
+            it.clearFocus()
+
+            val imm = it.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.hideSoftInputFromWindow(it.windowToken, 0)
+        }
     }
 }

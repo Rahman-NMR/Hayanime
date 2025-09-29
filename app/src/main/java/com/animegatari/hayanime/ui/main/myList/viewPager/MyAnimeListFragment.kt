@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -20,11 +21,14 @@ import com.animegatari.hayanime.R
 import com.animegatari.hayanime.data.types.WatchingStatus
 import com.animegatari.hayanime.databinding.FragmentMyAnimeListBinding
 import com.animegatari.hayanime.ui.base.ReselectableFragment
-import com.animegatari.hayanime.ui.detail.EditOwnListBottomSheet
+import com.animegatari.hayanime.ui.detail.EditOwnListFragment
+import com.animegatari.hayanime.ui.main.MainViewModel
 import com.animegatari.hayanime.ui.main.myList.MyListFragmentDirections
+import com.animegatari.hayanime.ui.utils.animation.ViewSlideInOutAnimation.ANIMATION_DURATION
 import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -34,6 +38,7 @@ class MyAnimeListFragment : Fragment(), ReselectableFragment {
     private val binding get() = _binding!!
 
     private val myAnimeListViewModel: MyAnimeListViewModel by viewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMyAnimeListBinding.inflate(inflater, container, false)
@@ -47,12 +52,33 @@ class MyAnimeListFragment : Fragment(), ReselectableFragment {
         val watchingStatusValue = getWatchingStatusValueFromPosition(position)
         val myListAdapter = initializeMyListAdapter()
 
+        setupAdapterRefreshListener(myListAdapter)
         initializeViews(watchingStatusValue)
         setupInteractions(myListAdapter)
         setupRecyclerView(myListAdapter)
 
         observeViewModelStates(myListAdapter)
         handleLoadState(myListAdapter)
+    }
+
+    private fun setupAdapterRefreshListener(myListAdapter: MyListAdapter) {
+        parentFragmentManager.setFragmentResultListener(
+            EditOwnListFragment.DETAIL_REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            val resultUpdate = bundle.getBoolean(EditOwnListFragment.BUNDLE_KEY_UPDATED)
+            val resulDelete = bundle.getBoolean(EditOwnListFragment.BUNDLE_KEY_DELETED)
+
+            if (resultUpdate || resulDelete) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    delay(ANIMATION_DURATION)
+                    myListAdapter.refresh()
+
+                    if (resultUpdate) mainViewModel.showSnackbar(getString(R.string.message_anime_updated_successfully))
+                    if (resulDelete) mainViewModel.showSnackbar(getString(R.string.message_anime_deleted_successfully))
+                }
+            }
+        }
     }
 
     private fun getWatchingStatusValueFromPosition(position: Int): String? = when (position) {
@@ -92,7 +118,7 @@ class MyAnimeListFragment : Fragment(), ReselectableFragment {
             anime.id?.let { animeId ->
                 val action = MyListFragmentDirections.actionNavigationToNavigationEditAnime(
                     animeId = animeId,
-                    requestKey = EditOwnListBottomSheet.DETAIL_REQUEST_KEY
+                    requestKey = EditOwnListFragment.DETAIL_REQUEST_KEY
                 )
                 findNavController().navigate(action)
             } ?: run {

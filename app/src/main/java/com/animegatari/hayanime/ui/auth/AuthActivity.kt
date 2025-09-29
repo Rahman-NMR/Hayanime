@@ -14,9 +14,11 @@ import com.animegatari.hayanime.BuildConfig
 import com.animegatari.hayanime.R
 import com.animegatari.hayanime.core.PKCEUtil.generateCodeVerifier
 import com.animegatari.hayanime.databinding.ActivityAuthBinding
+import com.animegatari.hayanime.domain.utils.onError
 import com.animegatari.hayanime.ui.main.MainActivity
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -46,14 +48,14 @@ class AuthActivity : AppCompatActivity() {
     }
 
     private fun observeLoadingStatus() = lifecycleScope.launch {
-        authViewModel.isLoading.collect { isLoading ->
+        authViewModel.isLoading.collectLatest { isLoading ->
             binding.progressIndicator.isVisible = isLoading
             binding.btnAuthAction.isEnabled = !isLoading
         }
     }
 
     private fun observeLoginStatus() = lifecycleScope.launch {
-        authViewModel.isLoggedIn.collect { isLoggedIn ->
+        authViewModel.isLoggedIn.collectLatest { isLoggedIn ->
             keepOnSplash = when (isLoggedIn) {
                 true -> {
                     startActivity(Intent(this@AuthActivity, MainActivity::class.java))
@@ -87,9 +89,13 @@ class AuthActivity : AppCompatActivity() {
         if (data != null && data.scheme == BuildConfig.APPLICATION_ID && data.host == "callback") {
             val code = data.getQueryParameter("code")
 
-            authViewModel.handleAuthCode(code)
+            authViewModel.handleAuthCode(code) { response ->
+                response.onError { message ->
+                    toastShort(this, message ?: getString(R.string.message_error_occurred))
+                }
+            }
         } else {
-            toastShort(this, getString(R.string.message_error_occurred))
+            toastShort(this, getString(R.string.message_invalid_redirect))
         }
     }
 

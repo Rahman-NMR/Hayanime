@@ -11,6 +11,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -24,13 +25,16 @@ import com.animegatari.hayanime.databinding.FragmentSearchBinding
 import com.animegatari.hayanime.ui.adapter.AnimeGridAdapter
 import com.animegatari.hayanime.ui.base.ReselectableFragment
 import com.animegatari.hayanime.ui.base.ViewActionListener
-import com.animegatari.hayanime.ui.detail.EditOwnListBottomSheet
+import com.animegatari.hayanime.ui.detail.EditOwnListFragment
+import com.animegatari.hayanime.ui.main.MainViewModel
+import com.animegatari.hayanime.ui.utils.animation.ViewSlideInOutAnimation.ANIMATION_DURATION
 import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
 import com.animegatari.hayanime.ui.utils.layout.SpanCalculator.calculateSpanCount
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.snackBarShort
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
 import com.google.android.material.search.SearchView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -40,6 +44,7 @@ class SearchFragment : Fragment(), ReselectableFragment {
     private val binding get() = _binding!!
 
     private val searchViewModel: SearchViewModel by viewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
 
     private var viewActionListener: ViewActionListener? = null
     private lateinit var searchViewBackCallback: OnBackPressedCallback
@@ -57,6 +62,7 @@ class SearchFragment : Fragment(), ReselectableFragment {
 
         val animeAdapter = initializeAnimeAdapter()
 
+        setupAdapterRefreshListener(animeAdapter)
         initializeViews()
         setupInteractions(animeAdapter)
         setupRecyclerView(animeAdapter)
@@ -64,6 +70,26 @@ class SearchFragment : Fragment(), ReselectableFragment {
 
         observeViewModelStates(animeAdapter)
         handleLoadState(animeAdapter)
+    }
+
+    private fun setupAdapterRefreshListener(animeAdapter: AnimeGridAdapter) {
+        parentFragmentManager.setFragmentResultListener(
+            EditOwnListFragment.DETAIL_REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            val resultUpdate = bundle.getBoolean(EditOwnListFragment.BUNDLE_KEY_UPDATED)
+            val resulDelete = bundle.getBoolean(EditOwnListFragment.BUNDLE_KEY_DELETED)
+
+            if (resultUpdate || resulDelete) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    delay(ANIMATION_DURATION)
+                    animeAdapter.refresh()
+
+                    if (resultUpdate) mainViewModel.showSnackbar(getString(R.string.message_anime_updated_successfully))
+                    if (resulDelete) mainViewModel.showSnackbar(getString(R.string.message_anime_deleted_successfully))
+                }
+            }
+        }
     }
 
     private fun initializeViews() = with(binding) {
@@ -109,7 +135,7 @@ class SearchFragment : Fragment(), ReselectableFragment {
             anime.id?.let { animeId ->
                 val action = SearchFragmentDirections.actionNavigationToNavigationEditAnime(
                     animeId = animeId,
-                    requestKey = EditOwnListBottomSheet.DETAIL_REQUEST_KEY
+                    requestKey = EditOwnListFragment.DETAIL_REQUEST_KEY
                 )
                 findNavController().navigate(action)
             } ?: run {

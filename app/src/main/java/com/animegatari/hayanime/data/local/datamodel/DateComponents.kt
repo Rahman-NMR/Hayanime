@@ -1,4 +1,4 @@
-package com.animegatari.hayanime.data.model
+package com.animegatari.hayanime.data.local.datamodel
 
 data class DateComponents(
     val year: String? = null,
