@@ -16,7 +16,7 @@ import com.animegatari.hayanime.core.PKCEUtil.generateCodeVerifier
 import com.animegatari.hayanime.databinding.ActivityAuthBinding
 import com.animegatari.hayanime.domain.utils.onError
 import com.animegatari.hayanime.ui.main.MainActivity
-import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
+import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -91,11 +91,11 @@ class AuthActivity : AppCompatActivity() {
 
             authViewModel.handleAuthCode(code) { response ->
                 response.onError { message ->
-                    toastShort(this, message ?: getString(R.string.message_error_occurred))
+                    showToast(this, message ?: getString(R.string.message_error_occurred))
                 }
             }
         } else {
-            toastShort(this, getString(R.string.message_invalid_redirect))
+            showToast(this, getString(R.string.message_invalid_redirect))
         }
     }
 

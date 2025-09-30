@@ -30,8 +30,8 @@ import com.animegatari.hayanime.ui.main.MainViewModel
 import com.animegatari.hayanime.ui.utils.animation.ViewSlideInOutAnimation.ANIMATION_DURATION
 import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
 import com.animegatari.hayanime.ui.utils.layout.SpanCalculator.calculateSpanCount
-import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.snackBarShort
-import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
+import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showSnackbar
+import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showToast
 import com.google.android.material.search.SearchView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -116,7 +116,7 @@ class SearchFragment : Fragment(), ReselectableFragment {
                     searchViewModel.getAnimeList(searchQuery)
                     tvInfoMsg.text = getString(R.string.info_no_results_found, searchQuery)
                 } else {
-                    snackBarShort(root, getString(R.string.message_query_short))
+                    showSnackbar(root, getString(R.string.message_query_short))
                 }
                 return@setOnEditorActionListener true
             }
@@ -139,7 +139,7 @@ class SearchFragment : Fragment(), ReselectableFragment {
                 )
                 findNavController().navigate(action)
             } ?: run {
-                toastShort(requireContext(), getString(R.string.message_error_missing_anime_id))
+                showToast(requireContext(), getString(R.string.message_error_missing_anime_id))
             }
         }
     )
@@ -163,7 +163,7 @@ class SearchFragment : Fragment(), ReselectableFragment {
             binding.loadingIndicator.isVisible = when (refreshState) {
                 is LoadState.Loading -> true
                 is LoadState.Error -> {
-                    toastShort(requireContext(), getString(R.string.message_error_occurred))
+                    showToast(requireContext(), getString(R.string.message_error_occurred))
                     false
                 }
 

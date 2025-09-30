@@ -30,7 +30,7 @@ import com.animegatari.hayanime.ui.main.MainViewModel
 import com.animegatari.hayanime.ui.utils.animation.ViewSlideInOutAnimation.ANIMATION_DURATION
 import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
 import com.animegatari.hayanime.ui.utils.layout.SpanCalculator.calculateSpanCount
-import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
+import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.delay
@@ -121,7 +121,7 @@ class SeasonFragment : Fragment(), ReselectableFragment {
 
     private fun handleMenuItemClick(menuItem: MenuItem?): Boolean = when (menuItem?.itemId) {
         R.id.menu_item_avatar -> {
-            toastShort(requireContext(), "TODO go to profile")
+            showToast(requireContext(), "TODO go to profile")
 
             true
         }
@@ -179,7 +179,7 @@ class SeasonFragment : Fragment(), ReselectableFragment {
                 )
                 findNavController().navigate(action)
             } ?: run {
-                toastShort(requireContext(), getString(R.string.message_error_missing_anime_id))
+                showToast(requireContext(), getString(R.string.message_error_missing_anime_id))
             }
         }
     )
@@ -203,7 +203,7 @@ class SeasonFragment : Fragment(), ReselectableFragment {
             binding.loadingIndicator.isVisible = when (refreshState) {
                 is LoadState.Loading -> true
                 is LoadState.Error -> {
-                    toastShort(requireContext(), getString(R.string.message_error_occurred))
+                    showToast(requireContext(), getString(R.string.message_error_occurred))
                     false
                 }
 

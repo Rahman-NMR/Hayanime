@@ -26,7 +26,7 @@ import com.animegatari.hayanime.ui.main.MainViewModel
 import com.animegatari.hayanime.ui.main.myList.MyListFragmentDirections
 import com.animegatari.hayanime.ui.utils.animation.ViewSlideInOutAnimation.ANIMATION_DURATION
 import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
-import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
+import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -62,7 +62,7 @@ class MyAnimeListFragment : Fragment(), ReselectableFragment {
     }
 
     private fun setupAdapterRefreshListener(myListAdapter: MyListAdapter) {
-        parentFragmentManager.setFragmentResultListener(
+        requireParentFragment().parentFragmentManager.setFragmentResultListener(
             EditOwnListFragment.DETAIL_REQUEST_KEY,
             this
         ) { _, bundle ->
@@ -122,11 +122,11 @@ class MyAnimeListFragment : Fragment(), ReselectableFragment {
                 )
                 findNavController().navigate(action)
             } ?: run {
-                toastShort(requireContext(), getString(R.string.message_error_missing_anime_id))
+                showToast(requireContext(), getString(R.string.message_error_missing_anime_id))
             }
         },
         onAddProgressEpisode = {
-            toastShort(requireContext(), "TODO action press again to add progress episode")
+            showToast(requireContext(), "TODO action press again to add progress episode")
         }
     )
 
@@ -146,7 +146,7 @@ class MyAnimeListFragment : Fragment(), ReselectableFragment {
             binding.loadingIndicator.isVisible = when (refreshState) {
                 is LoadState.Loading -> true
                 is LoadState.Error -> {
-                    toastShort(requireContext(), getString(R.string.message_error_occurred))
+                    showToast(requireContext(), getString(R.string.message_error_occurred))
                     false
                 }
 

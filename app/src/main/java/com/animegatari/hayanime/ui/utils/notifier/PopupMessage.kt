@@ -6,11 +6,24 @@ import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
 
 object PopupMessage {
-    fun toastShort(context: Context, message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    fun showToast(context: Context, message: String, duration: Int = Toast.LENGTH_SHORT) {
+        Toast.makeText(context, message, duration).show()
     }
 
-    fun snackBarShort(view: View, message: String, anchorView: View? = null) {
-        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).setAnchorView(anchorView).show()
+    fun showSnackbar(
+        view: View,
+        message: String,
+        anchorView: View? = null,
+        duration: Int = Snackbar.LENGTH_SHORT,
+        actionName: String? = null,
+        action: View.OnClickListener? = null,
+    ) {
+        val snackbar = Snackbar.make(view, message, duration)
+            .setAnchorView(anchorView)
+
+        if (actionName != null && action != null) {
+            snackbar.setAction(actionName, action)
+        }
+        snackbar.show()
     }
 }

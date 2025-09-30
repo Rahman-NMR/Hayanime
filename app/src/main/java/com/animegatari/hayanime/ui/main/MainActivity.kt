@@ -19,7 +19,7 @@ import com.animegatari.hayanime.ui.base.ReselectableFragment
 import com.animegatari.hayanime.ui.base.ViewActionListener
 import com.animegatari.hayanime.ui.utils.animation.ViewSlideInOutAnimation.animateSlideDownAndHide
 import com.animegatari.hayanime.ui.utils.animation.ViewSlideInOutAnimation.animateSlideUpAndShow
-import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.snackBarShort
+import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -127,7 +127,7 @@ class MainActivity : AppCompatActivity(), ViewActionListener {
     }
 
     private fun showSnackbarActivity(view: View, message: String, anchorView: View? = null) {
-        snackBarShort(view, message, anchorView)
+        showSnackbar(view, message, anchorView)
     }
 
     override fun onResume() {

@@ -10,7 +10,7 @@ import com.animegatari.hayanime.R
 import com.animegatari.hayanime.databinding.FragmentMyListBinding
 import com.animegatari.hayanime.ui.base.ReselectableFragment
 import com.animegatari.hayanime.ui.main.myList.viewPager.ViewPagerAdapter
-import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
+import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showToast
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MyListFragment : Fragment(), ReselectableFragment {
@@ -33,7 +33,7 @@ class MyListFragment : Fragment(), ReselectableFragment {
 
     private fun handleMenuItemClick(menuItem: MenuItem?): Boolean = when (menuItem?.itemId) {
         R.id.menu_item_avatar -> {
-            toastShort(requireContext(), "TODO go to profile")
+            showToast(requireContext(), "TODO go to profile")
 
             true
         }

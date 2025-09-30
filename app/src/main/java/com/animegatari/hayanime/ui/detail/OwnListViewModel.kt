@@ -123,7 +123,7 @@ class OwnListViewModel @Inject constructor(
     }
 
     fun updateSelectedEpisode(selectedEpisode: Int) = updateMyListStatus {
-        copy(numWatchedEpisodes = selectedEpisode)
+        copy(numWatchedEpisodes = selectedEpisode, numEpisodesWatched = selectedEpisode)
     }
 
     fun updateSelectedScore(selectedScore: Int) = updateMyListStatus {

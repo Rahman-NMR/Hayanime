@@ -38,8 +38,8 @@ import com.animegatari.hayanime.ui.utils.interfaces.UiUtils.handleTextChange
 import com.animegatari.hayanime.ui.utils.interfaces.UiUtils.hideKeyboardAndClearFocus
 import com.animegatari.hayanime.ui.utils.interfaces.UiUtils.scoreStringMap
 import com.animegatari.hayanime.ui.utils.interfaces.UiUtils.shouldUpdateInputText
-import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.snackBarShort
-import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.toastShort
+import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showSnackbar
+import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showToast
 import com.animegatari.hayanime.ui.utils.recyclerview.CenterSnapScrollListener
 import com.animegatari.hayanime.ui.utils.recyclerview.CenteredSnapHelper
 import com.animegatari.hayanime.ui.utils.recyclerview.RecyclerViewUtils.applyHorizontalPadding
@@ -177,11 +177,11 @@ class EditOwnListFragment : Fragment() {
                         parentFragmentManager.setFragmentResult(requestKey, bundleOf(BUNDLE_KEY_UPDATED to true))
                         dismiss()
                     } else {
-                        snackBarShort(requireView(), getString(R.string.message_same_data))
+                        showSnackbar(requireView(), getString(R.string.message_same_data))
                     }
                 }
                 response.onError { message ->
-                    snackBarShort(requireView(), message ?: getString(R.string.message_failed_save_changes))
+                    showSnackbar(requireView(), message ?: getString(R.string.message_failed_save_changes))
                 }
             }
         } else {
@@ -211,7 +211,7 @@ class EditOwnListFragment : Fragment() {
                         dismiss()
                     }
                     response.onError { message ->
-                        snackBarShort(requireView(), message ?: getString(R.string.message_failed_delete_anime))
+                        showSnackbar(requireView(), message ?: getString(R.string.message_failed_delete_anime))
                     }
                 }
             }
@@ -299,7 +299,10 @@ class EditOwnListFragment : Fragment() {
         activeScrollListeners.getOrPut(recyclerView) { mutableListOf() }.add(centerSelectionListener)
         recyclerView.addOnScrollListener(centerSelectionListener)
         numberAdapter.submitList(itemRange)
-    } // todo: problematic when the value is 0, the label becomes empty
+    }
+    /** todo: problematic when the value is 0, the label becomes empty,
+    *       i think the problem from scroll listener/item scale animator
+    */
 
     private fun setupEpisodesRecyclerView(maxEpisodesValue: Int?) = with(binding) {
         val maxEpisodeCount = maxEpisodesValue?.takeIf { it > 0 } ?: 9999
@@ -427,12 +430,12 @@ class EditOwnListFragment : Fragment() {
         val itemWidthPx = resources.getDimensionPixelSize(R.dimen.item_rv_scrolling_width)
         val paddingView = resources.getDimensionPixelSize(R.dimen.normal_dp) * 2
 
-        val numWatchedEpisodes = myListStatus?.numWatchedEpisodes ?: 0
+        val numEpisodesWatched = myListStatus?.numEpisodesWatched ?: 0
         val stringTotalEpisode = anime?.numEpisodes?.takeIf { it > 0 }?.toString() ?: getString(R.string.unknown_symbol)
-        progress.extraTitle.text = getString(R.string.label_num_episodes, "$numWatchedEpisodes/$stringTotalEpisode")
+        progress.extraTitle.text = getString(R.string.label_num_episodes, "$numEpisodesWatched/$stringTotalEpisode")
 
         progress.recyclerView.post {
-            progress.recyclerView.applyHorizontalPadding(numWatchedEpisodes, root.width, itemWidthPx, paddingView)
+            progress.recyclerView.applyHorizontalPadding(numEpisodesWatched, root.width, itemWidthPx, paddingView)
         }
 
         val currentScore = myListStatus?.score ?: 0
@@ -518,14 +521,14 @@ class EditOwnListFragment : Fragment() {
     private fun loadThisAnime() {
         val currentAnimeId = initialAnimeId
         if (currentAnimeId == null || currentAnimeId == INVALID_ANIME_ID) {
-            toastShort(requireContext(), getString(R.string.message_error_missing_anime_id))
+            showToast(requireContext(), getString(R.string.message_error_missing_anime_id))
             dismiss()
             return
         }
 
         ownListViewModel.loadMyAnimeDetail(currentAnimeId) { response ->
             response.onError {
-                toastShort(requireContext(), getString(R.string.message_failed_load_data))
+                showToast(requireContext(), getString(R.string.message_failed_load_data))
                 dismiss()
             }
         }
