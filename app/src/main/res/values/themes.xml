@@ -47,26 +47,23 @@
         <item name="colorSurfaceContainer">@color/md_theme_surfaceContainer</item>
         <item name="colorSurfaceContainerHigh">@color/md_theme_surfaceContainerHigh</item>
         <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest</item>
-        <item name="colorExtraColor1">@color/colorExtraColor1</item>
-        <item name="colorOnExtraColor1">@color/colorOnExtraColor1</item>
-        <item name="colorExtraColor1Container">@color/colorExtraColor1Container</item>
-        <item name="colorOnExtraColor1Container">@color/colorOnExtraColor1Container</item>
-        <item name="colorExtraColor2">@color/colorExtraColor2</item>
-        <item name="colorOnExtraColor2">@color/colorOnExtraColor2</item>
-        <item name="colorExtraColor2Container">@color/colorExtraColor2Container</item>
-        <item name="colorOnExtraColor2Container">@color/colorOnExtraColor2Container</item>
-        <item name="colorExtraColor3">@color/colorExtraColor3</item>
-        <item name="colorOnExtraColor3">@color/colorOnExtraColor3</item>
-        <item name="colorExtraColor3Container">@color/colorExtraColor3Container</item>
-        <item name="colorOnExtraColor3Container">@color/colorOnExtraColor3Container</item>
-        <item name="colorExtraColor4">@color/colorExtraColor4</item>
-        <item name="colorOnExtraColor4">@color/colorOnExtraColor4</item>
-        <item name="colorExtraColor4Container">@color/colorExtraColor4Container</item>
-        <item name="colorOnExtraColor4Container">@color/colorOnExtraColor4Container</item>
-        <item name="colorExtraColor5">@color/colorExtraColor5</item>
-        <item name="colorOnExtraColor5">@color/colorOnExtraColor5</item>
-        <item name="colorExtraColor5Container">@color/colorExtraColor5Container</item>
-        <item name="colorOnExtraColor5Container">@color/colorOnExtraColor5Container</item>
+
+        <item name="colorWatchingColor">@color/colorWatchingColor</item>
+        <item name="colorOnWatchingColor">@color/colorOnWatchingColor</item>
+        <item name="colorWatchingColorContainer">@color/colorWatchingColorContainer</item>
+        <item name="colorOnWatchingColorContainer">@color/colorOnWatchingColorContainer</item>
+        <item name="colorCompleteColor">@color/colorCompleteColor</item>
+        <item name="colorOnCompleteColor">@color/colorOnCompleteColor</item>
+        <item name="colorCompleteColorContainer">@color/colorCompleteColorContainer</item>
+        <item name="colorOnCompleteColorContainer">@color/colorOnCompleteColorContainer</item>
+        <item name="colorOnHoldColor">@color/colorOnHoldColor</item>
+        <item name="colorOnOnHoldColor">@color/colorOnOnHoldColor</item>
+        <item name="colorOnHoldColorContainer">@color/colorOnHoldColorContainer</item>
+        <item name="colorOnOnHoldColorContainer">@color/colorOnOnHoldColorContainer</item>
+        <item name="colorDroppedColor">@color/colorDroppedColor</item>
+        <item name="colorOnDroppedColor">@color/colorOnDroppedColor</item>
+        <item name="colorDroppedColorContainer">@color/colorDroppedColorContainer</item>
+        <item name="colorOnDroppedColorContainer">@color/colorOnDroppedColorContainer</item>
     </style>
 
     <style name="MainTheme.Hayanime" parent="Theme.Hayanime">
