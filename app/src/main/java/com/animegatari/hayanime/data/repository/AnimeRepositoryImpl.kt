@@ -36,6 +36,25 @@ class AnimeRepositoryImpl @Inject constructor(
         ).flow
     }
 
+    override fun suggestedAnime(isNsfw: Boolean, limitConfig: Int, commonFields: String): Flow<PagingData<AnimeList>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = limitConfig,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                AnimePagingSource { limit, offset ->
+                    apiService.getSuggestedAnime(
+                        nsfw = isNsfw,
+                        limit = limit,
+                        offset = offset,
+                        fields = commonFields
+                    )
+                }
+            }
+        ).flow
+    }
+
     override fun seasonalAnime(seasonModel: SeasonModel, limitConfig: Int, commonFields: String): Flow<PagingData<AnimeList>> {
         return Pager(
             config = PagingConfig(

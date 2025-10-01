@@ -18,6 +18,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import androidx.paging.awaitNotLoading
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.animegatari.hayanime.BuildConfig
 import com.animegatari.hayanime.R
@@ -66,10 +67,10 @@ class SearchFragment : Fragment(), ReselectableFragment {
         initializeViews()
         setupInteractions(animeAdapter)
         setupRecyclerView(animeAdapter)
-        handleSearchInput()
+        handleSearchInput(animeAdapter)
 
         observeViewModelStates(animeAdapter)
-        handleLoadState(animeAdapter)
+        observeLoadState(animeAdapter)
     }
 
     private fun setupAdapterRefreshListener(animeAdapter: AnimeGridAdapter) {
@@ -78,15 +79,15 @@ class SearchFragment : Fragment(), ReselectableFragment {
             this
         ) { _, bundle ->
             val resultUpdate = bundle.getBoolean(EditOwnListFragment.BUNDLE_KEY_UPDATED)
-            val resulDelete = bundle.getBoolean(EditOwnListFragment.BUNDLE_KEY_DELETED)
+            val resultDeleted = bundle.getBoolean(EditOwnListFragment.BUNDLE_KEY_DELETED)
 
-            if (resultUpdate || resulDelete) {
+            if (resultUpdate || resultDeleted) {
                 viewLifecycleOwner.lifecycleScope.launch {
                     delay(ANIMATION_DURATION)
                     animeAdapter.refresh()
 
                     if (resultUpdate) mainViewModel.showSnackbar(getString(R.string.message_anime_updated_successfully))
-                    if (resulDelete) mainViewModel.showSnackbar(getString(R.string.message_anime_deleted_successfully))
+                    if (resultDeleted) mainViewModel.showSnackbar(getString(R.string.message_anime_deleted_successfully))
                 }
             }
         }
@@ -100,11 +101,12 @@ class SearchFragment : Fragment(), ReselectableFragment {
     private fun setupInteractions(animeAdapter: AnimeGridAdapter) = with(binding) {
         swipeRefresh.setOnRefreshListener {
             animeAdapter.refresh()
+            scrollToTopOnLoad(animeAdapter)
             swipeRefresh.isRefreshing = false
         }
     }
 
-    private fun handleSearchInput() = with(binding) {
+    private fun handleSearchInput(animeAdapter: AnimeGridAdapter) = with(binding) {
         searchView.setupWithSearchBar(binding.searchBar)
         searchView.editText.setOnEditorActionListener { textView, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
@@ -115,6 +117,7 @@ class SearchFragment : Fragment(), ReselectableFragment {
                     searchView.hide()
                     searchViewModel.getAnimeList(searchQuery)
                     tvInfoMsg.text = getString(R.string.info_no_results_found, searchQuery)
+                    scrollToTopOnLoad(animeAdapter)
                 } else {
                     showSnackbar(root, getString(R.string.message_query_short))
                 }
@@ -155,7 +158,12 @@ class SearchFragment : Fragment(), ReselectableFragment {
         recyclerView.adapter = animeAdapter
     }
 
-    private fun handleLoadState(animeAdapter: AnimeGridAdapter) = viewLifecycleOwner.lifecycleScope.launch {
+    private fun scrollToTopOnLoad(animeAdapter: AnimeGridAdapter) = viewLifecycleOwner.lifecycleScope.launch {
+        animeAdapter.loadStateFlow.awaitNotLoading()
+        binding.recyclerView.scrollToPosition(0)
+    }
+
+    private fun observeLoadState(animeAdapter: AnimeGridAdapter) = viewLifecycleOwner.lifecycleScope.launch {
         animeAdapter.loadStateFlow.collectLatest { loadStates ->
             val refreshState = loadStates.refresh
 
@@ -172,7 +180,7 @@ class SearchFragment : Fragment(), ReselectableFragment {
         }
     }
 
-    private fun observeViewModelStates(animeAdapter: AnimeGridAdapter) = with(binding) {
+    private fun observeViewModelStates(animeAdapter: AnimeGridAdapter) {
         viewLifecycleOwner.lifecycleScope.launch {
             searchViewModel.animeList
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)

@@ -1,21 +1,46 @@
 package com.animegatari.hayanime.ui.main.myList
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
+import androidx.paging.awaitNotLoading
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.animegatari.hayanime.BuildConfig
 import com.animegatari.hayanime.R
+import com.animegatari.hayanime.data.types.WatchingStatus
 import com.animegatari.hayanime.databinding.FragmentMyListBinding
+import com.animegatari.hayanime.ui.adapter.MyListAdapter
 import com.animegatari.hayanime.ui.base.ReselectableFragment
-import com.animegatari.hayanime.ui.main.myList.viewPager.ViewPagerAdapter
+import com.animegatari.hayanime.ui.detail.EditOwnListFragment
+import com.animegatari.hayanime.ui.main.MainViewModel
+import com.animegatari.hayanime.ui.utils.animation.ViewSlideInOutAnimation.ANIMATION_DURATION
+import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showToast
-import com.google.android.material.tabs.TabLayoutMediator
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MyListFragment : Fragment(), ReselectableFragment {
     private var _binding: FragmentMyListBinding? = null
     private val binding get() = _binding!!
+
+    private val myListViewModel: MyListViewModel by viewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMyListBinding.inflate(inflater, container, false)
@@ -25,10 +50,76 @@ class MyListFragment : Fragment(), ReselectableFragment {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.viewPager()
-        binding.toolBar.setOnMenuItemClickListener { menuItem ->
+        val myListAdapter = initializeMyListAdapter()
+
+        setupAdapterRefreshListener(myListAdapter)
+        initializeViews()
+        setupInteractions(myListAdapter)
+        setupRecyclerView(myListAdapter)
+
+        observeViewModelStates(myListAdapter)
+        observeLoadState(myListAdapter)
+    }
+
+    private fun setupAdapterRefreshListener(myListAdapter: MyListAdapter) {
+        parentFragmentManager.setFragmentResultListener(
+            EditOwnListFragment.DETAIL_REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            val resultUpdate = bundle.getBoolean(EditOwnListFragment.BUNDLE_KEY_UPDATED)
+            val resultDeleted = bundle.getBoolean(EditOwnListFragment.BUNDLE_KEY_DELETED)
+
+            if (resultUpdate || resultDeleted) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    delay(ANIMATION_DURATION)
+                    myListAdapter.refresh()
+
+                    if (resultUpdate) mainViewModel.showSnackbar(getString(R.string.message_anime_updated_successfully))
+                    if (resultDeleted) mainViewModel.showSnackbar(getString(R.string.message_anime_deleted_successfully))
+                }
+            }
+        }
+    }
+
+    private fun initializeViews() = with(binding) {
+        tvInfoMsg.text = getString(R.string.info_no_results_found, getString(R.string.title_my_list))
+        loadingIndicator.hide()
+    }
+
+    private fun setupInteractions(myListAdapter: MyListAdapter) = with(binding) {
+        chipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
+            handleChipGroupSelection(checkedIds)
+            scrollToTopOnLoad(myListAdapter)
+        }
+        swipeRefresh.setOnRefreshListener {
+            myListAdapter.refresh()
+            scrollToTopOnLoad(myListAdapter)
+            swipeRefresh.isRefreshing = false
+        }
+        toolBar.setOnMenuItemClickListener { menuItem ->
             handleMenuItemClick(menuItem)
         }
+    }
+
+    private fun handleChipGroupSelection(checkedIds: List<Int>) = with(binding) {
+        val selectedStatus = if (checkedIds.isNotEmpty()) {
+            val checkedId = checkedIds.first()
+            when (checkedId) {
+                chipPlanToWatch.id -> WatchingStatus.PLAN_TO_WATCH.apiValue
+                chipWatching.id -> WatchingStatus.WATCHING.apiValue
+                chipCompleted.id -> WatchingStatus.COMPLETED.apiValue
+                chipOnHold.id -> WatchingStatus.ON_HOLD.apiValue
+                chipDropped.id -> WatchingStatus.DROPPED.apiValue
+                else -> null
+            }
+        } else {
+            null
+        }
+
+        val watchingStatusString = WatchingStatus.fromApiValue(selectedStatus).stringResId
+
+        myListViewModel.getAnimeList(selectedStatus)
+        tvInfoMsg.text = getString(R.string.info_no_results_found, getString(watchingStatusString))
     }
 
     private fun handleMenuItemClick(menuItem: MenuItem?): Boolean = when (menuItem?.itemId) {
@@ -41,31 +132,69 @@ class MyListFragment : Fragment(), ReselectableFragment {
         else -> false
     }
 
-    private fun FragmentMyListBinding.viewPager() {
-        viewPager.adapter = ViewPagerAdapter(this@MyListFragment)
-
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.text = when (position) {
-                0 -> getString(R.string.watching_status_all_anime)
-                1 -> getString(R.string.watching_status_watching)
-                2 -> getString(R.string.watching_status_completed)
-                3 -> getString(R.string.watching_status_plan_to_watch)
-                4 -> getString(R.string.watching_status_on_hold)
-                5 -> getString(R.string.watching_status_dropped)
-                else -> getString(R.string.label_unknown)
+    private fun initializeMyListAdapter(): MyListAdapter = MyListAdapter(
+        onItemClicked = { anime ->
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = "${BuildConfig.BASE_URL}anime/${anime.id}".toUri()
             }
-        }.attach()
+            startActivity(intent)
+        },
+        onEditMyListClicked = { anime ->
+            anime.id?.let { animeId ->
+                val action = MyListFragmentDirections.actionNavigationToNavigationEditAnime(
+                    animeId = animeId,
+                    requestKey = EditOwnListFragment.DETAIL_REQUEST_KEY
+                )
+                findNavController().navigate(action)
+            } ?: run {
+                showToast(requireContext(), getString(R.string.message_error_missing_anime_id))
+            }
+        },
+        onAddProgressEpisode = {
+            showToast(requireContext(), "TODO action press again to add progress episode")
+        }
+    )
+
+    private fun setupRecyclerView(myListAdapter: MyListAdapter) = with(binding) {
+        val paddingBottom = resources.getDimensionPixelSize(R.dimen.layout_padding_bottom)
+
+        recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        recyclerView.addItemDecoration(BottomPaddingItemDecoration(paddingBottom))
+        recyclerView.adapter = myListAdapter
+    }
+
+    private fun scrollToTopOnLoad(myListAdapter: MyListAdapter) = viewLifecycleOwner.lifecycleScope.launch {
+        myListAdapter.loadStateFlow.awaitNotLoading()
+        binding.recyclerView.scrollToPosition(0)
+    }
+
+    private fun observeLoadState(myListAdapter: MyListAdapter) = viewLifecycleOwner.lifecycleScope.launch {
+        myListAdapter.loadStateFlow.collectLatest { loadStates ->
+            val refreshState = loadStates.refresh
+
+            binding.tvInfoMsg.isVisible = refreshState is LoadState.NotLoading && myListAdapter.itemCount == 0
+            binding.loadingIndicator.isVisible = when (refreshState) {
+                is LoadState.Loading -> true
+                is LoadState.Error -> {
+                    showToast(requireContext(), getString(R.string.message_error_occurred))
+                    false
+                }
+
+                else -> false
+            }
+        }
+    }
+
+    private fun observeViewModelStates(myListAdapter: MyListAdapter) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            myListViewModel.myAnimeList
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collectLatest { myListAdapter.submitData(it) }
+        }
     }
 
     override fun onReselected() {
-        val viewPagerAdapter = binding.viewPager.adapter as? ViewPagerAdapter
-        if (viewPagerAdapter != null) {
-            val currentPosition = binding.viewPager.currentItem
-            val currentFragment = childFragmentManager.findFragmentByTag("f$currentPosition")
-            if (currentFragment is ReselectableFragment) {
-                currentFragment.onReselected()
-            }
-        }
+        binding.recyclerView.smoothScrollToPosition(0)
     }
 
     override fun onDestroyView() {

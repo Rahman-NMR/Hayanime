@@ -14,7 +14,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
@@ -26,7 +25,11 @@ class SearchViewModel @Inject constructor(
     val animeList: Flow<PagingData<AnimeList>> = _searchQuery
         .flatMapLatest { query ->
             if (query.isEmpty()) {
-                flowOf(PagingData.empty())
+                animeRepository.suggestedAnime(
+                    isNsfw = true,
+                    limitConfig = DEFAULT_PAGE_LIMIT,
+                    commonFields = COMMON_ANIME_FIELDS
+                )
             } else {
                 animeRepository.searchAnime(
                     query = query,

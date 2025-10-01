@@ -6,6 +6,25 @@
     android:layout_height="match_parent"
     tools:context=".ui.main.myList.MyListFragment">
 
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:paddingHorizontal="@dimen/recyclerview_corner_padding_small"
+            android:paddingTop="@dimen/recyclerview_corner_padding_small"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="3"
+            tools:listitem="@layout/layout_anime_list" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,19 +40,74 @@
             app:logo="@drawable/hayanime_logo"
             app:menu="@menu/avatar_menu" />
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tab_layout"
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:tabGravity="start"
-            app:tabIndicatorFullWidth="true"
-            app:tabInlineLabel="true"
-            app:tabMode="scrollable" />
+            android:scrollbars="none">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="12dp"
+                app:singleLine="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_plan_to_watch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:text="@string/watching_status_plan_to_watch" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_watching"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:text="@string/watching_status_watching" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_completed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:text="@string/watching_status_completed" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_on_hold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:text="@string/watching_status_on_hold" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_dropped"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:text="@string/watching_status_dropped" />
+            </com.google.android.material.chip.ChipGroup>
+        </HorizontalScrollView>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/view_pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_info_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="32dp"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:text="@string/info_no_results_found" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/loading_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

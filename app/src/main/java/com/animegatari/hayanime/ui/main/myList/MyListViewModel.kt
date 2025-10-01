@@ -1,11 +1,10 @@
-package com.animegatari.hayanime.ui.main.myList.viewPager
+package com.animegatari.hayanime.ui.main.myList
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.animegatari.hayanime.core.Config.COMMON_ANIME_FIELDS
-import com.animegatari.hayanime.core.Config.DEFAULT_PAGE_LIMIT
+import com.animegatari.hayanime.core.Config
 import com.animegatari.hayanime.data.remote.response.AnimeList
 import com.animegatari.hayanime.domain.repository.UserAnimeListRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +15,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import javax.inject.Inject
 
 @HiltViewModel
-class MyAnimeListViewModel @Inject constructor(
+class MyListViewModel @Inject constructor(
     private val useranimeListRepository: UserAnimeListRepository,
 ) : ViewModel() {
     private val _myAnimeList = MutableStateFlow(null as String?)
@@ -28,12 +27,12 @@ class MyAnimeListViewModel @Inject constructor(
                 status = watchingStatus,
                 sort = "list_updated_at",
                 isNsfw = true,
-                limitConfig = DEFAULT_PAGE_LIMIT,
-                commonFields = COMMON_ANIME_FIELDS
+                limitConfig = Config.DEFAULT_PAGE_LIMIT,
+                commonFields = Config.COMMON_ANIME_FIELDS
             )
         }.cachedIn(viewModelScope)
 
-    fun getAnimeList(watchingStatusValue: String?) {
+    fun getAnimeList(watchingStatusValue: String? = null) {
         _myAnimeList.value = watchingStatusValue
     }
 }
