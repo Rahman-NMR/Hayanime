@@ -18,6 +18,7 @@ import com.animegatari.hayanime.data.types.WatchingStatus
 import com.animegatari.hayanime.databinding.LayoutAnimeGridBinding
 import com.animegatari.hayanime.utils.FormatterUtils.digitNumberFormatter
 import com.animegatari.hayanime.utils.FormatterUtils.formatApiDate
+import com.animegatari.hayanime.utils.FormatterUtils.formatDecimal
 import com.animegatari.hayanime.utils.TimeUtils
 import com.bumptech.glide.Glide
 
@@ -50,7 +51,7 @@ class AnimeGridAdapter(
 
                 mediaType.text = viewContext.getString(MediaType.fromApiValue(anime.mediaType).stringResId)
 
-                score.text = anime.mean?.toString()
+                score.text = anime.mean?.let { formatDecimal(it) }
                     ?: viewContext.getString(R.string.not_available)
 
                 numScoringUser.text = anime.numScoringUsers
@@ -74,9 +75,14 @@ class AnimeGridAdapter(
                     isVisible = animeStatus != AiringStatus.FINISHED_AIRING
                 }
 
-                title.text = anime.title
-                    ?.takeIf { it.isNotEmpty() }
-                    ?: viewContext.getString(R.string.label_unknown)
+                val statusColor = WatchingStatus.fromApiValue(anime.myListStatus?.status).colorResId
+                val onStatusColor = WatchingStatus.fromApiValue(anime.myListStatus?.status).onColorResId
+                title.apply {
+                    text = anime.title
+                        ?.takeIf { it.isNotEmpty() }
+                        ?: viewContext.getString(R.string.label_unknown)
+                    setTextColor(viewContext.getColor(statusColor))
+                }
 
                 val nsfwMedia = NsfwMedia.fromApiValue(anime.nsfw)
                 nsfw.isVisible = nsfwMedia != NsfwMedia.WHITE
@@ -124,6 +130,8 @@ class AnimeGridAdapter(
 
                         else -> strWatchingStatus
                     }
+                    backgroundTintList = viewContext.getColorStateList(statusColor)
+                    setTextColor(viewContext.getColor(onStatusColor))
                 }
 
                 btnEditMylist.setOnClickListener { onEditMyListClicked(anime) }

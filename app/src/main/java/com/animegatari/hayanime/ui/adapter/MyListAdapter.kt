@@ -15,6 +15,7 @@ import com.animegatari.hayanime.data.types.NsfwMedia
 import com.animegatari.hayanime.data.types.RatingCategory
 import com.animegatari.hayanime.data.types.SeasonStart
 import com.animegatari.hayanime.data.types.SourceOfRefference
+import com.animegatari.hayanime.data.types.WatchingStatus
 import com.animegatari.hayanime.databinding.LayoutAnimeListBinding
 import com.bumptech.glide.Glide
 import kotlin.math.roundToInt
@@ -86,9 +87,13 @@ class MyListAdapter(
                     else -> mediaType
                 }
 
-                title.text = anime.title
-                    ?.takeIf { it.isNotEmpty() }
-                    ?: unknownString
+                val watchingStatusColorResId = WatchingStatus.fromApiValue(anime.myListStatus?.status).colorResId
+                title.apply {
+                    text = anime.title
+                        ?.takeIf { it.isNotEmpty() }
+                        ?: unknownString
+                    setTextColor(viewContext.getColor(watchingStatusColorResId))
+                }
 
                 rating.text = viewContext.getString(RatingCategory.Companion.fromApiValue(anime.rating).stringResId)
 
@@ -119,6 +124,7 @@ class MyListAdapter(
                     min = 0
                     max = numOfMaxEpisode.takeIf { it != 0 } ?: (episodeWatched * 2.0).roundToInt()
                     progress = episodeWatched
+                    setIndicatorColor(viewContext.getColor(watchingStatusColorResId))
                 }
 
                 val numTotalEpisodes = numOfMaxEpisode

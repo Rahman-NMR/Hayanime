@@ -1,6 +1,8 @@
 package com.animegatari.hayanime.utils
 
 import android.icu.text.NumberFormat
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.time.LocalDate
 import java.time.Year
 import java.time.YearMonth
@@ -11,6 +13,11 @@ object FormatterUtils {
     fun digitNumberFormatter(number: Int): String {
         val formatter = NumberFormat.getInstance(Locale.getDefault())
         return formatter.format(number)
+    }
+
+    fun formatDecimal(number: Float, pattern: String = "0.00"): String {
+        val decimalFormat = DecimalFormat(pattern, DecimalFormatSymbols.getInstance(Locale.getDefault()))
+        return decimalFormat.format(number)
     }
 
     fun formatApiDate(dateString: String?, locale: Locale = Locale.getDefault()): String? {
