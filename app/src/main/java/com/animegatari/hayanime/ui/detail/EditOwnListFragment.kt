@@ -272,6 +272,9 @@ class EditOwnListFragment : Fragment() {
         }
 
         ownListViewModel.updateWatchingStatus(selectedStatus)
+        if (selectedStatus == WatchingStatus.COMPLETED.apiValue) {
+            ownListViewModel.updateSelectedEpisode(isForceFinish = true)
+        }
     }
 
     private fun setupCenteringRecyclerView(

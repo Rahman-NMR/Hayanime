@@ -9,6 +9,8 @@ import com.animegatari.hayanime.data.local.datamodel.DateComponents
 import com.animegatari.hayanime.data.model.MyListStatus
 import com.animegatari.hayanime.domain.repository.UserAnimeListRepository
 import com.animegatari.hayanime.domain.utils.Response
+import com.animegatari.hayanime.domain.utils.onError
+import com.animegatari.hayanime.domain.utils.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -38,27 +40,36 @@ class OwnListViewModel @Inject constructor(
         val mainFields = Config.OWN_ANIME_LIST_MAIN_FIELDS
         val smollFields = Config.SHORT_ANIME_FIELDS
 
-        return userAnimeListRepository.getMyDetailAnime(
-            animeId,
-            "$smollFields{$mainFields,$extendedFields}"
-        )
+        return when (val response = userAnimeListRepository.getMyDetailAnime(
+            animeId = animeId,
+            fields = "$smollFields{$mainFields,$extendedFields}"
+        )) {
+            is Response.Success -> {
+                response.data
+            }
+
+            is Response.Error -> {
+                null
+            }
+        }
     }
 
     fun loadMyAnimeDetail(animeId: Int, onResponse: (Response<Boolean>) -> Unit) = viewModelScope.launch {
         _isLoading.value = true
-        try {
-            val animeDetails = fetchMyAnimeData(animeId)
+
+        val animeDetails = fetchMyAnimeData(animeId)
+        if (animeDetails != null) {
             _newestAnimeData.value = animeDetails
             _originalAnimeData.value = animeDetails
 
-            _startDateComponents.value = DateComponents.fromFormattedString(animeDetails?.myListStatus?.startDate)
-            _finishDateComponents.value = DateComponents.fromFormattedString(animeDetails?.myListStatus?.finishDate)
-            _maxEpisodes.value = animeDetails?.numEpisodes
+            _startDateComponents.value = DateComponents.fromFormattedString(animeDetails.myListStatus?.startDate)
+            _finishDateComponents.value = DateComponents.fromFormattedString(animeDetails.myListStatus?.finishDate)
+            _maxEpisodes.value = animeDetails.numEpisodes
 
             onResponse(Response.Success(true))
-        } catch (_: Exception) {
+            _isLoading.value = false
+        } else {
             onResponse(Response.Error())
-        } finally {
             _isLoading.value = false
         }
     }
@@ -78,19 +89,17 @@ class OwnListViewModel @Inject constructor(
         }
 
         _isLoading.value = true
-        try {
-            userAnimeListRepository.updateMyAnimeListStatus(animeId = animeId, myListStatus = currentStatus)
-            onResponse(Response.Success(true))
-        } catch (e: Exception) {
-            onResponse(Response.Error(e.localizedMessage))
-        } finally {
-            _isLoading.value = false
-            Log.i(
-                "Hayanime update", "title: ${_originalAnimeData.value?.title}\n" +
-                        "ori: ${_originalAnimeData.value?.myListStatus}\n" +
-                        "new: ${_newestAnimeData.value?.myListStatus}"
-            )
-        }
+        userAnimeListRepository.updateMyAnimeListStatus(animeId = animeId, myListStatus = currentStatus)
+            .onSuccess { onResponse(Response.Success(true)) }
+            .onError { message -> onResponse(Response.Error(message)) }
+            .also {
+                _isLoading.value = false
+                Log.i(
+                    "Hayanime update", "title: ${_originalAnimeData.value?.title}\n" +
+                            "ori: ${_originalAnimeData.value?.myListStatus}\n" +
+                            "new: ${_newestAnimeData.value?.myListStatus}"
+                )
+            }
     }
 
     fun deleteThisSeries(animeId: Int?, onResponse: (Response<Boolean>) -> Unit) = viewModelScope.launch {
@@ -100,14 +109,12 @@ class OwnListViewModel @Inject constructor(
         }
 
         _isLoading.value = true
-        try {
-            userAnimeListRepository.deleteAnime(animeId)
-            onResponse(Response.Success(true))
-        } catch (e: Exception) {
-            onResponse(Response.Error(e.localizedMessage))
-        } finally {
-            _isLoading.value = false
-        }
+        userAnimeListRepository.deleteAnime(animeId)
+            .onSuccess { onResponse(Response.Success(true)) }
+            .onError { message -> onResponse(Response.Error(message)) }
+            .also {
+                _isLoading.value = false
+            }
     }
 
     private fun updateMyListStatus(newListStatus: MyListStatus.() -> MyListStatus) {
@@ -122,8 +129,13 @@ class OwnListViewModel @Inject constructor(
         copy(status = selectedChip.orEmpty())
     }
 
-    fun updateSelectedEpisode(selectedEpisode: Int) = updateMyListStatus {
-        copy(numWatchedEpisodes = selectedEpisode, numEpisodesWatched = selectedEpisode)
+    fun updateSelectedEpisode(selectedEpisode: Int = 0, isForceFinish: Boolean = false) = updateMyListStatus {
+        var newNumEpisodeWatched: Int? = selectedEpisode
+        if (isForceFinish) {
+            newNumEpisodeWatched = _originalAnimeData.value?.numEpisodes
+        }
+
+        copy(numWatchedEpisodes = newNumEpisodeWatched, numEpisodesWatched = newNumEpisodeWatched)
     }
 
     fun updateSelectedScore(selectedScore: Int) = updateMyListStatus {

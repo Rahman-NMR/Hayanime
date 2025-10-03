@@ -143,7 +143,10 @@ class MyListAdapter(
 
                 btnEditMylist.setOnClickListener { onEditMyListClicked(anime) }
 
-                btnPlusOneEpisode.setOnClickListener { onAddProgressEpisode(anime) }
+                btnPlusOneEpisode.apply {
+                    isEnabled = episodeWatched < (numOfMaxEpisode ?: 0)
+                    setOnClickListener { onAddProgressEpisode(anime) }
+                }
 
                 root.setOnClickListener { onItemClicked(anime) }
             }

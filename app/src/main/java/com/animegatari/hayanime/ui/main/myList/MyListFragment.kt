@@ -150,8 +150,12 @@ class MyListFragment : Fragment(), ReselectableFragment {
                 showToast(requireContext(), getString(R.string.message_error_missing_anime_id))
             }
         },
-        onAddProgressEpisode = {
-            showToast(requireContext(), "TODO action press again to add progress episode")
+        onAddProgressEpisode = { anime ->
+            myListViewModel.updateAnimeProgress(
+                animeId = anime.id,
+                currentEpisodeProgress = anime.myListStatus?.numEpisodesWatched,
+                numEpisode = anime.numEpisodes,
+            )
         }
     )
 
@@ -190,6 +194,21 @@ class MyListFragment : Fragment(), ReselectableFragment {
             myListViewModel.myAnimeList
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collectLatest { myListAdapter.submitData(it) }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            myListViewModel.events.collectLatest { event ->
+                when (event) {
+                    is MyListEvent.DataModified -> {
+                        myListAdapter.refresh()
+                        scrollToTopOnLoad(myListAdapter)
+                    }
+
+                    is MyListEvent.UpdateProgressError -> {
+                        showToast(requireContext(), event.message ?: getString(R.string.message_error_occurred))
+                    }
+                }
+            }
         }
     }
 
