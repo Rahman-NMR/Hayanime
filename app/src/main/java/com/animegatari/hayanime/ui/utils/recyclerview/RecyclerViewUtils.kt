@@ -20,6 +20,7 @@ object RecyclerViewUtils {
         this.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
         this.adapter = adapter
         this.setHasFixedSize(true)
+        this.clearOnScrollListeners()
         scrollListener?.let { this.addOnScrollListener(it) }
         snapHelper.attachToRecyclerView(this)
     }

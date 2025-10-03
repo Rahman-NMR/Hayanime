@@ -63,23 +63,23 @@ class MyListAdapter(
                     notAvailableString
                 }
 
-                val animeStatus = AiringStatus.Companion.fromApiValue(anime.status)
+                val animeStatus = AiringStatus.fromApiValue(anime.status)
                 status.apply {
-                    text = viewContext.getString(AiringStatus.Companion.fromApiValue(anime.status).stringResId)
+                    text = viewContext.getString(AiringStatus.fromApiValue(anime.status).stringResId)
                     isVisible = animeStatus != AiringStatus.FINISHED_AIRING
                 }
 
-                val nsfwMedia = NsfwMedia.Companion.fromApiValue(anime.nsfw)
+                val nsfwMedia = NsfwMedia.fromApiValue(anime.nsfw)
                 nsfw.isVisible = nsfwMedia != NsfwMedia.WHITE
                 if (nsfwMedia == NsfwMedia.BLACK) {
                     val nsfwBlack = viewContext.getString(R.string.label_nsfw) + "+"
                     nsfw.text = nsfwBlack
                 }
 
-                val mediaType = viewContext.getString(MediaType.Companion.fromApiValue(anime.mediaType).stringResId)
+                val mediaType = viewContext.getString(MediaType.fromApiValue(anime.mediaType).stringResId)
                 val season = anime.startSeason?.season?.takeIf { it.isNotEmpty() }
                 val year = anime.startSeason?.year?.takeIf { it != 0 }
-                val strSeason = viewContext.getString(SeasonStart.Companion.fromApiValue(season).stringResId)
+                val strSeason = viewContext.getString(SeasonStart.fromApiValue(season).stringResId)
                 mediaTypeNStartSeason.text = when {
                     season != null && year != null -> "$mediaType • $strSeason $year"
                     season != null -> "$mediaType • $strSeason"
@@ -95,7 +95,7 @@ class MyListAdapter(
                     setTextColor(viewContext.getColor(watchingStatusColorResId))
                 }
 
-                rating.text = viewContext.getString(RatingCategory.Companion.fromApiValue(anime.rating).stringResId)
+                rating.text = viewContext.getString(RatingCategory.fromApiValue(anime.rating).stringResId)
 
                 genres.text = anime.genres
                     ?.mapNotNull { it?.name }
@@ -104,7 +104,7 @@ class MyListAdapter(
                     ?.takeIf { it.isNotEmpty() }
                     ?: unknownString
 
-                val source = viewContext.getString(SourceOfRefference.Companion.fromApiValue(anime.source).stringResId)
+                val source = viewContext.getString(SourceOfRefference.fromApiValue(anime.source).stringResId)
                 val studios = anime.studios
                     ?.mapNotNull { it?.name }
                     ?.filter { it.isNotBlank() }
@@ -143,10 +143,7 @@ class MyListAdapter(
 
                 btnEditMylist.setOnClickListener { onEditMyListClicked(anime) }
 
-                btnPlusOneEpisode.apply {
-                    isEnabled = episodeWatched < (numOfMaxEpisode ?: 0)
-                    setOnClickListener { onAddProgressEpisode(anime) }
-                }
+                btnPlusOneEpisode.setOnClickListener { onAddProgressEpisode(anime) }
 
                 root.setOnClickListener { onItemClicked(anime) }
             }

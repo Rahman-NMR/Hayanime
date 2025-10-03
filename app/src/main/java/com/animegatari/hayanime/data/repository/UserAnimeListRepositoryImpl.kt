@@ -78,7 +78,7 @@ class UserAnimeListRepositoryImpl @Inject constructor(
                 comments = myListStatus?.comments
             )
 
-            if (response.message.isNullOrBlank()) {
+            if (response.error.isNullOrBlank()) {
                 Response.Success(Unit)
             } else {
                 Response.Error(response.message)

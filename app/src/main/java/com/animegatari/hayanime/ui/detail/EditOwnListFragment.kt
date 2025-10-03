@@ -31,7 +31,6 @@ import com.animegatari.hayanime.domain.utils.onError
 import com.animegatari.hayanime.domain.utils.onSuccess
 import com.animegatari.hayanime.ui.adapter.NumberAdapter
 import com.animegatari.hayanime.ui.dialog.YearPickerDialogFragment
-import com.animegatari.hayanime.ui.utils.animation.ItemScaleAnimator
 import com.animegatari.hayanime.ui.utils.extension.AutoCompleteTextViewExtensions.setupDropdownWithEnum
 import com.animegatari.hayanime.ui.utils.extension.AutoCompleteTextViewExtensions.setupSimpleDropdown
 import com.animegatari.hayanime.ui.utils.interfaces.UiUtils.handleTextChange
@@ -40,7 +39,7 @@ import com.animegatari.hayanime.ui.utils.interfaces.UiUtils.scoreStringMap
 import com.animegatari.hayanime.ui.utils.interfaces.UiUtils.shouldUpdateInputText
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showSnackbar
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showToast
-import com.animegatari.hayanime.ui.utils.recyclerview.CenterSnapScrollListener
+import com.animegatari.hayanime.ui.utils.recyclerview.CenterSnapScaleScrollListener
 import com.animegatari.hayanime.ui.utils.recyclerview.CenteredSnapHelper
 import com.animegatari.hayanime.ui.utils.recyclerview.RecyclerViewUtils.applyHorizontalPadding
 import com.animegatari.hayanime.ui.utils.recyclerview.RecyclerViewUtils.setupHorizontalList
@@ -63,7 +62,9 @@ class EditOwnListFragment : Fragment() {
     private val episodesSnapHelper: CenteredSnapHelper by lazy { CenteredSnapHelper() }
     private val scoreSnapHelper: CenteredSnapHelper by lazy { CenteredSnapHelper() }
 
-    private val activeScrollListeners = mutableMapOf<RecyclerView, MutableList<RecyclerView.OnScrollListener>>()
+    private var episodesScrollListener: CenterSnapScaleScrollListener? = null
+    private var scoreScrollListener: CenterSnapScaleScrollListener? = null
+
     private var initialAnimeId: Int? = INVALID_ANIME_ID
     private var requestKey: String = DETAIL_REQUEST_KEY
     private val args: EditOwnListFragmentArgs by navArgs()
@@ -273,7 +274,7 @@ class EditOwnListFragment : Fragment() {
 
         ownListViewModel.updateWatchingStatus(selectedStatus)
         if (selectedStatus == WatchingStatus.COMPLETED.apiValue) {
-            ownListViewModel.updateSelectedEpisode(isForceFinish = true)
+            ownListViewModel.forceUpdateEpisodesWatched(selectedStatus)
         }
     }
 
@@ -284,45 +285,43 @@ class EditOwnListFragment : Fragment() {
         labelTextView: TextView? = null,
         labelMap: Map<Int, String>? = null,
         onItemSelected: (Int) -> Unit,
-    ) {
+    ): CenterSnapScaleScrollListener {
         val itemRange = (0..maxitems).toList()
         val numberAdapter = NumberAdapter()
-        val itemScaleAnimator = ItemScaleAnimator(recyclerView, labelTextView, labelMap)
-        recyclerView.setupHorizontalList(
-            adapter = numberAdapter,
-            snapHelper = snapHelper,
-            scrollListener = itemScaleAnimator
-        )
-
-        val centerSelectionListener = CenterSnapScrollListener(
+        val scrollListener = CenterSnapScaleScrollListener(
             snapHelper = snapHelper,
             getItemValue = { position -> itemRange.getOrNull(position) },
-            onItemSelected = onItemSelected
+            onItemSelected = onItemSelected,
+            currentItemLabelTextView = labelTextView,
+            valueToLabelMap = labelMap
         )
-        activeScrollListeners.getOrPut(recyclerView) { mutableListOf() }.add(centerSelectionListener)
-        recyclerView.addOnScrollListener(centerSelectionListener)
+
+        recyclerView.setupHorizontalList(
+            adapter = numberAdapter,
+            snapHelper = snapHelper
+        )
+        scrollListener.attach(recyclerView)
+
         numberAdapter.submitList(itemRange)
+        return scrollListener
     }
-    /** todo: problematic when the value is 0, the label becomes empty,
-    *       i think the problem from scroll listener/item scale animator
-    */
 
     private fun setupEpisodesRecyclerView(maxEpisodesValue: Int?) = with(binding) {
-        val maxEpisodeCount = maxEpisodesValue?.takeIf { it > 0 } ?: 9999
+        val maxEpisodeCount = maxEpisodesValue?.takeIf { it > 0 } ?: UShort.MAX_VALUE.toInt()
 
-        setupCenteringRecyclerView(
+        episodesScrollListener = setupCenteringRecyclerView(
             recyclerView = progress.recyclerView,
             maxitems = maxEpisodeCount,
             snapHelper = episodesSnapHelper,
         ) { selectedEpisode ->
             ownListViewModel.updateSelectedEpisode(selectedEpisode)
-        } //todo: problematic when there is only 1 episode
+        }
     }
 
     private fun setupScoreRecyclerView() = with(binding) {
         val scoreLabels = scoreStringMap(requireContext())
 
-        setupCenteringRecyclerView(
+        scoreScrollListener = setupCenteringRecyclerView(
             recyclerView = score.recyclerView,
             maxitems = scoreLabels.size - 1,
             snapHelper = scoreSnapHelper,
@@ -543,12 +542,8 @@ class EditOwnListFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        activeScrollListeners.forEach { (recyclerView, listeners) ->
-            listeners.forEach { listener ->
-                recyclerView.removeOnScrollListener(listener)
-            }
-        }
-        activeScrollListeners.clear()
+        episodesScrollListener?.detach(binding.progress.recyclerView)
+        scoreScrollListener?.detach(binding.score.recyclerView)
         episodesSnapHelper.attachToRecyclerView(null)
         scoreSnapHelper.attachToRecyclerView(null)
         _binding = null

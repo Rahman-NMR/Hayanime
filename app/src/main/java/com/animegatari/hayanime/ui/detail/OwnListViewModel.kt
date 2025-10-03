@@ -129,13 +129,18 @@ class OwnListViewModel @Inject constructor(
         copy(status = selectedChip.orEmpty())
     }
 
-    fun updateSelectedEpisode(selectedEpisode: Int = 0, isForceFinish: Boolean = false) = updateMyListStatus {
-        var newNumEpisodeWatched: Int? = selectedEpisode
-        if (isForceFinish) {
-            newNumEpisodeWatched = _originalAnimeData.value?.numEpisodes
+    fun updateSelectedEpisode(selectedEpisode: Int) = updateMyListStatus {
+        copy(numWatchedEpisodes = selectedEpisode, numEpisodesWatched = selectedEpisode)
+    }
+
+    fun forceUpdateEpisodesWatched(selectedStatus: String?) = updateMyListStatus {
+        val currentStatus = _newestAnimeData.value?.myListStatus?.status
+        if (selectedStatus == currentStatus) {
+            return@updateMyListStatus this
         }
 
-        copy(numWatchedEpisodes = newNumEpisodeWatched, numEpisodesWatched = newNumEpisodeWatched)
+        val totalEpisodesWatched = _originalAnimeData.value?.numEpisodes
+        copy(numWatchedEpisodes = totalEpisodesWatched, numEpisodesWatched = totalEpisodesWatched)
     }
 
     fun updateSelectedScore(selectedScore: Int) = updateMyListStatus {
