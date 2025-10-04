@@ -40,7 +40,7 @@ class MyListViewModel @Inject constructor(
                 sort = "list_updated_at",
                 isNsfw = true,
                 limitConfig = Config.DEFAULT_PAGE_LIMIT,
-                commonFields = Config.COMMON_ANIME_FIELDS
+                commonFields = Config.MYLIST_ANIME_FIELDS
             )
         }.cachedIn(viewModelScope)
 

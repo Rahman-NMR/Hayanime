@@ -4,8 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.animegatari.hayanime.core.Config.COMMON_ANIME_FIELDS
-import com.animegatari.hayanime.core.Config.DEFAULT_PAGE_LIMIT
+import com.animegatari.hayanime.core.Config
 import com.animegatari.hayanime.data.remote.response.AnimeList
 import com.animegatari.hayanime.domain.repository.AnimeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,15 +26,15 @@ class SearchViewModel @Inject constructor(
             if (query.isEmpty()) {
                 animeRepository.suggestedAnime(
                     isNsfw = true,
-                    limitConfig = DEFAULT_PAGE_LIMIT,
-                    commonFields = COMMON_ANIME_FIELDS
+                    limitConfig = Config.DEFAULT_PAGE_LIMIT,
+                    commonFields = Config.ANIME_LIST_FIELDS
                 )
             } else {
                 animeRepository.searchAnime(
                     query = query,
                     isNsfw = true,
-                    limitConfig = DEFAULT_PAGE_LIMIT,
-                    commonFields = COMMON_ANIME_FIELDS
+                    limitConfig = Config.DEFAULT_PAGE_LIMIT,
+                    commonFields = Config.ANIME_LIST_FIELDS
                 )
             }
         }.cachedIn(viewModelScope)

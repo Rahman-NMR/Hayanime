@@ -4,8 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.animegatari.hayanime.core.Config.COMMON_ANIME_FIELDS
-import com.animegatari.hayanime.core.Config.DEFAULT_PAGE_LIMIT
+import com.animegatari.hayanime.core.Config
 import com.animegatari.hayanime.data.local.datamodel.SeasonModel
 import com.animegatari.hayanime.data.remote.response.AnimeList
 import com.animegatari.hayanime.domain.repository.AnimeRepository
@@ -42,8 +41,8 @@ class SeasonViewModel @Inject constructor(
     }.flatMapLatest { dataModel ->
         animeRepository.seasonalAnime(
             seasonModel = dataModel,
-            limitConfig = DEFAULT_PAGE_LIMIT,
-            commonFields = COMMON_ANIME_FIELDS
+            limitConfig = Config.DEFAULT_PAGE_LIMIT,
+            commonFields = Config.ANIME_LIST_FIELDS
         )
     }.cachedIn(viewModelScope)
 
