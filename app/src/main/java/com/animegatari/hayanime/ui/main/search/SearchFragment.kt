@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
@@ -28,11 +29,14 @@ import com.animegatari.hayanime.ui.base.ReselectableFragment
 import com.animegatari.hayanime.ui.base.ViewActionListener
 import com.animegatari.hayanime.ui.detail.EditOwnListFragment
 import com.animegatari.hayanime.ui.main.MainViewModel
+import com.animegatari.hayanime.ui.main.ProfileMenuViewModel
 import com.animegatari.hayanime.ui.utils.animation.ViewSlideInOutAnimation.ANIMATION_DURATION
 import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
+import com.animegatari.hayanime.ui.utils.extension.ProfileImage.loadProfileImage
 import com.animegatari.hayanime.ui.utils.layout.SpanCalculator.calculateSpanCount
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showSnackbar
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showToast
+import com.bumptech.glide.Glide
 import com.google.android.material.search.SearchView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -46,6 +50,7 @@ class SearchFragment : Fragment(), ReselectableFragment {
 
     private val searchViewModel: SearchViewModel by viewModels()
     private val mainViewModel: MainViewModel by activityViewModels()
+    private val profileViewModel: ProfileMenuViewModel by activityViewModels()
 
     private var viewActionListener: ViewActionListener? = null
     private lateinit var searchViewBackCallback: OnBackPressedCallback
@@ -104,6 +109,19 @@ class SearchFragment : Fragment(), ReselectableFragment {
             scrollToTopOnLoad(animeAdapter)
             swipeRefresh.isRefreshing = false
         }
+        searchBar.setOnMenuItemClickListener { menuItem ->
+            handleMenuItemClick(menuItem)
+        }
+    }
+
+    private fun handleMenuItemClick(menuItem: MenuItem?): Boolean = when (menuItem?.itemId) {
+        R.id.menu_item_avatar -> {
+            showToast(requireContext(), "TODO go to profile")
+
+            true
+        }
+
+        else -> false
     }
 
     private fun handleSearchInput(animeAdapter: AnimeGridAdapter) = with(binding) {
@@ -158,6 +176,15 @@ class SearchFragment : Fragment(), ReselectableFragment {
         recyclerView.adapter = animeAdapter
     }
 
+    private fun loadProfileImage(imageUri: String?) = with(binding) {
+        searchBar.menu.loadProfileImage(
+            glide = Glide.with(requireContext()),
+            lifecycle = viewLifecycleOwner.lifecycleScope,
+            profilePictureUrl = imageUri,
+            menuItemId = R.id.menu_item_avatar
+        )
+    }
+
     private fun scrollToTopOnLoad(animeAdapter: AnimeGridAdapter) = viewLifecycleOwner.lifecycleScope.launch {
         animeAdapter.loadStateFlow.awaitNotLoading()
         binding.recyclerView.scrollToPosition(0)
@@ -185,6 +212,12 @@ class SearchFragment : Fragment(), ReselectableFragment {
             searchViewModel.animeList
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collectLatest { animeAdapter.submitData(it) }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            profileViewModel.profileImageUri
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collectLatest { loadProfileImage(it) }
         }
     }
 

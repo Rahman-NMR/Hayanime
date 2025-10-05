@@ -3,17 +3,20 @@ package com.animegatari.hayanime.di
 import android.content.Context
 import com.animegatari.hayanime.BuildConfig
 import com.animegatari.hayanime.data.local.datastore.TokenDataStore
+import com.animegatari.hayanime.data.remote.api.AnimeApiService
+import com.animegatari.hayanime.data.remote.api.AuthApiService
+import com.animegatari.hayanime.data.remote.api.UserAnimeListApiService
+import com.animegatari.hayanime.data.remote.api.UserInfoApiService
 import com.animegatari.hayanime.data.remote.okhttp.AuthInterceptor
 import com.animegatari.hayanime.data.remote.okhttp.TokenAuthenticator
-import com.animegatari.hayanime.data.remote.api.AnimeApiService
-import com.animegatari.hayanime.data.remote.api.UserAnimeListApiService
-import com.animegatari.hayanime.data.remote.api.AuthApiService
 import com.animegatari.hayanime.data.repository.AnimeRepositoryImpl
-import com.animegatari.hayanime.domain.repository.AuthRepository
 import com.animegatari.hayanime.data.repository.AuthRepositoryImpl
 import com.animegatari.hayanime.data.repository.UserAnimeListRepositoryImpl
+import com.animegatari.hayanime.data.repository.UserInfoRepositoryImpl
 import com.animegatari.hayanime.domain.repository.AnimeRepository
+import com.animegatari.hayanime.domain.repository.AuthRepository
 import com.animegatari.hayanime.domain.repository.UserAnimeListRepository
+import com.animegatari.hayanime.domain.repository.UserInfoRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -42,6 +45,10 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindUserAnimeListRepository(userAnimeListRepositoryImpl: UserAnimeListRepositoryImpl): UserAnimeListRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserInfoRepository(userInfoRepositoryImpl: UserInfoRepositoryImpl): UserInfoRepository
 
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
@@ -130,6 +137,12 @@ abstract class AppModule {
         @Singleton
         fun provideUserAnimeListApiService(@ApiRetrofit retrofit: Retrofit): UserAnimeListApiService {
             return retrofit.create(UserAnimeListApiService::class.java)
+        }
+
+        @Provides
+        @Singleton
+        fun provideUserInfoApiService(@ApiRetrofit retrofit: Retrofit): UserInfoApiService {
+            return retrofit.create(UserInfoApiService::class.java)
         }
 
         @Provides

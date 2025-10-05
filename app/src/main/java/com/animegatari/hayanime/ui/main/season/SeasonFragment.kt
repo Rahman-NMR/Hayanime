@@ -28,13 +28,16 @@ import com.animegatari.hayanime.ui.base.ReselectableFragment
 import com.animegatari.hayanime.ui.detail.EditOwnListFragment
 import com.animegatari.hayanime.ui.dialog.YearPickerDialogFragment
 import com.animegatari.hayanime.ui.main.MainViewModel
+import com.animegatari.hayanime.ui.main.ProfileMenuViewModel
 import com.animegatari.hayanime.ui.utils.animation.ViewSlideInOutAnimation.ANIMATION_DURATION
 import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
+import com.animegatari.hayanime.ui.utils.extension.ProfileImage.loadProfileImage
 import com.animegatari.hayanime.ui.utils.layout.SpanCalculator.calculateSpanCount
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showToast
+import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -44,6 +47,7 @@ class SeasonFragment : Fragment(), ReselectableFragment {
 
     private val seasonViewModel: SeasonViewModel by activityViewModels()
     private val mainViewModel: MainViewModel by activityViewModels()
+    private val profileViewModel: ProfileMenuViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSeasonBinding.inflate(inflater, container, false)
@@ -195,6 +199,15 @@ class SeasonFragment : Fragment(), ReselectableFragment {
         recyclerView.adapter = animeAdapter
     }
 
+    private fun loadProfileImage(imageUri: String?) = with(binding) {
+        toolBar.menu.loadProfileImage(
+            glide = Glide.with(requireContext()),
+            lifecycle = viewLifecycleOwner.lifecycleScope,
+            profilePictureUrl = imageUri,
+            menuItemId = R.id.menu_item_avatar
+        )
+    }
+
     private fun scrollToTopOnLoad(animeAdapter: AnimeGridAdapter) = viewLifecycleOwner.lifecycleScope.launch {
         animeAdapter.loadStateFlow.awaitNotLoading()
         binding.recyclerView.scrollToPosition(0)
@@ -240,6 +253,12 @@ class SeasonFragment : Fragment(), ReselectableFragment {
             seasonViewModel.animeList
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collectLatest { animeAdapter.submitData(it) }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            profileViewModel.profileImageUri
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collectLatest { loadProfileImage(it) }
         }
     }
 
