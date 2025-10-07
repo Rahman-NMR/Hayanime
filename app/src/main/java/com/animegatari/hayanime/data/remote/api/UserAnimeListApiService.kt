@@ -1,7 +1,8 @@
 package com.animegatari.hayanime.data.remote.api
 
 import com.animegatari.hayanime.data.remote.response.AnimeListResponse
-import com.animegatari.hayanime.data.remote.response.ErrorResponse
+import okhttp3.ResponseBody
+import retrofit2.Response
 import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -36,12 +37,12 @@ interface UserAnimeListApiService {
         @Field("comments") comments: String? = null,
         @Field("start_date") startDate: String? = null,
         @Field("finish_date") finishDate: String? = null,
-    ): ErrorResponse
+    ): Response<ResponseBody>
 
     @DELETE("anime/{anime_id}/my_list_status")
     suspend fun deleteAnimeFromList(
         @Path("anime_id") animeId: Int,
-    ): ErrorResponse
+    ): Response<ResponseBody>
 
     @FormUrlEncoded
     @PATCH("anime/{anime_id}/my_list_status")
@@ -50,5 +51,5 @@ interface UserAnimeListApiService {
         @Field("num_watched_episodes") numWatchedEpisodes: Int? = null,
         @Field("status") status: String? = null,
         @Field("finish_date") finishDate: String? = null,
-    ): ErrorResponse
+    ): Response<ResponseBody>
 }

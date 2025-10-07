@@ -25,8 +25,8 @@ android {
         applicationId = "com.animegatari.hayanime"
         minSdk = 28
         targetSdk = 36
-        versionCode = 31
-        versionName = "0.2.2"
+        versionCode = 32
+        versionName = "0.2.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

@@ -9,8 +9,10 @@ import com.animegatari.hayanime.data.pagination.AnimePagingSource
 import com.animegatari.hayanime.data.remote.api.AnimeApiService
 import com.animegatari.hayanime.data.remote.api.UserAnimeListApiService
 import com.animegatari.hayanime.data.remote.response.AnimeList
+import com.animegatari.hayanime.data.remote.response.ErrorResponse
 import com.animegatari.hayanime.domain.repository.UserAnimeListRepository
 import com.animegatari.hayanime.domain.utils.Response
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -78,10 +80,12 @@ class UserAnimeListRepositoryImpl @Inject constructor(
                 comments = myListStatus?.comments
             )
 
-            if (response.error.isNullOrBlank()) {
+            if (response.isSuccessful) {
                 Response.Success(Unit)
             } else {
-                Response.Error(response.message)
+                val errorBody = response.errorBody()?.string()
+                val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+                Response.Error(errorResponse.message)
             }
         } catch (e: Exception) {
             Response.Error(e.localizedMessage)
@@ -102,10 +106,12 @@ class UserAnimeListRepositoryImpl @Inject constructor(
                 finishDate = finishDate
             )
 
-            if (response.error.isNullOrBlank()) {
+            if (response.isSuccessful) {
                 Response.Success(Unit)
             } else {
-                Response.Error(response.message)
+                val errorBody = response.errorBody()?.string()
+                val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+                Response.Error(errorResponse.message)
             }
         } catch (e: Exception) {
             Response.Error(e.localizedMessage)
@@ -116,10 +122,12 @@ class UserAnimeListRepositoryImpl @Inject constructor(
         return try {
             val response = userAnimeService.deleteAnimeFromList(animeId)
 
-            if (response.error.isNullOrBlank()) {
+            if (response.isSuccessful) {
                 Response.Success(Unit)
             } else {
-                Response.Error(response.message)
+                val errorBody = response.errorBody()?.string()
+                val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+                Response.Error(errorResponse.message)
             }
         } catch (e: Exception) {
             Response.Error(e.localizedMessage)
