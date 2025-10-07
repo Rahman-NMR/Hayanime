@@ -105,6 +105,7 @@ class SearchFragment : Fragment(), ReselectableFragment {
 
     private fun setupInteractions(animeAdapter: AnimeGridAdapter) = with(binding) {
         swipeRefresh.setOnRefreshListener {
+            profileViewModel.getProfileImage()
             animeAdapter.refresh()
             scrollToTopOnLoad(animeAdapter)
             swipeRefresh.isRefreshing = false

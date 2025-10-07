@@ -113,6 +113,7 @@ class SeasonFragment : Fragment(), ReselectableFragment {
             scrollToTopOnLoad(animeAdapter)
         }
         swipeRefresh.setOnRefreshListener {
+            profileViewModel.getProfileImage()
             animeAdapter.refresh()
             scrollToTopOnLoad(animeAdapter)
             swipeRefresh.isRefreshing = false

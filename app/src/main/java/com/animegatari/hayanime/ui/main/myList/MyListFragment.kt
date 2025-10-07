@@ -96,6 +96,7 @@ class MyListFragment : Fragment(), ReselectableFragment {
             scrollToTopOnLoad(myListAdapter)
         }
         swipeRefresh.setOnRefreshListener {
+            profileViewModel.getProfileImage()
             myListAdapter.refresh()
             scrollToTopOnLoad(myListAdapter)
             swipeRefresh.isRefreshing = false
