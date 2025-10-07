@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.animegatari.hayanime.core.Config
+import com.animegatari.hayanime.data.local.datamodel.DateComponents
 import com.animegatari.hayanime.data.remote.response.AnimeList
 import com.animegatari.hayanime.data.types.WatchingStatus
 import com.animegatari.hayanime.domain.repository.UserAnimeListRepository
@@ -68,7 +69,11 @@ class MyListViewModel @Inject constructor(
 
         if (numEpisode != null && numEpisode > 0 && newProgressEpisode == numEpisode) {
             isCompletedWatching = WatchingStatus.COMPLETED.apiValue
-            finishDate = "${getCurrentYear()}-${getCurrentMonth()}-${getCurrentDay()}"
+            finishDate = DateComponents(
+                year = getCurrentYear().toString(),
+                month = getCurrentMonth().toString().padStart(2, '0'),
+                day = getCurrentDay().toString().padStart(2, '0')
+            ).toFormattedString()
         }
 
         userAnimeListRepository.updateAnimeProgress(animeId, newProgressEpisode, isCompletedWatching, finishDate)
