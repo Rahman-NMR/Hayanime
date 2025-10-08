@@ -1,0 +1,10 @@
+<resources>
+
+    <style name="ThemeOverlay.Preference" parent="ThemeOverlay.Material3">
+        <item name="switchPreferenceCompatStyle">@style/PreferenceMaterialSwitch</item>
+    </style>
+
+    <style name="PreferenceMaterialSwitch" parent="@style/Preference.SwitchPreferenceCompat.Material">
+        <item name="widgetLayout">@layout/preference_switch</item>
+    </style>
+</resources>

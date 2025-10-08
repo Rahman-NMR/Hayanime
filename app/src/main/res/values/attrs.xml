@@ -15,4 +15,6 @@
     <attr name="colorOnDroppedColor" format="color" />
     <attr name="colorDroppedColorContainer" format="color" />
     <attr name="colorOnDroppedColorContainer" format="color" />
+    <attr name="colorMale" format="color" />
+    <attr name="colorFemale" format="color" />
 </resources>

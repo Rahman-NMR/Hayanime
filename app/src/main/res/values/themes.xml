@@ -64,6 +64,9 @@
         <item name="colorOnDroppedColor">@color/colorOnDroppedColor</item>
         <item name="colorDroppedColorContainer">@color/colorDroppedColorContainer</item>
         <item name="colorOnDroppedColorContainer">@color/colorOnDroppedColorContainer</item>
+
+        <item name="colorMale">@color/colorMale</item>
+        <item name="colorFemale">@color/colorFemale</item>
     </style>
 
     <style name="MainTheme.Hayanime" parent="Theme.Hayanime">
@@ -97,5 +100,7 @@
 
         <!-- costume. -->
         <item name="chipStyle">@style/Material.Chip</item>
+        <item name="preferenceTheme">@style/ThemeOverlay.Preference</item>
+        <item name="colorAccent">?attr/colorTertiary</item>
     </style>
 </resources>

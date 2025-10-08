@@ -2,6 +2,7 @@ package com.animegatari.hayanime.di
 
 import android.content.Context
 import com.animegatari.hayanime.BuildConfig
+import com.animegatari.hayanime.data.local.datastore.SettingsPreferences
 import com.animegatari.hayanime.data.local.datastore.TokenDataStore
 import com.animegatari.hayanime.data.remote.api.AnimeApiService
 import com.animegatari.hayanime.data.remote.api.AuthApiService
@@ -149,6 +150,12 @@ abstract class AppModule {
         @Singleton
         fun provideTokenDataStore(@ApplicationContext context: Context): TokenDataStore {
             return TokenDataStore(context)
+        }
+
+        @Provides
+        @Singleton
+        fun provideSettingsDataStore(@ApplicationContext context: Context): SettingsPreferences {
+            return SettingsPreferences(context)
         }
     }
 }

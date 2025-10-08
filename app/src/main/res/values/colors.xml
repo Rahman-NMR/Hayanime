@@ -64,4 +64,7 @@
     <color name="colorOnDroppedColor">#FFFFFF</color>
     <color name="colorDroppedColorContainer">#FFDAD6</color>
     <color name="colorOnDroppedColorContainer">#73332F</color>
+
+    <color name="colorMale">#119CC8</color>
+    <color name="colorFemale">#F94CAA</color>
 </resources>

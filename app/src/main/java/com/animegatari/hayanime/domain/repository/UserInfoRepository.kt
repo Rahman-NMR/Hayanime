@@ -5,4 +5,5 @@ import com.animegatari.hayanime.domain.utils.Response
 
 interface UserInfoRepository {
     suspend fun getProfileImage(): Response<UserInfo>
+    suspend fun getProfileInfo(): Response<UserInfo>
 }

@@ -64,5 +64,8 @@
         <item name="colorOnDroppedColor">@color/colorOnDroppedColor</item>
         <item name="colorDroppedColorContainer">@color/colorDroppedColorContainer</item>
         <item name="colorOnDroppedColorContainer">@color/colorOnDroppedColorContainer</item>
+
+        <item name="colorMale">@color/colorMale</item>
+        <item name="colorFemale">@color/colorFemale</item>
     </style>
 </resources>

@@ -14,12 +14,18 @@
     <string name="title_choose_x_year">Choose %1$s Year</string>
     <string name="title_edit_anime">Edit Anime Details</string>
     <string name="title_delete_anime_confirmation">Delete Anime from the List?</string>
+    <string name="title_user_stats">User Statistics</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_profile_info">Profile Info</string>
+    <string name="title_myanimelist_stats">MyAnimeList Statistics</string>
+
+    <string name="body_myanimelist_stats">Watchlist statistics from anime lists on MyAnimeList</string>
 
     <string name="search_hint">Search anime from MyAnimeList</string>
 
-    <string name="label_login_with_mal">Login with MyAnimeList</string>
-    <string name="label_header_on_start_page">Discover Your Favorite Anime.</string>
-    <string name="label_subheader_on_start_page">Find and save anime to your personal list.</string>
+    <string name="header_start_page">Discover Your Favorite Anime.</string>
+    <string name="subheader_start_page">Find and save anime to your personal list.</string>
+
     <string name="label_episode">Episode</string>
     <string name="label_nsfw">NSFW</string>
     <string name="label_episode_duration">%1$s/eps</string>
@@ -49,11 +55,15 @@
     <string name="label_show_advanced">Show Advanced</string>
     <string name="label_hide_advanced">Hide Advanced</string>
     <string name="label_no_status">No Status</string>
+    <string name="label_supporter">I\'m a supporter</string>
+    <string name="label_not_supporter">Not a supporter</string>
 
     <string name="action_delete">Delete</string>
+    <string name="btn_login_with_mal">Login with MyAnimeList</string>
 
     <string name="info_empty_initial_search">Oops! You haven\'t performed any searches yet</string>
     <string name="info_no_results_found">No results found for %1$s</string>
+
     <string name="description_profile">Profile</string>
     <string name="description_edit_this_anime">Edit this anime</string>
     <string name="description_add_one_episode">Add one episode</string>
@@ -71,4 +81,13 @@
     <string name="message_anime_updated_successfully">Anime details updated successfully</string>
     <string name="message_anime_deleted_successfully">Anime removed from your list</string>
     <string name="message_same_data">The data is totally same</string>
+
+    <!-- Preference: NSFW -->
+    <string name="settings_nsfw_title">NSFW Content</string>
+    <string name="pref_nsfw_search_title">Search results</string>
+    <string name="pref_nsfw_search_summary_off">Don\'t show anime containing NSFW in search results</string>
+    <string name="pref_nsfw_search_summary_on">Anime containing NSFW will be shown in search results</string>
+    <string name="pref_nsfw_suggestions_title">Suggestions</string>
+    <string name="pref_nsfw_suggestions_summary_off">Don\'t include NSFW content in suggestions</string>
+    <string name="pref_nsfw_suggestions_summary_on">Anime containing NSFW will be included in suggestions</string>
 </resources>

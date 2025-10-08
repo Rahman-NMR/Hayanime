@@ -1,5 +1,6 @@
 package com.animegatari.hayanime.data.repository
 
+import com.animegatari.hayanime.core.Config
 import com.animegatari.hayanime.data.model.UserInfo
 import com.animegatari.hayanime.data.remote.api.UserInfoApiService
 import com.animegatari.hayanime.domain.repository.UserInfoRepository
@@ -15,8 +16,22 @@ class UserInfoRepositoryImpl @Inject constructor(
         return try {
             val response = userInfoApiService.getUserInfo("id,picture")
 
-            if (response.picture.isNullOrBlank().not()) {
-                Response.Success(response)
+            if (response.isSuccessful) {
+                Response.Success(response.body())
+            } else {
+                Response.Error()
+            }
+        } catch (e: Exception) {
+            Response.Error(e.localizedMessage)
+        }
+    }
+
+    override suspend fun getProfileInfo(): Response<UserInfo> {
+        return try {
+            val response = userInfoApiService.getUserInfo("${Config.USER_INFO_FIELDS},${Config.USER_INFO_MORE_FIELDS}")
+
+            if (response.isSuccessful) {
+                Response.Success(response.body())
             } else {
                 Response.Error()
             }

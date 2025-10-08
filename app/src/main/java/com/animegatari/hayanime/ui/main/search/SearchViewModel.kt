@@ -25,14 +25,12 @@ class SearchViewModel @Inject constructor(
         .flatMapLatest { query ->
             if (query.isEmpty()) {
                 animeRepository.suggestedAnime(
-                    isNsfw = true,
                     limitConfig = Config.DEFAULT_PAGE_LIMIT,
                     commonFields = Config.ANIME_LIST_FIELDS
                 )
             } else {
                 animeRepository.searchAnime(
                     query = query,
-                    isNsfw = true,
                     limitConfig = Config.DEFAULT_PAGE_LIMIT,
                     commonFields = Config.ANIME_LIST_FIELDS
                 )

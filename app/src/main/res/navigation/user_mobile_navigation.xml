@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/user_mobile_navigation"
+    app:startDestination="@id/navigation_user_stats">
+
+    <fragment
+        android:id="@+id/navigation_user_stats"
+        android:name="com.animegatari.hayanime.ui.profile.userStats.UserStatsFragment"
+        android:label="@string/title_user_stats"
+        tools:layout="@layout/fragment_user_stats">
+
+        <action
+            android:id="@+id/action_userStatsFragment_to_settingsFragment"
+            app:destination="@id/navigation_settings"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.animegatari.hayanime.ui.profile.settings.SettingsFragment"
+        android:label="@string/title_settings" />
+</navigation>

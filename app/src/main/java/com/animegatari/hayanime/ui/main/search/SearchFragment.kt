@@ -30,6 +30,7 @@ import com.animegatari.hayanime.ui.base.ViewActionListener
 import com.animegatari.hayanime.ui.detail.EditOwnListFragment
 import com.animegatari.hayanime.ui.main.MainViewModel
 import com.animegatari.hayanime.ui.main.ProfileMenuViewModel
+import com.animegatari.hayanime.ui.profile.ProfileActivity
 import com.animegatari.hayanime.ui.utils.animation.ViewSlideInOutAnimation.ANIMATION_DURATION
 import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
 import com.animegatari.hayanime.ui.utils.extension.ProfileImage.loadProfileImage
@@ -117,8 +118,7 @@ class SearchFragment : Fragment(), ReselectableFragment {
 
     private fun handleMenuItemClick(menuItem: MenuItem?): Boolean = when (menuItem?.itemId) {
         R.id.menu_item_avatar -> {
-            showToast(requireContext(), "TODO go to profile")
-
+            startActivity(Intent(requireContext(), ProfileActivity::class.java))
             true
         }
 
