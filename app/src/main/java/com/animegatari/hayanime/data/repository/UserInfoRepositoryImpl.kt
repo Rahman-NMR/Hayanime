@@ -28,7 +28,9 @@ class UserInfoRepositoryImpl @Inject constructor(
 
     override suspend fun getProfileInfo(): Response<UserInfo> {
         return try {
-            val response = userInfoApiService.getUserInfo("${Config.USER_INFO_FIELDS},${Config.USER_INFO_MORE_FIELDS}")
+            val response = userInfoApiService.getUserInfo(
+                "${Config.USER_INFO_FIELDS},${Config.USER_INFO_MORE_FIELDS},{${Config.USER_INFO_ANIME_STATS_FIELDS}}"
+            )
 
             if (response.isSuccessful) {
                 Response.Success(response.body())

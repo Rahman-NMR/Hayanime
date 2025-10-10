@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/user_stats"
@@ -7,192 +7,323 @@
     android:layout_height="match_parent"
     tools:context=".ui.profile.userStats.UserStatsFragment">
 
-    <LinearLayout
-        android:id="@+id/profile_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|center"
-        android:background="@drawable/bg_bottom_corner_rounded"
-        android:backgroundTint="@color/md_theme_tertiaryContainer"
-        android:orientation="vertical"
-        android:paddingHorizontal="32dp"
-        android:paddingTop="48dp"
-        android:paddingBottom="16dp">
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/user_picture"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_gravity="center"
-            android:padding="2dp"
-            android:scaleType="centerCrop"
-            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.ExtraLarge"
-            app:srcCompat="@drawable/img_placeholder"
-            app:strokeColor="@color/md_theme_onTertiary"
-            app:strokeWidth="2dp" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/user_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="16dp"
-            android:text="@string/label_unknown"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/user_location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="4dp"
-            android:drawableStart="@drawable/ic_location_on_24px_rounded"
-            android:drawablePadding="4dp"
-            android:gravity="center_vertical"
-            android:text="@string/nothing"
-            android:textSize="16sp"
-            android:visibility="gone"
-            tools:visibility="visible" />
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/user_gender"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="4dp" />
-    </LinearLayout>
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/profile_info"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:padding="16dp"
-        app:layout_anchor="@id/profile_container"
-        app:layout_anchorGravity="bottom">
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/layout_padding_bottom">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/title_profile_info"
+        <LinearLayout
+            android:id="@+id/profile_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/title_profile_info"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/birth_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="4dp"
-            android:drawableStart="@drawable/ic_featured_seasonal_and_gifts_24px_rounded"
-            android:drawablePadding="4dp"
-            android:gravity="center_vertical"
-            android:text="@string/nothing"
-            android:textSize="16sp"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintEnd_toStartOf="@id/profile_guideline"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/title_profile_info" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/join_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="4dp"
-            android:drawableStart="@drawable/ic_calendar_today_24px_rounded"
-            android:drawablePadding="4dp"
-            android:gravity="center_vertical"
-            android:text="@string/nothing"
-            android:textSize="16sp"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintEnd_toStartOf="@id/profile_guideline"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/birth_date" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/profile_guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:background="@drawable/bg_bottom_corner_rounded"
+            android:backgroundTint="?attr/colorTertiaryContainer"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.55" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/timezone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="12dp"
-            android:drawableStart="@drawable/ic_nest_clock_farsight_analog_24px_rounded"
-            android:drawablePadding="4dp"
-            android:gravity="center_vertical"
-            android:text="@string/nothing"
-            android:textSize="16sp"
-            app:layout_constrainedWidth="true"
+            android:paddingHorizontal="32dp"
+            android:paddingTop="48dp"
+            android:paddingBottom="16dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@id/profile_guideline"
-            app:layout_constraintTop_toBottomOf="@id/title_profile_info" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/supporter_status"
-            android:layout_width="wrap_content"
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/user_picture"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center"
+                android:padding="2dp"
+                android:scaleType="centerCrop"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.ExtraLarge"
+                app:srcCompat="@drawable/img_placeholder"
+                app:strokeColor="?attr/colorOnTertiary"
+                app:strokeWidth="2dp" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="@string/nothing"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/user_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="4dp"
+                android:drawableStart="@drawable/ic_location_on_24px_rounded"
+                android:drawablePadding="4dp"
+                android:gravity="center_vertical"
+                android:text="@string/nothing"
+                android:textSize="16sp"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/user_gender"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/profile_info"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="8dp"
-            android:drawableStart="@drawable/ic_crown_24px_rounded"
-            android:drawablePadding="4dp"
-            android:gravity="center_vertical"
-            android:text="@string/nothing"
-            android:textSize="16sp"
-            app:layout_constrainedWidth="true"
+            android:layout_marginTop="16dp"
+            android:padding="16dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@id/profile_guideline"
-            app:layout_constraintTop_toBottomOf="@id/timezone" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/profile_container">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:padding="16dp"
-        app:layout_anchor="@id/profile_info"
-        app:layout_anchorGravity="bottom">
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/title_profile_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_profile_info"
+                android:textColor="?attr/colorTertiary"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/title_myanimelist_stats"
-            android:layout_width="wrap_content"
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/birth_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="4dp"
+                android:drawableStart="@drawable/ic_featured_seasonal_and_gifts_24px_rounded"
+                android:drawablePadding="4dp"
+                android:gravity="center_vertical"
+                android:text="@string/nothing"
+                android:textSize="16sp"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toStartOf="@id/profile_guideline"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/title_profile_info" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/join_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="4dp"
+                android:drawableStart="@drawable/ic_calendar_today_24px_rounded"
+                android:drawablePadding="4dp"
+                android:gravity="center_vertical"
+                android:text="@string/nothing"
+                android:textSize="16sp"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toStartOf="@id/profile_guideline"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/birth_date" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/profile_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.55" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/timezone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="12dp"
+                android:drawableStart="@drawable/ic_nest_clock_farsight_analog_24px_rounded"
+                android:drawablePadding="4dp"
+                android:gravity="center_vertical"
+                android:text="@string/nothing"
+                android:textSize="16sp"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@id/profile_guideline"
+                app:layout_constraintTop_toBottomOf="@id/title_profile_info" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/supporter_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="8dp"
+                android:drawableStart="@drawable/ic_crown_24px_rounded"
+                android:drawablePadding="4dp"
+                android:gravity="center_vertical"
+                android:text="@string/nothing"
+                android:textSize="16sp"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@id/profile_guideline"
+                app:layout_constraintTop_toBottomOf="@id/timezone" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/mal_stats"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/title_myanimelist_stats"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constrainedWidth="true"
+            android:padding="16dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/profile_info">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/title_myanimelist_stats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_myanimelist_stats"
+                android:textColor="?attr/colorTertiary"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/body_myanimelist_stats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha="0.8"
+                android:text="@string/body_myanimelist_stats"
+                android:textSize="16sp"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/title_myanimelist_stats" />
+
+            <androidx.constraintlayout.helper.widget.Flow
+                android:id="@+id/flow_chart"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:constraint_referenced_ids="pie_chart, legend_chart_container"
+                app:flow_horizontalAlign="center"
+                app:flow_horizontalGap="16dp"
+                app:flow_horizontalStyle="packed"
+                app:flow_verticalAlign="top"
+                app:flow_verticalGap="16dp"
+                app:flow_wrapMode="chain"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/body_myanimelist_stats" />
+
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/pie_chart"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                app:layout_constrainedWidth="true" />
+
+            <androidx.constraintlayout.helper.widget.Flow
+                android:id="@+id/legend_chart_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="legend_watching, legend_complete, legend_on_hold, legend_dropped, legend_plan_to_watch"
+                app:flow_maxElementsWrap="2"
+                app:flow_wrapMode="chain"
+                app:layout_constrainedWidth="true" />
+
+            <include
+                android:id="@+id/legend_watching"
+                layout="@layout/include_legend_status_watching"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintWidth_min="100dp" />
+
+            <include
+                android:id="@+id/legend_complete"
+                layout="@layout/include_legend_status_watching"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintWidth_min="100dp" />
+
+            <include
+                android:id="@+id/legend_on_hold"
+                layout="@layout/include_legend_status_watching"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintWidth_min="100dp" />
+
+            <include
+                android:id="@+id/legend_dropped"
+                layout="@layout/include_legend_status_watching"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintWidth_min="100dp" />
+
+            <include
+                android:id="@+id/legend_plan_to_watch"
+                layout="@layout/include_legend_status_watching"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintWidth_min="100dp" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrier_chart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:barrierMargin="16dp"
+                app:constraint_referenced_ids="pie_chart, legend_chart_container" />
+
+            <androidx.constraintlayout.helper.widget.Flow
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="sum_episodes, sum_rewatched, sum_mean"
+                app:flow_horizontalGap="16dp"
+                app:flow_horizontalStyle="packed"
+                app:flow_verticalGap="16dp"
+                app:flow_wrapMode="chain"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/barrier_chart" />
+
+            <include
+                android:id="@+id/sum_episodes"
+                layout="@layout/include_summary_stats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintWidth_min="100dp" />
+
+            <include
+                android:id="@+id/sum_rewatched"
+                layout="@layout/include_summary_stats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintWidth_min="100dp" />
+
+            <include
+                android:id="@+id/sum_mean"
+                layout="@layout/include_summary_stats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintWidth_min="100dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/loading_indicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/body_myanimelist_stats"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:alpha="0.8"
-            android:text="@string/body_myanimelist_stats"
-            android:textSize="16sp"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/title_myanimelist_stats" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.core.widget.NestedScrollView>

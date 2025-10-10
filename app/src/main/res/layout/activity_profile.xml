@@ -24,7 +24,6 @@
             android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"
             app:buttonGravity="center_vertical"
-            app:layout_scrollFlags="scroll|enterAlways|snap"
             app:navigationIcon="@drawable/ic_close_24px_rounded" />
     </com.google.android.material.appbar.AppBarLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -2,9 +2,12 @@ package com.animegatari.hayanime.ui.utils.interfaces
 
 import android.content.Context
 import android.text.Editable
+import android.text.SpannableString
+import android.text.style.AbsoluteSizeSpan
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import com.animegatari.hayanime.R
+import com.animegatari.hayanime.utils.FormatterUtils.formatDecimal
 import com.google.android.material.textfield.TextInputEditText
 
 object UiUtils {
@@ -37,5 +40,17 @@ object UiUtils {
             val imm = it.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             imm?.hideSoftInputFromWindow(it.windowToken, 0)
         }
+    }
+
+    fun createStatSpannable(context: Context, value: Number, label: String): SpannableString {
+        val valueStr = if (value is Float) formatDecimal(value) else value.toString()
+        val text = "$valueStr\n$label"
+        val spannable = SpannableString(text)
+        val textSizeLarge = context.resources.getDimensionPixelSize(R.dimen.pie_chart_center_text_large)
+        val textSizeSmall = context.resources.getDimensionPixelSize(R.dimen.pie_chart_center_text_small)
+
+        spannable.setSpan(AbsoluteSizeSpan(textSizeLarge), 0, valueStr.length, 0)
+        spannable.setSpan(AbsoluteSizeSpan(textSizeSmall), valueStr.length, text.length, 0)
+        return spannable
     }
 }

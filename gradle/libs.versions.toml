@@ -27,6 +27,7 @@ splashscreen = "1.0.1"
 paging = "3.3.6"
 glide = "5.0.5"
 preference = "1.2.1"
+androidchart = "v3.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -58,6 +59,7 @@ androidx-splashscreen = { group = "androidx.core", name = "core-splashscreen", v
 androidx-paging = { group = "androidx.paging", name = "paging-runtime", version.ref = "paging" }
 androidx-preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+androidchart = { group = "com.github.PhilJay", name = "MPAndroidChart", version.ref = "androidchart" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

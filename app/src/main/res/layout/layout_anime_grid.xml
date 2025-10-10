@@ -246,7 +246,7 @@
                 android:gravity="center_vertical"
                 android:maxWidth="65dp"
                 android:maxLines="1"
-                android:text="@string/label_episode"
+                android:text="@string/label_episodes"
                 android:textColor="?attr/colorSurfaceVariant" />
         </LinearLayout>
 

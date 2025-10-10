@@ -25,8 +25,8 @@ android {
         applicationId = "com.animegatari.hayanime"
         minSdk = 28
         targetSdk = 36
-        versionCode = 33
-        versionName = "0.2.4"
+        versionCode = 34
+        versionName = "0.2.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -75,6 +75,7 @@ dependencies {
     implementation(libs.androidx.paging)
     implementation(libs.androidx.preference)
     implementation(libs.glide)
+    implementation(libs.androidchart)
 
     // bussiness
     implementation(libs.androidx.lifecycle.livedata.ktx)

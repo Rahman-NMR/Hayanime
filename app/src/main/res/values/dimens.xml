@@ -4,6 +4,9 @@
     <dimen name="normal_dp">16dp</dimen>
     <dimen name="item_rv_scrolling_width">50dp</dimen>
 
+    <dimen name="pie_chart_center_text_large">24sp</dimen>
+    <dimen name="pie_chart_center_text_small">14sp</dimen>
+
     <item name="alpha_on_image" type="dimen">0.9</item>
     <integer name="text_max_length">255</integer>
 </resources>

@@ -23,22 +23,22 @@ data class UserAnimeStatistics(
     val numItems: Int? = null,
 
     @field:SerializedName("num_days_watched")
-    val numDaysWatched: Double? = null,
+    val numDaysWatched: Float? = null,
 
     @field:SerializedName("num_days_watching")
-    val numDaysWatching: Double? = null,
+    val numDaysWatching: Float? = null,
 
     @field:SerializedName("num_days_completed")
-    val numDaysCompleted: Double? = null,
+    val numDaysCompleted: Float? = null,
 
     @field:SerializedName("num_days_on_hold")
-    val numDaysOnHold: Double? = null,
+    val numDaysOnHold: Float? = null,
 
     @field:SerializedName("num_days_dropped")
-    val numDaysDropped: Double? = null,
+    val numDaysDropped: Float? = null,
 
     @field:SerializedName("num_days")
-    val numDays: Double? = null,
+    val numDays: Float? = null,
 
     @field:SerializedName("num_episodes")
     val numEpisodes: Int? = null,
@@ -47,5 +47,5 @@ data class UserAnimeStatistics(
     val numTimesRewatched: Int? = null,
 
     @field:SerializedName("mean_score")
-    val meanScore: Double? = null,
+    val meanScore: Float? = null,
 )

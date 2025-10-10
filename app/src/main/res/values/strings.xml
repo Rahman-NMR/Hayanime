@@ -26,7 +26,8 @@
     <string name="header_start_page">Discover Your Favorite Anime.</string>
     <string name="subheader_start_page">Find and save anime to your personal list.</string>
 
-    <string name="label_episode">Episode</string>
+    <string name="label_anime">Anime</string>
+    <string name="label_episodes">Episodes</string>
     <string name="label_nsfw">NSFW</string>
     <string name="label_episode_duration">%1$s/eps</string>
     <string name="label_cancel">Cancel</string>
@@ -47,6 +48,7 @@
     <string name="label_day">Day</string>
     <string name="label_today">Today</string>
     <string name="label_score">Score</string>
+    <string name="label_mean_score">Mean Score</string>
     <string name="label_comments">Comments</string>
     <string name="label_tags">Tags</string>
     <string name="label_remove_from_list">Remove from List</string>
@@ -57,6 +59,7 @@
     <string name="label_no_status">No Status</string>
     <string name="label_supporter">I\'m a supporter</string>
     <string name="label_not_supporter">Not a supporter</string>
+    <string name="label_rewatched">Rewatched</string>
 
     <string name="action_delete">Delete</string>
     <string name="btn_login_with_mal">Login with MyAnimeList</string>
