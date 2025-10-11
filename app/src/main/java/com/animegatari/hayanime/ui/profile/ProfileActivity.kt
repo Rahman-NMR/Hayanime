@@ -1,5 +1,6 @@
 package com.animegatari.hayanime.ui.profile
 
+import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -56,14 +57,16 @@ class ProfileActivity : AppCompatActivity() {
         menu.clear()
         inflateMenu(R.menu.profile_menu)
 
-        setNavigationIcon(R.drawable.ic_close_24px_rounded)
+        setNavigationIcon(R.drawable.avd_back_to_close_24)
+        (navigationIcon as? AnimatedVectorDrawable)?.start()
         setNavigationOnClickListener { finish() }
     }
 
     private fun configureToolbarForSubscreen(navController: NavController) = with(binding.toolBar) {
         menu.clear()
 
-        setNavigationIcon(R.drawable.ic_arrow_back_24px_rounded)
+        setNavigationIcon(R.drawable.avd_close_to_back_24)
+        (navigationIcon as? AnimatedVectorDrawable)?.start()
         setNavigationOnClickListener { navController.navigateUp() }
     }
 
