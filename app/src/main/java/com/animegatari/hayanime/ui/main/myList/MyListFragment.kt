@@ -37,6 +37,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 @AndroidEntryPoint
 class MyListFragment : Fragment(), ReselectableFragment {
@@ -88,7 +90,6 @@ class MyListFragment : Fragment(), ReselectableFragment {
 
     private fun initializeViews() = with(binding) {
         tvInfoMsg.text = getString(R.string.info_no_results_found, getString(R.string.title_my_list))
-        loadingIndicator.hide()
     }
 
     private fun setupInteractions(myListAdapter: MyListAdapter) = with(binding) {
@@ -100,7 +101,6 @@ class MyListFragment : Fragment(), ReselectableFragment {
             profileViewModel.getProfileImage()
             myListAdapter.refresh()
             scrollToTopOnLoad(myListAdapter)
-            swipeRefresh.isRefreshing = false
         }
         toolBar.setOnMenuItemClickListener { menuItem ->
             handleMenuItemClick(menuItem)
@@ -191,14 +191,14 @@ class MyListFragment : Fragment(), ReselectableFragment {
             val refreshState = loadStates.refresh
 
             binding.tvInfoMsg.isVisible = refreshState is LoadState.NotLoading && myListAdapter.itemCount == 0
-            binding.loadingIndicator.isVisible = when (refreshState) {
-                is LoadState.Loading -> true
-                is LoadState.Error -> {
-                    showToast(requireContext(), getString(R.string.message_error_occurred))
-                    false
-                }
+            binding.swipeRefresh.isRefreshing = refreshState is LoadState.Loading
 
-                else -> false
+            if (refreshState is LoadState.Error) {
+                when (refreshState.error) {
+                    is SocketTimeoutException -> myListAdapter.retry()
+                    is UnknownHostException -> mainViewModel.showSnackbar(getString(R.string.message_no_internet))
+                    else -> mainViewModel.showSnackbar(getString(R.string.message_error_occurred))
+                }
             }
         }
     }

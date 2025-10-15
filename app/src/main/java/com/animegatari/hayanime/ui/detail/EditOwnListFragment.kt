@@ -33,6 +33,7 @@ import com.animegatari.hayanime.ui.adapter.NumberAdapter
 import com.animegatari.hayanime.ui.dialog.YearPickerDialogFragment
 import com.animegatari.hayanime.ui.utils.extension.AutoCompleteTextViewExtensions.setupDropdownWithEnum
 import com.animegatari.hayanime.ui.utils.extension.AutoCompleteTextViewExtensions.setupSimpleDropdown
+import com.animegatari.hayanime.ui.utils.interfaces.AlertDialog.confirmationDialog
 import com.animegatari.hayanime.ui.utils.interfaces.UiUtils.handleTextChange
 import com.animegatari.hayanime.ui.utils.interfaces.UiUtils.hideKeyboardAndClearFocus
 import com.animegatari.hayanime.ui.utils.interfaces.UiUtils.scoreStringMap
@@ -46,7 +47,6 @@ import com.animegatari.hayanime.ui.utils.recyclerview.RecyclerViewUtils.setupHor
 import com.animegatari.hayanime.utils.DateInputUtils
 import com.animegatari.hayanime.utils.TimeUtils
 import com.google.android.material.chip.Chip
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -134,10 +134,7 @@ class EditOwnListFragment : Fragment() {
         btnActionSave.setOnClickListener { saveChanges() }
         btnActionExpand.setOnClickListener { toggleAdvancedOptions() }
         chipGroup.setOnCheckedStateChangeListener { _, checkedIds -> handleChipGroupSelection(checkedIds) }
-        swipeRefresh.setOnRefreshListener {
-            loadThisAnime()
-            swipeRefresh.isRefreshing = false
-        }
+        swipeRefresh.setOnRefreshListener { loadThisAnime() }
 
         setupDateInputListeners(
             dateBinding = startDate,
@@ -202,22 +199,23 @@ class EditOwnListFragment : Fragment() {
     }
 
     private fun openDeleteConfirmationDialog(): Boolean {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(getString(R.string.title_delete_anime_confirmation))
-            .setMessage(getString(R.string.message_delete_anime_confirmation))
-            .setPositiveButton(getString(R.string.action_delete)) { _, _ ->
-                ownListViewModel.deleteThisSeries(initialAnimeId) { response ->
-                    response.onSuccess {
-                        parentFragmentManager.setFragmentResult(requestKey, bundleOf(BUNDLE_KEY_DELETED to true))
-                        dismiss()
-                    }
-                    response.onError { message ->
-                        showSnackbar(requireView(), message ?: getString(R.string.message_failed_delete_anime))
-                    }
+        confirmationDialog(
+            context = requireContext(),
+            title = getString(R.string.title_delete_anime_confirmation),
+            message = getString(R.string.message_delete_anime_confirmation),
+            positiveButton = getString(R.string.action_delete),
+            negativeButton = getString(R.string.label_cancel)
+        ) {
+            ownListViewModel.deleteThisSeries(initialAnimeId) { response ->
+                response.onSuccess {
+                    parentFragmentManager.setFragmentResult(requestKey, bundleOf(BUNDLE_KEY_DELETED to true))
+                    dismiss()
+                }
+                response.onError { message ->
+                    showSnackbar(requireView(), message ?: getString(R.string.message_failed_delete_anime))
                 }
             }
-            .setNegativeButton(getString(R.string.label_cancel), null)
-            .show()
+        }
 
         return true
     }
@@ -487,7 +485,7 @@ class EditOwnListFragment : Fragment() {
     private fun updateLoadingState(isLoading: Boolean) = with(binding) {
         if (!isAdded || _binding == null) return
 
-        loadingIndicator.isVisible = isLoading
+        swipeRefresh.isRefreshing = isLoading
         nestedScrollView.isVisible = !isLoading
         btnActionSave.isEnabled = !isLoading
         toolBar.menu.findItem(R.id.menu_delete_anime)?.isEnabled = !isLoading

@@ -43,6 +43,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 @AndroidEntryPoint
 class SearchFragment : Fragment(), ReselectableFragment {
@@ -101,7 +103,6 @@ class SearchFragment : Fragment(), ReselectableFragment {
 
     private fun initializeViews() = with(binding) {
         tvInfoMsg.text = getString(R.string.info_empty_initial_search)
-        loadingIndicator.hide()
     }
 
     private fun setupInteractions(animeAdapter: AnimeGridAdapter) = with(binding) {
@@ -109,7 +110,6 @@ class SearchFragment : Fragment(), ReselectableFragment {
             profileViewModel.getProfileImage()
             animeAdapter.refresh()
             scrollToTopOnLoad(animeAdapter)
-            swipeRefresh.isRefreshing = false
         }
         searchBar.setOnMenuItemClickListener { menuItem ->
             handleMenuItemClick(menuItem)
@@ -196,14 +196,14 @@ class SearchFragment : Fragment(), ReselectableFragment {
             val refreshState = loadStates.refresh
 
             binding.tvInfoMsg.isVisible = refreshState is LoadState.NotLoading && animeAdapter.itemCount == 0
-            binding.loadingIndicator.isVisible = when (refreshState) {
-                is LoadState.Loading -> true
-                is LoadState.Error -> {
-                    showToast(requireContext(), getString(R.string.message_error_occurred))
-                    false
-                }
+            binding.swipeRefresh.isRefreshing = refreshState is LoadState.Loading
 
-                else -> false
+            if (refreshState is LoadState.Error) {
+                when (refreshState.error) {
+                    is SocketTimeoutException -> animeAdapter.retry()
+                    is UnknownHostException -> mainViewModel.showSnackbar(getString(R.string.message_no_internet))
+                    else -> mainViewModel.showSnackbar(getString(R.string.message_error_occurred))
+                }
             }
         }
     }
