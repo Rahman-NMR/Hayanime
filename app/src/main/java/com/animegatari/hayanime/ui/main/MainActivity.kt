@@ -2,7 +2,6 @@ package com.animegatari.hayanime.ui.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -19,7 +18,7 @@ import com.animegatari.hayanime.ui.base.ReselectableFragment
 import com.animegatari.hayanime.ui.base.ViewActionListener
 import com.animegatari.hayanime.ui.utils.animation.ViewSlideInOutAnimation.animateSlideDownAndHide
 import com.animegatari.hayanime.ui.utils.animation.ViewSlideInOutAnimation.animateSlideUpAndShow
-import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showSnackbar
+import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -31,7 +30,6 @@ class MainActivity : AppCompatActivity(), ViewActionListener {
     private var backPressedTime: Long = 0
 
     private val authViewModel: AuthViewModel by viewModels()
-    private val mainViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +45,6 @@ class MainActivity : AppCompatActivity(), ViewActionListener {
         setupDestinationChangedListener()
         setupReselectBottomNavListener(navHostFragment)
         observeLoginStatus()
-        observeSnackbarEvents()
     }
 
     override fun onViewShown() {
@@ -100,10 +97,10 @@ class MainActivity : AppCompatActivity(), ViewActionListener {
         }
 
         private fun handleBackPressedOnSearch() {
-            if (backPressedTime + 2000 > System.currentTimeMillis()) {
+            if (backPressedTime + BACK_PRESS_EXIT_DELAY > System.currentTimeMillis()) {
                 finish()
             } else {
-                showSnackbarActivity(binding.root, getString(R.string.message_back_pressed), binding.navView)
+                showToast(this@MainActivity, getString(R.string.message_back_pressed), BACK_PRESS_EXIT_DELAY.toInt())
                 backPressedTime = System.currentTimeMillis()
             }
         }
@@ -120,18 +117,12 @@ class MainActivity : AppCompatActivity(), ViewActionListener {
         }
     }
 
-    private fun observeSnackbarEvents() = lifecycleScope.launch {
-        mainViewModel.snackbarEvent.collectLatest { message ->
-            showSnackbarActivity(binding.root, message, binding.navView)
-        }
-    }
-
-    private fun showSnackbarActivity(view: View, message: String, anchorView: View? = null) {
-        showSnackbar(view, message, anchorView)
-    }
-
     override fun onResume() {
         super.onResume()
         authViewModel.validateToken()
+    }
+
+    companion object {
+        private const val BACK_PRESS_EXIT_DELAY = 2000L
     }
 }

@@ -27,13 +27,13 @@ import com.animegatari.hayanime.ui.adapter.AnimeGridAdapter
 import com.animegatari.hayanime.ui.base.ReselectableFragment
 import com.animegatari.hayanime.ui.detail.EditOwnListFragment
 import com.animegatari.hayanime.ui.dialog.YearPickerDialogFragment
-import com.animegatari.hayanime.ui.main.MainViewModel
 import com.animegatari.hayanime.ui.main.ProfileMenuViewModel
 import com.animegatari.hayanime.ui.profile.ProfileActivity
 import com.animegatari.hayanime.ui.utils.animation.ViewSlideInOutAnimation.ANIMATION_DURATION
 import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
 import com.animegatari.hayanime.ui.utils.extension.ProfileImage.loadProfileImage
 import com.animegatari.hayanime.ui.utils.layout.SpanCalculator.calculateSpanCount
+import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showSnackbar
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showToast
 import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,7 +49,6 @@ class SeasonFragment : Fragment(), ReselectableFragment {
     private val binding get() = _binding!!
 
     private val seasonViewModel: SeasonViewModel by activityViewModels()
-    private val mainViewModel: MainViewModel by activityViewModels()
     private val profileViewModel: ProfileMenuViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -96,8 +95,20 @@ class SeasonFragment : Fragment(), ReselectableFragment {
                     delay(ANIMATION_DURATION)
                     animeAdapter.refresh()
 
-                    if (resultUpdate) mainViewModel.showSnackbar(getString(R.string.message_anime_updated_successfully))
-                    if (resultDeleted) mainViewModel.showSnackbar(getString(R.string.message_anime_deleted_successfully))
+                    if (resultUpdate) {
+                        showSnackbar(
+                            view = binding.root,
+                            message = getString(R.string.message_anime_updated_successfully),
+                            anchorView = requireActivity().findViewById(R.id.nav_view)
+                        )
+                    }
+                    if (resultDeleted) {
+                        showSnackbar(
+                            view = binding.root,
+                            message = getString(R.string.message_anime_deleted_successfully),
+                            anchorView = requireActivity().findViewById(R.id.nav_view)
+                        )
+                    }
                 }
             }
         }
@@ -218,14 +229,28 @@ class SeasonFragment : Fragment(), ReselectableFragment {
         animeAdapter.loadStateFlow.collectLatest { loadStates ->
             val refreshState = loadStates.refresh
 
-            binding.tvInfoMsg.isVisible = refreshState is LoadState.NotLoading && animeAdapter.itemCount == 0
+            val isListEmpty = animeAdapter.itemCount == 0
+            binding.tvInfoMsg.isVisible = isListEmpty && (refreshState is LoadState.NotLoading || refreshState is LoadState.Error)
             binding.swipeRefresh.isRefreshing = refreshState is LoadState.Loading
 
             if (refreshState is LoadState.Error) {
                 when (refreshState.error) {
                     is SocketTimeoutException -> animeAdapter.retry()
-                    is UnknownHostException -> mainViewModel.showSnackbar(getString(R.string.message_no_internet))
-                    else -> mainViewModel.showSnackbar(getString(R.string.message_error_occurred))
+                    is UnknownHostException -> showSnackbar(
+                        view = binding.root,
+                        message = getString(R.string.message_no_internet),
+                        anchorView = requireActivity().findViewById(R.id.nav_view),
+                        actionName = getString(R.string.action_retry),
+                        action = { animeAdapter.retry() }
+                    )
+
+                    else -> showSnackbar(
+                        view = binding.root,
+                        message = getString(R.string.message_error_occurred),
+                        anchorView = requireActivity().findViewById(R.id.nav_view),
+                        actionName = getString(R.string.action_retry),
+                        action = { animeAdapter.retry() }
+                    )
                 }
             }
         }

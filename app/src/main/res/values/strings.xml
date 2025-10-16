@@ -64,6 +64,7 @@
 
     <string name="action_delete">Delete</string>
     <string name="action_logout">Logout</string>
+    <string name="action_retry">Retry</string>
     <string name="btn_login_with_mal">Login with MyAnimeList</string>
 
     <string name="info_empty_initial_search">Oops! You haven\'t performed any searches yet</string>

@@ -37,7 +37,7 @@ class SearchViewModel @Inject constructor(
             }
         }.cachedIn(viewModelScope)
 
-    fun getAnimeList(searchQuery: String) {
+    fun getAnimeList(searchQuery: String = "") {
         _searchQuery.value = searchQuery
     }
 }

@@ -28,7 +28,6 @@ import com.animegatari.hayanime.ui.adapter.AnimeGridAdapter
 import com.animegatari.hayanime.ui.base.ReselectableFragment
 import com.animegatari.hayanime.ui.base.ViewActionListener
 import com.animegatari.hayanime.ui.detail.EditOwnListFragment
-import com.animegatari.hayanime.ui.main.MainViewModel
 import com.animegatari.hayanime.ui.main.ProfileMenuViewModel
 import com.animegatari.hayanime.ui.profile.ProfileActivity
 import com.animegatari.hayanime.ui.utils.animation.ViewSlideInOutAnimation.ANIMATION_DURATION
@@ -52,7 +51,6 @@ class SearchFragment : Fragment(), ReselectableFragment {
     private val binding get() = _binding!!
 
     private val searchViewModel: SearchViewModel by viewModels()
-    private val mainViewModel: MainViewModel by activityViewModels()
     private val profileViewModel: ProfileMenuViewModel by activityViewModels()
 
     private var viewActionListener: ViewActionListener? = null
@@ -94,8 +92,20 @@ class SearchFragment : Fragment(), ReselectableFragment {
                     delay(ANIMATION_DURATION)
                     animeAdapter.refresh()
 
-                    if (resultUpdate) mainViewModel.showSnackbar(getString(R.string.message_anime_updated_successfully))
-                    if (resultDeleted) mainViewModel.showSnackbar(getString(R.string.message_anime_deleted_successfully))
+                    if (resultUpdate) {
+                        showSnackbar(
+                            view = binding.root,
+                            message = getString(R.string.message_anime_updated_successfully),
+                            anchorView = requireActivity().findViewById(R.id.nav_view)
+                        )
+                    }
+                    if (resultDeleted) {
+                        showSnackbar(
+                            view = binding.root,
+                            message = getString(R.string.message_anime_deleted_successfully),
+                            anchorView = requireActivity().findViewById(R.id.nav_view)
+                        )
+                    }
                 }
             }
         }
@@ -132,13 +142,24 @@ class SearchFragment : Fragment(), ReselectableFragment {
                 val searchQuery = textView.text.toString().trim()
                 searchBar.setText(searchQuery)
 
-                if (searchQuery.length >= MIN_QUERY_LENGTH) {
-                    searchView.hide()
-                    searchViewModel.getAnimeList(searchQuery)
-                    tvInfoMsg.text = getString(R.string.info_no_results_found, searchQuery)
-                    scrollToTopOnLoad(animeAdapter)
-                } else {
-                    showSnackbar(root, getString(R.string.message_query_short))
+                when {
+                    searchQuery.length >= MIN_QUERY_LENGTH -> {
+                        searchView.hide()
+                        searchViewModel.getAnimeList(searchQuery)
+                        tvInfoMsg.text = getString(R.string.info_no_results_found, searchQuery)
+                        scrollToTopOnLoad(animeAdapter)
+                    }
+
+                    searchQuery.isEmpty() -> {
+                        searchView.hide()
+                        searchViewModel.getAnimeList()
+                        tvInfoMsg.text = getString(R.string.info_empty_initial_search)
+                        scrollToTopOnLoad(animeAdapter)
+                    }
+
+                    else -> {
+                        showSnackbar(root, getString(R.string.message_query_short))
+                    }
                 }
                 return@setOnEditorActionListener true
             }
@@ -195,14 +216,28 @@ class SearchFragment : Fragment(), ReselectableFragment {
         animeAdapter.loadStateFlow.collectLatest { loadStates ->
             val refreshState = loadStates.refresh
 
-            binding.tvInfoMsg.isVisible = refreshState is LoadState.NotLoading && animeAdapter.itemCount == 0
+            val isListEmpty = animeAdapter.itemCount == 0
+            binding.tvInfoMsg.isVisible = isListEmpty && (refreshState is LoadState.NotLoading || refreshState is LoadState.Error)
             binding.swipeRefresh.isRefreshing = refreshState is LoadState.Loading
 
             if (refreshState is LoadState.Error) {
                 when (refreshState.error) {
                     is SocketTimeoutException -> animeAdapter.retry()
-                    is UnknownHostException -> mainViewModel.showSnackbar(getString(R.string.message_no_internet))
-                    else -> mainViewModel.showSnackbar(getString(R.string.message_error_occurred))
+                    is UnknownHostException -> showSnackbar(
+                        view = binding.root,
+                        message = getString(R.string.message_no_internet),
+                        anchorView = requireActivity().findViewById(R.id.nav_view),
+                        actionName = getString(R.string.action_retry),
+                        action = { animeAdapter.retry() }
+                    )
+
+                    else -> showSnackbar(
+                        view = binding.root,
+                        message = getString(R.string.message_error_occurred),
+                        anchorView = requireActivity().findViewById(R.id.nav_view),
+                        actionName = getString(R.string.action_retry),
+                        action = { animeAdapter.retry() }
+                    )
                 }
             }
         }

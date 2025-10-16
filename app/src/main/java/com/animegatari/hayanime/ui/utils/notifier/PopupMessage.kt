@@ -21,8 +21,9 @@ object PopupMessage {
         val snackbar = Snackbar.make(view, message, duration)
             .setAnchorView(anchorView)
 
-        if (actionName != null && action != null) {
-            snackbar.setAction(actionName, action)
+        if (actionName.isNullOrBlank().not()) {
+            val clickListener = action ?: View.OnClickListener { }
+            snackbar.setAction(actionName, clickListener)
         }
         snackbar.show()
     }
