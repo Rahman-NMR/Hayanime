@@ -42,6 +42,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.net.ConnectException
+import java.net.SocketException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
@@ -221,24 +223,21 @@ class SearchFragment : Fragment(), ReselectableFragment {
             binding.swipeRefresh.isRefreshing = refreshState is LoadState.Loading
 
             if (refreshState is LoadState.Error) {
-                when (refreshState.error) {
-                    is SocketTimeoutException -> animeAdapter.retry()
-                    is UnknownHostException -> showSnackbar(
-                        view = binding.root,
-                        message = getString(R.string.message_no_internet),
-                        anchorView = requireActivity().findViewById(R.id.nav_view),
-                        actionName = getString(R.string.action_retry),
-                        action = { animeAdapter.retry() }
-                    )
-
-                    else -> showSnackbar(
-                        view = binding.root,
-                        message = getString(R.string.message_error_occurred),
-                        anchorView = requireActivity().findViewById(R.id.nav_view),
-                        actionName = getString(R.string.action_retry),
-                        action = { animeAdapter.retry() }
-                    )
+                val message = when (refreshState.error) {
+                    is ConnectException -> getString(R.string.message_failed_to_connect)
+                    is SocketException -> getString(R.string.message_connection_lost)
+                    is SocketTimeoutException -> getString(R.string.message_timeout)
+                    is UnknownHostException -> getString(R.string.message_no_internet)
+                    else -> getString(R.string.message_error_occurred)
                 }
+
+                showSnackbar(
+                    view = binding.root,
+                    message = message,
+                    anchorView = requireActivity().findViewById(R.id.nav_view),
+                    actionName = getString(R.string.action_retry),
+                    action = { animeAdapter.retry() }
+                )
             }
         }
     }

@@ -76,6 +76,9 @@
 
     <string name="message_back_pressed">Press back again to exit</string>
     <string name="message_no_internet">No internet connection</string>
+    <string name="message_timeout">Request timed out</string>
+    <string name="message_failed_to_connect">Failed to connect to server</string>
+    <string name="message_connection_lost">Connection lost</string>
     <string name="message_error_occurred">An error occurred</string>
     <string name="message_invalid_redirect">Invalid redirect</string>
     <string name="message_query_short">Search query is too short</string>
