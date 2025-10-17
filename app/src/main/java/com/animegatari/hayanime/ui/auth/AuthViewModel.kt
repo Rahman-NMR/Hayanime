@@ -3,6 +3,7 @@ package com.animegatari.hayanime.ui.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.animegatari.hayanime.domain.repository.AuthRepository
+import com.animegatari.hayanime.domain.repository.SearchHistoryRepository
 import com.animegatari.hayanime.domain.utils.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +17,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthViewModel @Inject constructor(private val authRepository: AuthRepository) : ViewModel() {
+class AuthViewModel @Inject constructor(
+    private val authRepository: AuthRepository,
+    private val historyRepository: SearchHistoryRepository,
+) : ViewModel() {
     val isLoggedIn: StateFlow<Boolean?> =
         authRepository.accessToken.combine(authRepository.refreshToken) { accessToken, refreshToken ->
             !accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty()
@@ -62,6 +66,7 @@ class AuthViewModel @Inject constructor(private val authRepository: AuthReposito
     }
 
     fun logout() = viewModelScope.launch {
+        historyRepository.clearHistory()
         authRepository.clearAuthTokens()
     }
 

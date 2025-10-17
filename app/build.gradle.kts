@@ -26,7 +26,7 @@ android {
         minSdk = 28
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0.1-beta"
+        versionName = "1.0.2-beta"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -88,6 +88,11 @@ dependencies {
     // data store
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.datastore.core)
+
+    // room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
     // dependency injection
     implementation(libs.dagger.hilt.android)

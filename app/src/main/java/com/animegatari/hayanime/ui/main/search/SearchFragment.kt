@@ -20,6 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.awaitNotLoading
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.animegatari.hayanime.BuildConfig
 import com.animegatari.hayanime.R
@@ -29,6 +30,8 @@ import com.animegatari.hayanime.ui.base.ReselectableFragment
 import com.animegatari.hayanime.ui.base.ViewActionListener
 import com.animegatari.hayanime.ui.detail.EditOwnListFragment
 import com.animegatari.hayanime.ui.main.ProfileMenuViewModel
+import com.animegatari.hayanime.ui.main.search.history.SearchHistoryAdapter
+import com.animegatari.hayanime.ui.main.search.history.SearchHistoryViewModel
 import com.animegatari.hayanime.ui.profile.ProfileActivity
 import com.animegatari.hayanime.ui.utils.animation.ViewSlideInOutAnimation.ANIMATION_DURATION
 import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
@@ -53,6 +56,7 @@ class SearchFragment : Fragment(), ReselectableFragment {
     private val binding get() = _binding!!
 
     private val searchViewModel: SearchViewModel by viewModels()
+    private val historyViewModel: SearchHistoryViewModel by viewModels()
     private val profileViewModel: ProfileMenuViewModel by activityViewModels()
 
     private var viewActionListener: ViewActionListener? = null
@@ -70,14 +74,15 @@ class SearchFragment : Fragment(), ReselectableFragment {
         setupSearchViewTransitionListener()
 
         val animeAdapter = initializeAnimeAdapter()
+        val historyAdapter = initializeHistoryAdapter(animeAdapter)
 
         setupAdapterRefreshListener(animeAdapter)
         initializeViews()
         setupInteractions(animeAdapter)
-        setupRecyclerView(animeAdapter)
+        setupRecyclerView(animeAdapter, historyAdapter)
         handleSearchInput(animeAdapter)
 
-        observeViewModelStates(animeAdapter)
+        observeViewModelStates(animeAdapter, historyAdapter)
         observeLoadState(animeAdapter)
     }
 
@@ -146,17 +151,12 @@ class SearchFragment : Fragment(), ReselectableFragment {
 
                 when {
                     searchQuery.length >= MIN_QUERY_LENGTH -> {
-                        searchView.hide()
-                        searchViewModel.getAnimeList(searchQuery)
-                        tvInfoMsg.text = getString(R.string.info_no_results_found, searchQuery)
-                        scrollToTopOnLoad(animeAdapter)
+                        performSearch(animeAdapter, searchQuery)
+                        historyViewModel.saveSearchQuery(searchQuery)
                     }
 
                     searchQuery.isEmpty() -> {
-                        searchView.hide()
-                        searchViewModel.getAnimeList()
-                        tvInfoMsg.text = getString(R.string.info_empty_initial_search)
-                        scrollToTopOnLoad(animeAdapter)
+                        performSearch(animeAdapter)
                     }
 
                     else -> {
@@ -168,6 +168,35 @@ class SearchFragment : Fragment(), ReselectableFragment {
             false
         }
     }
+
+    private fun performSearch(animeAdapter: AnimeGridAdapter, query: String? = null) = with(binding) {
+        searchView.hide()
+        searchViewModel.getAnimeList(query ?: "")
+
+        tvInfoMsg.text = if (query != null) {
+            getString(R.string.info_no_results_found, query)
+        } else {
+            getString(R.string.info_empty_initial_search)
+        }
+
+        scrollToTopOnLoad(animeAdapter)
+    }
+
+
+    private fun initializeHistoryAdapter(animeAdapter: AnimeGridAdapter): SearchHistoryAdapter = SearchHistoryAdapter(
+        onHistoryItemClicked = { query ->
+            binding.searchBar.setText(query)
+            binding.searchView.hide()
+
+            searchViewModel.getAnimeList(query)
+            historyViewModel.saveSearchQuery(query)
+
+            scrollToTopOnLoad(animeAdapter)
+        },
+        onHistoryItemDeleted = { historyId ->
+            historyViewModel.removeSelectedHistory(historyId)
+        }
+    )
 
     private fun initializeAnimeAdapter(): AnimeGridAdapter = AnimeGridAdapter(
         onItemClicked = { anime ->
@@ -189,15 +218,27 @@ class SearchFragment : Fragment(), ReselectableFragment {
         }
     )
 
-    private fun setupRecyclerView(animeAdapter: AnimeGridAdapter) = with(binding) {
+    private fun setupRecyclerView(animeAdapter: AnimeGridAdapter, historyAdapter: SearchHistoryAdapter) = with(binding) {
         val paddingBottom = resources.getDimensionPixelSize(R.dimen.layout_padding_bottom)
 
-        recyclerView.layoutManager = StaggeredGridLayoutManager(
-            calculateSpanCount(requireContext(), 200),
-            StaggeredGridLayoutManager.VERTICAL
-        )
-        recyclerView.addItemDecoration(BottomPaddingItemDecoration(paddingBottom))
-        recyclerView.adapter = animeAdapter
+        recyclerView.apply {
+            layoutManager = StaggeredGridLayoutManager(
+                calculateSpanCount(requireContext(), 200),
+                StaggeredGridLayoutManager.VERTICAL
+            )
+            addItemDecoration(BottomPaddingItemDecoration(paddingBottom))
+            adapter = animeAdapter
+        }
+
+        recyclerViewLatestSearch.apply {
+            layoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.VERTICAL,
+                false
+            )
+            addItemDecoration(BottomPaddingItemDecoration(paddingBottom))
+            adapter = historyAdapter
+        }
     }
 
     private fun loadProfileImage(imageUri: String?) = with(binding) {
@@ -212,6 +253,7 @@ class SearchFragment : Fragment(), ReselectableFragment {
     private fun scrollToTopOnLoad(animeAdapter: AnimeGridAdapter) = viewLifecycleOwner.lifecycleScope.launch {
         animeAdapter.loadStateFlow.awaitNotLoading()
         binding.recyclerView.scrollToPosition(0)
+        binding.recyclerViewLatestSearch.smoothScrollToPosition(0)
     }
 
     private fun observeLoadState(animeAdapter: AnimeGridAdapter) = viewLifecycleOwner.lifecycleScope.launch {
@@ -242,7 +284,7 @@ class SearchFragment : Fragment(), ReselectableFragment {
         }
     }
 
-    private fun observeViewModelStates(animeAdapter: AnimeGridAdapter) {
+    private fun observeViewModelStates(animeAdapter: AnimeGridAdapter, historyAdapter: SearchHistoryAdapter) {
         viewLifecycleOwner.lifecycleScope.launch {
             searchViewModel.animeList
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
@@ -253,6 +295,12 @@ class SearchFragment : Fragment(), ReselectableFragment {
             profileViewModel.profileImageUri
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collectLatest { loadProfileImage(it) }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            historyViewModel.historyState
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collectLatest { historyAdapter.submitList(it) }
         }
     }
 

@@ -1,7 +1,10 @@
 package com.animegatari.hayanime.di
 
 import android.content.Context
+import androidx.room.Room
 import com.animegatari.hayanime.BuildConfig
+import com.animegatari.hayanime.data.local.dao.SearchHistoryDao
+import com.animegatari.hayanime.data.local.database.AppDatabase
 import com.animegatari.hayanime.data.local.datastore.SettingsPreferences
 import com.animegatari.hayanime.data.local.datastore.TokenDataStore
 import com.animegatari.hayanime.data.remote.api.AnimeApiService
@@ -12,10 +15,12 @@ import com.animegatari.hayanime.data.remote.okhttp.AuthInterceptor
 import com.animegatari.hayanime.data.remote.okhttp.TokenAuthenticator
 import com.animegatari.hayanime.data.repository.AnimeRepositoryImpl
 import com.animegatari.hayanime.data.repository.AuthRepositoryImpl
+import com.animegatari.hayanime.data.repository.SearchHistoryRepositoryImpl
 import com.animegatari.hayanime.data.repository.UserAnimeListRepositoryImpl
 import com.animegatari.hayanime.data.repository.UserInfoRepositoryImpl
 import com.animegatari.hayanime.domain.repository.AnimeRepository
 import com.animegatari.hayanime.domain.repository.AuthRepository
+import com.animegatari.hayanime.domain.repository.SearchHistoryRepository
 import com.animegatari.hayanime.domain.repository.UserAnimeListRepository
 import com.animegatari.hayanime.domain.repository.UserInfoRepository
 import dagger.Binds
@@ -50,6 +55,10 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindUserInfoRepository(userInfoRepositoryImpl: UserInfoRepositoryImpl): UserInfoRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindSearchHistoryRepository(searchHistoryRepositoryImpl: SearchHistoryRepositoryImpl): SearchHistoryRepository
 
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
@@ -156,6 +165,22 @@ abstract class AppModule {
         @Singleton
         fun provideSettingsDataStore(@ApplicationContext context: Context): SettingsPreferences {
             return SettingsPreferences(context)
+        }
+
+        @Provides
+        @Singleton
+        fun provideSearchHistoryDao(database: AppDatabase): SearchHistoryDao {
+            return database.searchHistoryDao()
+        }
+
+        @Provides
+        @Singleton
+        fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
+            return Room.databaseBuilder(
+                context.applicationContext,
+                AppDatabase::class.java,
+                "app_database"
+            ).build()
         }
     }
 }

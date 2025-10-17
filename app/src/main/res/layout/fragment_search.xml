@@ -55,7 +55,18 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         android:hint="@string/search_hint"
-        app:layout_anchor="@id/search_bar" />
+        app:layout_anchor="@id/search_bar">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_latest_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:paddingTop="@dimen/recyclerview_corner_padding_small"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/layout_latest_search" />
+    </com.google.android.material.search.SearchView>
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_info_msg"
