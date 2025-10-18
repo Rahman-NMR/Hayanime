@@ -1,7 +1,9 @@
 package com.animegatari.hayanime.ui.auth
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.animegatari.hayanime.R
 import com.animegatari.hayanime.domain.repository.AuthRepository
 import com.animegatari.hayanime.domain.repository.SearchHistoryRepository
 import com.animegatari.hayanime.domain.utils.Response
@@ -20,7 +22,8 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val historyRepository: SearchHistoryRepository,
-) : ViewModel() {
+    private val application: Application,
+) : AndroidViewModel(application) {
     val isLoggedIn: StateFlow<Boolean?> =
         authRepository.accessToken.combine(authRepository.refreshToken) { accessToken, refreshToken ->
             !accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty()
@@ -39,7 +42,7 @@ class AuthViewModel @Inject constructor(
 
     fun handleAuthCode(code: String?, onResult: (Response<Boolean>) -> Unit) {
         if (code.isNullOrEmpty()) {
-            onResult(Response.Error("Invalid code"))
+            onResult(Response.Error(application.getString(R.string.message_invalid_code)))
             return
         }
 
@@ -50,7 +53,7 @@ class AuthViewModel @Inject constructor(
                 val codeVerifier = authRepository.codeVerifier.firstOrNull()
                 if (codeVerifier.isNullOrEmpty()) {
                     _isLoading.value = false
-                    onResult(Response.Error("Invalid code verifier"))
+                    onResult(Response.Error(application.getString(R.string.message_invalid_code_verifier)))
                     return@launch
                 }
 

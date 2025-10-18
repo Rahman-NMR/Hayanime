@@ -1,9 +1,11 @@
 package com.animegatari.hayanime.ui.main.myList
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.animegatari.hayanime.R
 import com.animegatari.hayanime.core.Config
 import com.animegatari.hayanime.data.local.datamodel.DateComponents
 import com.animegatari.hayanime.data.remote.response.AnimeList
@@ -27,7 +29,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MyListViewModel @Inject constructor(
     private val userAnimeListRepository: UserAnimeListRepository,
-) : ViewModel() {
+    private val application: Application,
+) : AndroidViewModel(application) {
     private val _eventChannel = Channel<MyListEvent>(Channel.BUFFERED)
     val events = _eventChannel.receiveAsFlow()
 
@@ -39,7 +42,6 @@ class MyListViewModel @Inject constructor(
             userAnimeListRepository.userAnimeList(
                 status = watchingStatus,
                 sort = "list_updated_at",
-                isNsfw = true,
                 limitConfig = Config.DEFAULT_PAGE_LIMIT,
                 commonFields = Config.MYLIST_ANIME_FIELDS
             )
@@ -55,7 +57,8 @@ class MyListViewModel @Inject constructor(
         numEpisode: Int?,
     ) = viewModelScope.launch {
         if (animeId == null || currentEpisodeProgress == null) {
-            _eventChannel.send(MyListEvent.UpdateProgressError("Missing anime ID or current episode"))
+            val errorMessage = application.getString(R.string.message_missing_anime_id_or_current_episode)
+            _eventChannel.send(MyListEvent.UpdateProgressError(errorMessage))
             return@launch
         }
 

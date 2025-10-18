@@ -78,8 +78,12 @@
     <string name="message_connection_lost">Connection lost</string>
     <string name="message_error_occurred">An error occurred</string>
     <string name="message_invalid_redirect">Invalid redirect</string>
+    <string name="message_invalid_code">Invalid code</string>
+    <string name="message_invalid_code_verifier">Invalid code verifier</string>
     <string name="message_query_short">Search query is too short</string>
     <string name="message_error_missing_anime_id">Anime ID missing. Please try again later</string>
+    <string name="message_missing_anime_id_or_current_episode">Missing anime ID or current episode</string>
+    <string name="message_missing_anime_id_reopen_page">Missing anime ID. Please re-open this page</string>
     <string name="message_failed_load_data">Failed to load data, please try again later!</string>
     <string name="message_delete_anime_confirmation">Remove the anime data details from your list. This action cannot be undone</string>
     <string name="message_logout_confirmation">This will clear your session and search history</string>

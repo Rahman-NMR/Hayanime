@@ -1,11 +1,13 @@
 package com.animegatari.hayanime.ui.detail
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.animegatari.hayanime.R
 import com.animegatari.hayanime.core.Config
-import com.animegatari.hayanime.data.model.AnimeMinimum
 import com.animegatari.hayanime.data.local.datamodel.DateComponents
+import com.animegatari.hayanime.data.model.AnimeMinimum
 import com.animegatari.hayanime.data.model.MyListStatus
 import com.animegatari.hayanime.domain.repository.UserAnimeListRepository
 import com.animegatari.hayanime.domain.utils.Response
@@ -21,8 +23,9 @@ import javax.inject.Inject
 @HiltViewModel
 class OwnListViewModel @Inject constructor(
     private val userAnimeListRepository: UserAnimeListRepository,
-) : ViewModel() {
-    private val missingAnimeIdError = "Missing anime ID. Please re-open this page"
+    application: Application,
+) : AndroidViewModel(application) {
+    private val missingAnimeIdError = application.getString(R.string.message_missing_anime_id_reopen_page)
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> get() = _isLoading.asStateFlow()
