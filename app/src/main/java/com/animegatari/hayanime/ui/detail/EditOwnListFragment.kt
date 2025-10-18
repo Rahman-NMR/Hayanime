@@ -397,12 +397,13 @@ class EditOwnListFragment : Fragment() {
             totalRewatchInputText.setText(rewatchCount)
         }
 
-        val tags = myListStatus?.tags?.joinToString(", ")
+        val tags = myListStatus?.tags?.takeIf { it.isNotEmpty() }?.joinToString(", ") ?: ""
         if (shouldUpdateInputText(tagsInputText, tags)) {
             tagsInputText.setText(tags)
         }
 
-        if (shouldUpdateInputText(commentsInputText, myListStatus?.comments)) {
+        val comments = myListStatus?.comments?.takeIf { it.isNotBlank() } ?: ""
+        if (shouldUpdateInputText(commentsInputText, comments)) {
             commentsInputText.setText(myListStatus?.comments)
         }
 
