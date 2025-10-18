@@ -3,6 +3,7 @@ package com.animegatari.hayanime.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.animegatari.hayanime.data.local.datastore.SettingsPreferences
 import com.animegatari.hayanime.data.model.AnimeMinimum
 import com.animegatari.hayanime.data.model.MyListStatus
 import com.animegatari.hayanime.data.pagination.AnimePagingSource
@@ -14,6 +15,8 @@ import com.animegatari.hayanime.domain.repository.UserAnimeListRepository
 import com.animegatari.hayanime.domain.utils.Response
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,11 +24,11 @@ import javax.inject.Singleton
 class UserAnimeListRepositoryImpl @Inject constructor(
     private val userAnimeService: UserAnimeListApiService,
     private val animeService: AnimeApiService,
+    private val settingsDataStore: SettingsPreferences,
 ) : UserAnimeListRepository {
     override fun userAnimeList(
         status: String?,
         sort: String?,
-        isNsfw: Boolean,
         limitConfig: Int,
         commonFields: String,
     ): Flow<PagingData<AnimeList>> {
@@ -36,6 +39,7 @@ class UserAnimeListRepositoryImpl @Inject constructor(
             ),
             pagingSourceFactory = {
                 AnimePagingSource { limit, offset ->
+                    val isNsfw = runBlocking { settingsDataStore.myListNsfw.first() }
                     userAnimeService.getUserAnimeList(
                         status = status,
                         sort = sort,

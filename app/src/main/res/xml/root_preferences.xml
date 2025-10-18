@@ -7,16 +7,21 @@
             app:defaultValue="false"
             app:iconSpaceReserved="false"
             app:key="show_nsfw_content"
-            app:summaryOff="@string/pref_nsfw_search_summary_off"
-            app:summaryOn="@string/pref_nsfw_search_summary_on"
+            app:summary="@string/pref_nsfw_search_summary"
             app:title="@string/pref_nsfw_search_title" />
 
         <SwitchPreferenceCompat
             app:defaultValue="false"
             app:iconSpaceReserved="false"
             app:key="show_nsfw_suggestions"
-            app:summaryOff="@string/pref_nsfw_suggestions_summary_off"
-            app:summaryOn="@string/pref_nsfw_suggestions_summary_on"
+            app:summary="@string/pref_nsfw_suggestions_summary"
             app:title="@string/pref_nsfw_suggestions_title" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"
+            app:key="show_nsfw_my_list"
+            app:summary="@string/pref_nsfw_mylist_summary"
+            app:title="@string/pref_nsfw_mylist_title" />
     </PreferenceCategory>
 </PreferenceScreen>

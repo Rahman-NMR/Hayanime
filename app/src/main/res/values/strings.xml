@@ -33,9 +33,6 @@
     <string name="label_episode_duration">%1$s/eps</string>
     <string name="label_cancel">Cancel</string>
     <string name="label_this_season">this season</string>
-    <string name="label_source_studio">Source : %1$s\nStudio : %2$s</string>
-    <string name="label_source">Source: %1$s</string>
-    <string name="label_studio">Studio: %1$s</string>
     <string name="label_priority_watch">Priority watch this anime</string>
     <string name="label_rewatching">Rewatching this anime</string>
     <string name="label_total_rewatch">Total time rewatch this anime</string>
@@ -95,9 +92,9 @@
     <!-- Preference: NSFW -->
     <string name="settings_nsfw_title">NSFW Content</string>
     <string name="pref_nsfw_search_title">Search results</string>
-    <string name="pref_nsfw_search_summary_off">Don\'t show anime containing NSFW in search results</string>
-    <string name="pref_nsfw_search_summary_on">Anime containing NSFW will be shown in search results</string>
+    <string name="pref_nsfw_search_summary">Show anime with adult or explicit themes in search results</string>
     <string name="pref_nsfw_suggestions_title">Suggestions</string>
-    <string name="pref_nsfw_suggestions_summary_off">Don\'t include NSFW content in suggestions</string>
-    <string name="pref_nsfw_suggestions_summary_on">Anime containing NSFW will be included in suggestions</string>
+    <string name="pref_nsfw_suggestions_summary">Allow recommendations to include mature-rated anime</string>
+    <string name="pref_nsfw_mylist_title">My List</string>
+    <string name="pref_nsfw_mylist_summary">Display NSFW anime that you have saved to your list</string>
 </resources>

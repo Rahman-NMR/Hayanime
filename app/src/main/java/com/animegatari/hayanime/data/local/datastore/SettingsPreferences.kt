@@ -15,11 +15,13 @@ import javax.inject.Singleton
 class SettingsPreferences @Inject constructor(context: Context) {
     val searchNsfw: Flow<Boolean> = context.datastore.data.map { it[SHOW_NSFW_CONTENT] ?: false }
     val suggestionsNsfw: Flow<Boolean> = context.datastore.data.map { it[SHOW_NSFW_SUGGESTIONS] ?: false }
+    val myListNsfw: Flow<Boolean> = context.datastore.data.map { it[SHOW_NSFW_MY_LIST] ?: false }
 
     companion object {
         val Context.datastore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
         private val SHOW_NSFW_CONTENT = booleanPreferencesKey("show_nsfw_content")
         private val SHOW_NSFW_SUGGESTIONS = booleanPreferencesKey("show_nsfw_suggestions")
+        private val SHOW_NSFW_MY_LIST = booleanPreferencesKey("show_nsfw_my_list")
     }
 }

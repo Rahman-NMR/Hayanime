@@ -112,9 +112,9 @@ class MyListAdapter(
                     ?.takeIf { it.isNotEmpty() }
                     ?: unknownString
                 sourceNStudio.text = when {
-                    source.isNotBlank() && studios.isNotBlank() -> viewContext.getString(R.string.label_source_studio, source, studios)
-                    source.isNotBlank() -> viewContext.getString(R.string.label_source, source)
-                    studios.isNotBlank() -> viewContext.getString(R.string.label_source, studios)
+                    source.isNotBlank() && studios.isNotBlank() -> "$source • $studios"
+                    source.isNotBlank() -> source
+                    studios.isNotBlank() -> studios
                     else -> unknownString
                 }
 
