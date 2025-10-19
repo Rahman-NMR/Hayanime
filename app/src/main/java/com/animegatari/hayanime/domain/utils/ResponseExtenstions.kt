@@ -9,3 +9,8 @@ inline fun <T> Response<T>.onError(action: (String?) -> Unit): Response<T> {
     if (this is Response.Error) action(message)
     return this
 }
+
+inline fun <T> Response<T>.onLoading(action: () -> Unit): Response<T> {
+    if (this is Response.Loading) action()
+    return this
+}

@@ -21,8 +21,11 @@ import androidx.paging.awaitNotLoading
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.animegatari.hayanime.BuildConfig
 import com.animegatari.hayanime.R
+import com.animegatari.hayanime.data.model.UserInfo
 import com.animegatari.hayanime.data.types.WatchingStatus
 import com.animegatari.hayanime.databinding.FragmentMyListBinding
+import com.animegatari.hayanime.domain.utils.Response
+import com.animegatari.hayanime.domain.utils.onSuccess
 import com.animegatari.hayanime.ui.adapter.MyListAdapter
 import com.animegatari.hayanime.ui.base.ReselectableFragment
 import com.animegatari.hayanime.ui.detail.EditOwnListFragment
@@ -185,13 +188,15 @@ class MyListFragment : Fragment(), ReselectableFragment {
         recyclerView.adapter = myListAdapter
     }
 
-    private fun loadProfileImage(imageUri: String?) = with(binding) {
-        toolBar.menu.loadProfileImage(
-            glide = Glide.with(requireContext()),
-            lifecycle = viewLifecycleOwner.lifecycleScope,
-            profilePictureUrl = imageUri,
-            menuItemId = R.id.menu_item_avatar
-        )
+    private fun loadProfileImage(response: Response<UserInfo>) = with(binding) {
+        response.onSuccess { userInfo ->
+            toolBar.menu.loadProfileImage(
+                glide = Glide.with(requireContext()),
+                lifecycle = viewLifecycleOwner.lifecycleScope,
+                profilePictureUrl = userInfo?.picture,
+                menuItemId = R.id.menu_item_avatar
+            )
+        }
     }
 
     private fun scrollToTopOnLoad(myListAdapter: MyListAdapter) = viewLifecycleOwner.lifecycleScope.launch {

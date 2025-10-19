@@ -10,8 +10,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.animegatari.hayanime.R
 import com.animegatari.hayanime.data.local.datamodel.StatusInfo
 import com.animegatari.hayanime.data.model.UserAnimeStatistics
@@ -20,7 +20,12 @@ import com.animegatari.hayanime.data.types.Gender
 import com.animegatari.hayanime.data.types.WatchingStatus
 import com.animegatari.hayanime.databinding.FragmentUserStatsBinding
 import com.animegatari.hayanime.databinding.IncludeLegendStatusWatchingBinding
+import com.animegatari.hayanime.domain.utils.Response
+import com.animegatari.hayanime.domain.utils.onError
+import com.animegatari.hayanime.domain.utils.onLoading
+import com.animegatari.hayanime.domain.utils.onSuccess
 import com.animegatari.hayanime.ui.utils.interfaces.UiUtils.createStatSpannable
+import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showToast
 import com.animegatari.hayanime.utils.FormatterUtils.formatApiDate
 import com.animegatari.hayanime.utils.FormatterUtils.formattedDateTimeZone
 import com.bumptech.glide.Glide
@@ -28,7 +33,6 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -145,25 +149,24 @@ class UserStatsFragment : Fragment() {
         legendBinding.numValue.text = totalAnimeSuffix
     }
 
-    private fun updateUi(userInfo: UserInfo?) = with(binding) {
-        setupUserProfileHeader(userInfo)
-        setupProfileInfo(userInfo)
-        setupMyAnimeListStats(userInfo?.userAnimeStatistics)
+    private fun updateUi(response: Response<UserInfo>) = with(binding) {
+        response.onSuccess { userInfo ->
+            loadingIndicator.isVisible = false
+
+            setupUserProfileHeader(userInfo)
+            setupProfileInfo(userInfo)
+            setupMyAnimeListStats(userInfo?.userAnimeStatistics)
+        }.onError { message ->
+            loadingIndicator.isVisible = false
+            showToast(requireContext(), message ?: getString(R.string.message_error_occurred))
+        }.onLoading { loadingIndicator.isVisible = true }
     }
 
     private fun observeViewModelStates() {
         viewLifecycleOwner.lifecycleScope.launch {
-            userViewModel.isLoading
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest { isLoading ->
-                    binding.loadingIndicator.isVisible = isLoading
-                }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            userViewModel.userInfo
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest(::updateUi)
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch { userViewModel.userInfo.collect(::updateUi) }
+            }
         }
     }
 

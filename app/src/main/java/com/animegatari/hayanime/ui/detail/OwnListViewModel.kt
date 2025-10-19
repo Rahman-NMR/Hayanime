@@ -67,6 +67,10 @@ class OwnListViewModel @Inject constructor(
             is Response.Error -> {
                 null
             }
+
+            is Response.Loading -> {
+                null
+            }
         }
     }
 

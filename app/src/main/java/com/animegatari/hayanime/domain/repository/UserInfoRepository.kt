@@ -2,8 +2,9 @@ package com.animegatari.hayanime.domain.repository
 
 import com.animegatari.hayanime.data.model.UserInfo
 import com.animegatari.hayanime.domain.utils.Response
+import kotlinx.coroutines.flow.Flow
 
 interface UserInfoRepository {
-    suspend fun getProfileImage(): Response<UserInfo>
-    suspend fun getProfileInfo(): Response<UserInfo>
+    fun getProfileImage(): Flow<Response<UserInfo>>
+    fun getProfileInfo(): Flow<Response<UserInfo>>
 }

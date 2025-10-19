@@ -21,9 +21,12 @@ import androidx.paging.awaitNotLoading
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.animegatari.hayanime.BuildConfig
 import com.animegatari.hayanime.R
+import com.animegatari.hayanime.data.model.UserInfo
 import com.animegatari.hayanime.data.types.SeasonStart
 import com.animegatari.hayanime.data.types.SortingAnime
 import com.animegatari.hayanime.databinding.FragmentSeasonBinding
+import com.animegatari.hayanime.domain.utils.Response
+import com.animegatari.hayanime.domain.utils.onSuccess
 import com.animegatari.hayanime.ui.adapter.AnimeGridAdapter
 import com.animegatari.hayanime.ui.base.ReselectableFragment
 import com.animegatari.hayanime.ui.detail.EditOwnListFragment
@@ -213,13 +216,15 @@ class SeasonFragment : Fragment(), ReselectableFragment {
         recyclerView.adapter = animeAdapter
     }
 
-    private fun loadProfileImage(imageUri: String?) = with(binding) {
-        toolBar.menu.loadProfileImage(
-            glide = Glide.with(requireContext()),
-            lifecycle = viewLifecycleOwner.lifecycleScope,
-            profilePictureUrl = imageUri,
-            menuItemId = R.id.menu_item_avatar
-        )
+    private fun loadProfileImage(response: Response<UserInfo>) = with(binding) {
+        response.onSuccess { userInfo ->
+            toolBar.menu.loadProfileImage(
+                glide = Glide.with(requireContext()),
+                lifecycle = viewLifecycleOwner.lifecycleScope,
+                profilePictureUrl = userInfo?.picture,
+                menuItemId = R.id.menu_item_avatar
+            )
+        }
     }
 
     private fun scrollToTopOnLoad(animeAdapter: AnimeGridAdapter) = viewLifecycleOwner.lifecycleScope.launch {

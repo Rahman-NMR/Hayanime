@@ -5,6 +5,8 @@ import com.animegatari.hayanime.data.model.UserInfo
 import com.animegatari.hayanime.data.remote.api.UserInfoApiService
 import com.animegatari.hayanime.domain.repository.UserInfoRepository
 import com.animegatari.hayanime.domain.utils.Response
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -12,33 +14,35 @@ import javax.inject.Singleton
 class UserInfoRepositoryImpl @Inject constructor(
     private val userInfoApiService: UserInfoApiService,
 ) : UserInfoRepository {
-    override suspend fun getProfileImage(): Response<UserInfo> {
-        return try {
+    override fun getProfileImage(): Flow<Response<UserInfo>> = flow {
+        emit(Response.Loading)
+        try {
             val response = userInfoApiService.getUserInfo("id,picture")
 
             if (response.isSuccessful) {
-                Response.Success(response.body())
+                emit(Response.Success(response.body()))
             } else {
-                Response.Error()
+                emit(Response.Error())
             }
         } catch (e: Exception) {
-            Response.Error(e.localizedMessage)
+            emit(Response.Error(e.localizedMessage))
         }
     }
 
-    override suspend fun getProfileInfo(): Response<UserInfo> {
-        return try {
+    override fun getProfileInfo(): Flow<Response<UserInfo>> = flow {
+        emit(Response.Loading)
+        try {
             val response = userInfoApiService.getUserInfo(
                 "${Config.USER_INFO_FIELDS},${Config.USER_INFO_MORE_FIELDS},{${Config.USER_INFO_ANIME_STATS_FIELDS}}"
             )
 
             if (response.isSuccessful) {
-                Response.Success(response.body())
+                emit(Response.Success(response.body()))
             } else {
-                Response.Error()
+                emit(Response.Error())
             }
         } catch (e: Exception) {
-            Response.Error(e.localizedMessage)
+            emit(Response.Error(e.localizedMessage))
         }
     }
 }

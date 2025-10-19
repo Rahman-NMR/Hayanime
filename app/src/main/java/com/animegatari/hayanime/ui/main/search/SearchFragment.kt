@@ -25,7 +25,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.animegatari.hayanime.BuildConfig
 import com.animegatari.hayanime.R
+import com.animegatari.hayanime.data.model.UserInfo
 import com.animegatari.hayanime.databinding.FragmentSearchBinding
+import com.animegatari.hayanime.domain.utils.Response
+import com.animegatari.hayanime.domain.utils.onSuccess
 import com.animegatari.hayanime.ui.adapter.AnimeGridAdapter
 import com.animegatari.hayanime.ui.base.ReselectableFragment
 import com.animegatari.hayanime.ui.base.ViewActionListener
@@ -241,13 +244,15 @@ class SearchFragment : Fragment(), ReselectableFragment {
         }
     }
 
-    private fun loadProfileImage(imageUri: String?) = with(binding) {
-        searchBar.menu.loadProfileImage(
-            glide = Glide.with(requireContext()),
-            lifecycle = viewLifecycleOwner.lifecycleScope,
-            profilePictureUrl = imageUri,
-            menuItemId = R.id.menu_item_avatar
-        )
+    private fun loadProfileImage(response: Response<UserInfo>) = with(binding) {
+        response.onSuccess { userInfo ->
+            searchBar.menu.loadProfileImage(
+                glide = Glide.with(requireContext()),
+                lifecycle = viewLifecycleOwner.lifecycleScope,
+                profilePictureUrl = userInfo?.picture,
+                menuItemId = R.id.menu_item_avatar
+            )
+        }
     }
 
     private fun scrollToTopOnLoad(animeAdapter: AnimeGridAdapter) = viewLifecycleOwner.lifecycleScope.launch {
@@ -272,14 +277,13 @@ class SearchFragment : Fragment(), ReselectableFragment {
                 else -> getString(R.string.message_error_occurred)
             }
 
-                showSnackbar(
-                    view = binding.root,
-                    message = message,
-                    anchorView = requireActivity().findViewById(R.id.nav_view),
-                    actionName = getString(R.string.action_retry),
-                    action = { animeAdapter.retry() }
-                )
-            }
+            showSnackbar(
+                view = root,
+                message = message,
+                anchorView = requireActivity().findViewById(R.id.nav_view),
+                actionName = getString(R.string.action_retry),
+                action = { animeAdapter.retry() }
+            )
         }
     }
 
