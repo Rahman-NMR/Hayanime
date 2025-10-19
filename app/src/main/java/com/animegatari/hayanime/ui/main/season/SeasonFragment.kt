@@ -12,9 +12,10 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.awaitNotLoading
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -70,7 +71,6 @@ class SeasonFragment : Fragment(), ReselectableFragment {
         setupRecyclerView(animeAdapter)
 
         observeViewModelStates(animeAdapter)
-        observeLoadState(animeAdapter)
     }
 
     private fun setupYearPickerListener(animeAdapter: AnimeGridAdapter) {
@@ -227,63 +227,42 @@ class SeasonFragment : Fragment(), ReselectableFragment {
         binding.recyclerView.scrollToPosition(0)
     }
 
-    private fun observeLoadState(animeAdapter: AnimeGridAdapter) = viewLifecycleOwner.lifecycleScope.launch {
-        animeAdapter.loadStateFlow.collectLatest { loadStates ->
-            val refreshState = loadStates.refresh
+    private fun observeLoadState(animeAdapter: AnimeGridAdapter, loadStates: CombinedLoadStates) = with(binding) {
+        val refreshState = loadStates.refresh
 
-            val isListEmpty = animeAdapter.itemCount == 0
-            binding.tvInfoMsg.isVisible = isListEmpty && (refreshState is LoadState.NotLoading || refreshState is LoadState.Error)
-            binding.swipeRefresh.isRefreshing = refreshState is LoadState.Loading
+        val isListEmpty = animeAdapter.itemCount == 0
+        tvInfoMsg.isVisible = isListEmpty && (refreshState is LoadState.NotLoading || refreshState is LoadState.Error)
+        swipeRefresh.isRefreshing = refreshState is LoadState.Loading
 
-            if (refreshState is LoadState.Error) {
-                val message = when (refreshState.error) {
-                    is ConnectException -> getString(R.string.message_failed_to_connect)
-                    is SocketException -> getString(R.string.message_connection_lost)
-                    is SocketTimeoutException -> getString(R.string.message_timeout)
-                    is UnknownHostException -> getString(R.string.message_no_internet)
-                    else -> getString(R.string.message_error_occurred)
-                }
-
-                showSnackbar(
-                    view = binding.root,
-                    message = message,
-                    anchorView = requireActivity().findViewById(R.id.nav_view),
-                    actionName = getString(R.string.action_retry),
-                    action = { animeAdapter.retry() }
-                )
+        if (refreshState is LoadState.Error) {
+            val message = when (refreshState.error) {
+                is ConnectException -> getString(R.string.message_failed_to_connect)
+                is SocketException -> getString(R.string.message_connection_lost)
+                is SocketTimeoutException -> getString(R.string.message_timeout)
+                is UnknownHostException -> getString(R.string.message_no_internet)
+                else -> getString(R.string.message_error_occurred)
             }
+
+            showSnackbar(
+                view = root,
+                message = message,
+                anchorView = requireActivity().findViewById(R.id.nav_view),
+                actionName = getString(R.string.action_retry),
+                action = { animeAdapter.retry() }
+            )
         }
     }
 
     private fun observeViewModelStates(animeAdapter: AnimeGridAdapter) = with(binding) {
         viewLifecycleOwner.lifecycleScope.launch {
-            seasonViewModel.selectedSeason
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest { btnChangeSeason.text = it.replaceFirstChar { s -> s.titlecase() } }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            seasonViewModel.selectedYear
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest { btnChangeYear.text = it.toString() }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            seasonViewModel.sortKey
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest { btnSortBy.text = getString(SortingAnime.keyValue(it).stringResId) }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            seasonViewModel.animeList
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest { animeAdapter.submitData(it) }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            profileViewModel.profileImageUri
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest { loadProfileImage(it) }
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch { seasonViewModel.selectedSeason.collectLatest { btnChangeSeason.text = it.replaceFirstChar { s -> s.titlecase() } } }
+                launch { seasonViewModel.selectedYear.collectLatest { btnChangeYear.text = it.toString() } }
+                launch { seasonViewModel.sortKey.collectLatest { btnSortBy.text = getString(SortingAnime.keyValue(it).stringResId) } }
+                launch { seasonViewModel.animeList.collectLatest(animeAdapter::submitData) }
+                launch { profileViewModel.profileImageUri.collectLatest(::loadProfileImage) }
+                launch { animeAdapter.loadStateFlow.collectLatest { observeLoadState(animeAdapter, it) } }
+            }
         }
     }
 

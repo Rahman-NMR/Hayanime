@@ -15,9 +15,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.awaitNotLoading
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -83,7 +84,6 @@ class SearchFragment : Fragment(), ReselectableFragment {
         handleSearchInput(animeAdapter)
 
         observeViewModelStates(animeAdapter, historyAdapter)
-        observeLoadState(animeAdapter)
     }
 
     private fun setupAdapterRefreshListener(animeAdapter: AnimeGridAdapter) {
@@ -256,22 +256,21 @@ class SearchFragment : Fragment(), ReselectableFragment {
         binding.recyclerViewLatestSearch.smoothScrollToPosition(0)
     }
 
-    private fun observeLoadState(animeAdapter: AnimeGridAdapter) = viewLifecycleOwner.lifecycleScope.launch {
-        animeAdapter.loadStateFlow.collectLatest { loadStates ->
-            val refreshState = loadStates.refresh
+    private fun observeLoadState(animeAdapter: AnimeGridAdapter, loadStates: CombinedLoadStates) = with(binding) {
+        val refreshState = loadStates.refresh
 
-            val isListEmpty = animeAdapter.itemCount == 0
-            binding.tvInfoMsg.isVisible = isListEmpty && (refreshState is LoadState.NotLoading || refreshState is LoadState.Error)
-            binding.swipeRefresh.isRefreshing = refreshState is LoadState.Loading
+        val isListEmpty = animeAdapter.itemCount == 0
+        tvInfoMsg.isVisible = isListEmpty && (refreshState is LoadState.NotLoading || refreshState is LoadState.Error)
+        swipeRefresh.isRefreshing = refreshState is LoadState.Loading
 
-            if (refreshState is LoadState.Error) {
-                val message = when (refreshState.error) {
-                    is ConnectException -> getString(R.string.message_failed_to_connect)
-                    is SocketException -> getString(R.string.message_connection_lost)
-                    is SocketTimeoutException -> getString(R.string.message_timeout)
-                    is UnknownHostException -> getString(R.string.message_no_internet)
-                    else -> getString(R.string.message_error_occurred)
-                }
+        if (refreshState is LoadState.Error) {
+            val message = when (refreshState.error) {
+                is ConnectException -> getString(R.string.message_failed_to_connect)
+                is SocketException -> getString(R.string.message_connection_lost)
+                is SocketTimeoutException -> getString(R.string.message_timeout)
+                is UnknownHostException -> getString(R.string.message_no_internet)
+                else -> getString(R.string.message_error_occurred)
+            }
 
                 showSnackbar(
                     view = binding.root,
@@ -286,21 +285,12 @@ class SearchFragment : Fragment(), ReselectableFragment {
 
     private fun observeViewModelStates(animeAdapter: AnimeGridAdapter, historyAdapter: SearchHistoryAdapter) {
         viewLifecycleOwner.lifecycleScope.launch {
-            searchViewModel.animeList
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest { animeAdapter.submitData(it) }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            profileViewModel.profileImageUri
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest { loadProfileImage(it) }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            historyViewModel.historyState
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest { historyAdapter.submitList(it) }
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch { searchViewModel.animeList.collectLatest(animeAdapter::submitData) }
+                launch { profileViewModel.profileImageUri.collectLatest(::loadProfileImage) }
+                launch { historyViewModel.historyState.collectLatest(historyAdapter::submitList) }
+                launch { animeAdapter.loadStateFlow.collectLatest { observeLoadState(animeAdapter, it) } }
+            }
         }
     }
 

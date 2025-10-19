@@ -12,8 +12,8 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
@@ -494,28 +494,13 @@ class EditOwnListFragment : Fragment() {
 
     private fun observeViewModelStates() {
         viewLifecycleOwner.lifecycleScope.launch {
-            ownListViewModel.isLoading.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest(::updateLoadingState)
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            ownListViewModel.animeUIState.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest(::observeUIState)
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            ownListViewModel.maxEpisodes.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest(::setupEpisodesRecyclerView)
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            ownListViewModel.startDateComponents.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest(::startDateObserver)
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            ownListViewModel.finishDateComponents.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest(::finishDateObserver)
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch { ownListViewModel.isLoading.collectLatest(::updateLoadingState) }
+                launch { ownListViewModel.animeUIState.collectLatest(::observeUIState) }
+                launch { ownListViewModel.maxEpisodes.collectLatest(::setupEpisodesRecyclerView) }
+                launch { ownListViewModel.startDateComponents.collectLatest(::startDateObserver) }
+                launch { ownListViewModel.finishDateComponents.collectLatest(::finishDateObserver) }
+            }
         }
     }
 

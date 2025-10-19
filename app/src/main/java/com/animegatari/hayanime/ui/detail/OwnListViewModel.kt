@@ -15,8 +15,9 @@ import com.animegatari.hayanime.domain.utils.onError
 import com.animegatari.hayanime.domain.utils.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,15 +29,27 @@ class OwnListViewModel @Inject constructor(
     private val missingAnimeIdError = application.getString(R.string.message_missing_anime_id_reopen_page)
 
     private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> get() = _isLoading.asStateFlow()
+    val isLoading: StateFlow<Boolean> = _isLoading.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = _isLoading.value
+    )
 
     private val _maxEpisodes = MutableStateFlow<Int?>(null)
-    val maxEpisodes: StateFlow<Int?> get() = _maxEpisodes.asStateFlow()
+    val maxEpisodes: StateFlow<Int?> = _maxEpisodes.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = null
+    )
 
     private val _newestAnimeData = MutableStateFlow<AnimeMinimum?>(null)
     private val _originalAnimeData = MutableStateFlow<AnimeMinimum?>(null)
 
-    val animeUIState: StateFlow<AnimeMinimum?> get() = _newestAnimeData.asStateFlow()
+    val animeUIState: StateFlow<AnimeMinimum?> = _newestAnimeData.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = null
+    )
 
     private suspend fun fetchMyAnimeData(animeId: Int): AnimeMinimum? {
         val extendedFields = Config.OWN_ANIME_LIST_EXTENDED_FIELDS
@@ -181,10 +194,18 @@ class OwnListViewModel @Inject constructor(
     }
 
     private val _startDateComponents = MutableStateFlow<DateComponents?>(DateComponents())
-    val startDateComponents: StateFlow<DateComponents?> get() = _startDateComponents.asStateFlow()
+    val startDateComponents: StateFlow<DateComponents?> = _startDateComponents.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = DateComponents()
+    )
 
     private val _finishDateComponents = MutableStateFlow<DateComponents?>(DateComponents())
-    val finishDateComponents: StateFlow<DateComponents?> get() = _finishDateComponents.asStateFlow()
+    val finishDateComponents: StateFlow<DateComponents?> = _finishDateComponents.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = DateComponents()
+    )
 
     /** null update using one by one selection,
      *  not null update using current date */

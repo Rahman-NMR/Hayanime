@@ -12,9 +12,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.awaitNotLoading
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -66,7 +67,6 @@ class MyListFragment : Fragment(), ReselectableFragment {
         setupRecyclerView(myListAdapter)
 
         observeViewModelStates(myListAdapter)
-        observeLoadState(myListAdapter)
     }
 
     private fun setupAdapterRefreshListener(myListAdapter: MyListAdapter) {
@@ -199,59 +199,52 @@ class MyListFragment : Fragment(), ReselectableFragment {
         binding.recyclerView.scrollToPosition(0)
     }
 
-    private fun observeLoadState(myListAdapter: MyListAdapter) = viewLifecycleOwner.lifecycleScope.launch {
-        myListAdapter.loadStateFlow.collectLatest { loadStates ->
-            val refreshState = loadStates.refresh
+    private fun observeLoadState(myListAdapter: MyListAdapter, loadStates: CombinedLoadStates) = with(binding) {
+        val refreshState = loadStates.refresh
 
-            val isListEmpty = myListAdapter.itemCount == 0
-            binding.tvInfoMsg.isVisible = isListEmpty && (refreshState is LoadState.NotLoading || refreshState is LoadState.Error)
-            binding.swipeRefresh.isRefreshing = refreshState is LoadState.Loading
+        val isListEmpty = myListAdapter.itemCount == 0
+        tvInfoMsg.isVisible = isListEmpty && (refreshState is LoadState.NotLoading || refreshState is LoadState.Error)
+        swipeRefresh.isRefreshing = refreshState is LoadState.Loading
 
-            if (refreshState is LoadState.Error) {
-                val message = when (refreshState.error) {
-                    is ConnectException -> getString(R.string.message_failed_to_connect)
-                    is SocketException -> getString(R.string.message_connection_lost)
-                    is SocketTimeoutException -> getString(R.string.message_timeout)
-                    is UnknownHostException -> getString(R.string.message_no_internet)
-                    else -> getString(R.string.message_error_occurred)
-                }
-
-                showSnackbar(
-                    view = binding.root,
-                    message = message,
-                    anchorView = requireActivity().findViewById(R.id.nav_view),
-                    actionName = getString(R.string.action_retry),
-                    action = { myListAdapter.retry() }
-                )
+        if (refreshState is LoadState.Error) {
+            val message = when (refreshState.error) {
+                is ConnectException -> getString(R.string.message_failed_to_connect)
+                is SocketException -> getString(R.string.message_connection_lost)
+                is SocketTimeoutException -> getString(R.string.message_timeout)
+                is UnknownHostException -> getString(R.string.message_no_internet)
+                else -> getString(R.string.message_error_occurred)
             }
+
+            showSnackbar(
+                view = root,
+                message = message,
+                anchorView = requireActivity().findViewById(R.id.nav_view),
+                actionName = getString(R.string.action_retry),
+                action = { myListAdapter.retry() }
+            )
         }
     }
 
     private fun observeViewModelStates(myListAdapter: MyListAdapter) {
         viewLifecycleOwner.lifecycleScope.launch {
-            myListViewModel.myAnimeList
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest { myListAdapter.submitData(it) }
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch { myListViewModel.myAnimeList.collectLatest(myListAdapter::submitData) }
+                launch { profileViewModel.profileImageUri.collectLatest(::loadProfileImage) }
+                launch { myListAdapter.loadStateFlow.collectLatest { observeLoadState(myListAdapter, it) } }
+                launch { myListViewModel.events.collectLatest { handleEvent(it, myListAdapter) } }
+            }
         }
+    }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            profileViewModel.profileImageUri
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest { loadProfileImage(it) }
-        }
+    private fun handleEvent(event: MyListEvent, myListAdapter: MyListAdapter) {
+        when (event) {
+            is MyListEvent.DataModified -> {
+                myListAdapter.refresh()
+                scrollToTopOnLoad(myListAdapter)
+            }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            myListViewModel.events.collectLatest { event ->
-                when (event) {
-                    is MyListEvent.DataModified -> {
-                        myListAdapter.refresh()
-                        scrollToTopOnLoad(myListAdapter)
-                    }
-
-                    is MyListEvent.UpdateProgressError -> {
-                        showToast(requireContext(), event.message ?: getString(R.string.message_error_occurred))
-                    }
-                }
+            is MyListEvent.UpdateProgressError -> {
+                showToast(requireContext(), event.message ?: getString(R.string.message_error_occurred))
             }
         }
     }
