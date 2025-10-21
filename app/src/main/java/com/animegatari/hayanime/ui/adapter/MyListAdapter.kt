@@ -70,10 +70,10 @@ class MyListAdapter(
                 }
 
                 val nsfwMedia = NsfwMedia.fromApiValue(anime.nsfw)
-                nsfw.isVisible = nsfwMedia != NsfwMedia.WHITE
+                nsfw.layout.isVisible = nsfwMedia != NsfwMedia.WHITE && nsfwMedia != NsfwMedia.UNKNOWN
                 if (nsfwMedia == NsfwMedia.BLACK) {
                     val nsfwBlack = viewContext.getString(R.string.label_nsfw) + "+"
-                    nsfw.text = nsfwBlack
+                    nsfw.layout.text = nsfwBlack
                 }
 
                 val mediaType = viewContext.getString(MediaType.fromApiValue(anime.mediaType).stringResId)

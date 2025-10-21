@@ -8,7 +8,7 @@ data class AnimeDetail(
     val id: Int? = null,
 
     @field:SerializedName("main_picture")
-    val mainPicture: MainPicture? = null,
+    val mainPicture: Picture? = null,
 
     @field:SerializedName("title")
     val title: String? = null,
@@ -35,7 +35,7 @@ data class AnimeDetail(
     val endDate: String? = null,
 
     @field:SerializedName("mean")
-    val mean: Any? = null,
+    val mean: Float? = null,
 
     @field:SerializedName("num_scoring_users")
     val numScoringUsers: Int? = null,

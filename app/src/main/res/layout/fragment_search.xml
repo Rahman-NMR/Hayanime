@@ -20,6 +20,7 @@
             android:clipToPadding="false"
             android:paddingHorizontal="@dimen/recyclerview_corner_padding_small"
             android:paddingTop="@dimen/recyclerview_corner_padding_small"
+            android:paddingBottom="@dimen/layout_padding_bottom"
             app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
             app:spanCount="2"
             tools:itemCount="3"

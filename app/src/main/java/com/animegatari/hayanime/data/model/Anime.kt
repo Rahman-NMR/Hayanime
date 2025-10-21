@@ -8,7 +8,7 @@ data class Anime(
     val id: Int? = null,
 
     @field:SerializedName("main_picture")
-    val mainPicture: MainPicture? = null,
+    val mainPicture: Picture? = null,
 
     @field:SerializedName("media_type")
     val mediaType: String? = null,
