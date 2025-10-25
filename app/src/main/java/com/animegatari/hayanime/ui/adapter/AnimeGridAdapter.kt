@@ -44,7 +44,7 @@ class AnimeGridAdapter(
             with(binding) {
                 val pictureUrl = anime.mainPicture
                 Glide.with(viewContext)
-                    .load(pictureUrl?.medium ?: pictureUrl?.large)
+                    .load(pictureUrl?.large ?: pictureUrl?.medium)
                     .placeholder(R.drawable.img_placeholder)
                     .error(R.drawable.img_error)
                     .into(mainPicture)
