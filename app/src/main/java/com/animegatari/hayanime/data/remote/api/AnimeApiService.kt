@@ -37,6 +37,12 @@ interface AnimeApiService {
     ): AnimeListResponse
 
     @GET("anime/{id}")
+    suspend fun getAnimeDetail(
+        @Path("id") id: Int,
+        @Query("fields") fields: String? = null,
+    ): AnimeDetail
+
+    @GET("anime/{id}")
     suspend fun getShortAnimeDetail(
         @Path("id") id: Int,
         @Query("fields") fields: String? = null,

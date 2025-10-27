@@ -7,7 +7,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -19,7 +18,6 @@ import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.awaitNotLoading
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.animegatari.hayanime.BuildConfig
 import com.animegatari.hayanime.R
 import com.animegatari.hayanime.data.model.UserInfo
 import com.animegatari.hayanime.data.types.SeasonStart
@@ -187,10 +185,12 @@ class SeasonFragment : Fragment(), ReselectableFragment {
 
     private fun initializeAnimeAdapter(): AnimeGridAdapter = AnimeGridAdapter(
         onItemClicked = { anime ->
-            val intent = Intent(Intent.ACTION_VIEW).apply {
-                data = "${BuildConfig.BASE_URL}anime/${anime.id}".toUri()
+            anime.id?.let {
+                val action = SeasonFragmentDirections.actionNavigationToNavigationAnimeDetail(it)
+                findNavController().navigate(action)
+            } ?: run {
+                showToast(requireContext(), getString(R.string.message_error_missing_anime_id))
             }
-            startActivity(intent)
         },
         onEditMyListClicked = { anime ->
             anime.id?.let { animeId ->

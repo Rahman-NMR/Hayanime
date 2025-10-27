@@ -13,6 +13,7 @@
     <string name="title_choose_season_year">Choose Season Year</string>
     <string name="title_choose_x_year">Choose %1$s Year</string>
     <string name="title_edit_anime">Edit Anime Details</string>
+    <string name="title_anime_detail">Anime Detail</string>
     <string name="title_delete_anime_confirmation">Delete Anime from the List?</string>
     <string name="title_logout_confirmation">Logout from your Account?</string>
     <string name="title_user_stats">User Statistics</string>
@@ -62,6 +63,8 @@
     <string name="action_delete">Delete</string>
     <string name="action_logout">Logout</string>
     <string name="action_retry">Retry</string>
+    <string name="action_share">Share</string>
+    <string name="action_open_in_browser">Open in Browser</string>
     <string name="btn_login_with_mal">Login with MyAnimeList</string>
 
     <string name="info_empty_initial_search">Oops! You haven\'t performed any searches yet</string>

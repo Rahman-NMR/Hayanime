@@ -15,6 +15,12 @@ object Config {
     const val ANIME_LIST_FIELDS = "$BROADCAST_FIELDS,$AVG_FIELDS,$SHORT_ANIME_FIELDS{status,finish_date}"
     const val MYLIST_ANIME_FIELDS = "$BROADCAST_FIELDS,$SHORT_ANIME_FIELDS{$MY_LIST_STATUS_BASIC_FIELDS}"
 
+
+    // Anime Detail Fields
+    private const val ANIME_DETAIL_BASIC = "id,title,main_picture,alternative_titles,start_date,end_date,synopsis,rank,popularity,num_list_users"
+    private const val ANIME_DETAIL_EXTENDED = "created_at,updated_at,num_episodes,broadcast,pictures,background,related_anime,related_manga,recommendations,statistics"
+    const val ANIME_DETAIL_FIELDS = "$ANIME_DETAIL_BASIC,$BROADCAST_FIELDS,$AVG_FIELDS,$ANIME_DETAIL_EXTENDED"
+
     // User Info Fields
     private const val NI = "num_items"
     private const val ND = "num_days"

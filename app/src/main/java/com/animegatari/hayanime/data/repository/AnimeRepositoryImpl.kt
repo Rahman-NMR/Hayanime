@@ -5,12 +5,15 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.animegatari.hayanime.data.local.datamodel.SeasonModel
 import com.animegatari.hayanime.data.local.datastore.SettingsPreferences
+import com.animegatari.hayanime.data.model.AnimeDetail
 import com.animegatari.hayanime.data.pagination.AnimePagingSource
 import com.animegatari.hayanime.data.remote.api.AnimeApiService
 import com.animegatari.hayanime.data.remote.response.AnimeList
 import com.animegatari.hayanime.domain.repository.AnimeRepository
+import com.animegatari.hayanime.domain.utils.Response
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -82,5 +85,20 @@ class AnimeRepositoryImpl @Inject constructor(
                 }
             }
         ).flow
+    }
+
+    override fun animeDetails(id: Int, commonFields: String): Flow<Response<AnimeDetail>> = flow {
+        emit(Response.Loading)
+        try {
+            val response = apiService.getAnimeDetail(id, commonFields)
+
+            if (response != AnimeDetail()) {
+                emit(Response.Success(response))
+            } else {
+                emit(Response.Error())
+            }
+        } catch (e: Exception) {
+            emit(Response.Error(e.localizedMessage))
+        }
     }
 }
