@@ -3,6 +3,7 @@ package com.animegatari.hayanime.ui.detail
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.animegatari.hayanime.R
 import com.animegatari.hayanime.core.Config
@@ -24,9 +25,14 @@ import javax.inject.Inject
 @HiltViewModel
 class OwnListViewModel @Inject constructor(
     private val userAnimeListRepository: UserAnimeListRepository,
+    savedStateHandle: SavedStateHandle,
     application: Application,
 ) : AndroidViewModel(application) {
+    private val initialID = 0
     private val missingAnimeIdError = application.getString(R.string.message_missing_anime_id_reopen_page)
+
+    val animeId = savedStateHandle.get<Int>("animeId") ?: initialID
+    val requestKey = savedStateHandle.get<String>("requestKey") ?: ""
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.stateIn(
@@ -74,8 +80,13 @@ class OwnListViewModel @Inject constructor(
         }
     }
 
-    fun loadMyAnimeDetail(animeId: Int, onResponse: (Response<Boolean>) -> Unit) = viewModelScope.launch {
+    fun loadMyAnimeDetail(onResponse: (Response<Boolean>) -> Unit) = viewModelScope.launch {
         _isLoading.value = true
+        if (animeId <= initialID) {
+            onResponse(Response.Error(missingAnimeIdError))
+            _isLoading.value = false
+            return@launch
+        }
 
         val animeDetails = fetchMyAnimeData(animeId)
         if (animeDetails != null) {
@@ -94,8 +105,8 @@ class OwnListViewModel @Inject constructor(
         }
     }
 
-    fun saveChanges(animeId: Int?, onResponse: (Response<Boolean>) -> Unit) = viewModelScope.launch {
-        if (animeId == null) {
+    fun saveChanges(onResponse: (Response<Boolean>) -> Unit) = viewModelScope.launch {
+        if (animeId <= initialID) {
             onResponse(Response.Error(missingAnimeIdError))
             return@launch
         }
@@ -122,8 +133,8 @@ class OwnListViewModel @Inject constructor(
             }
     }
 
-    fun deleteThisSeries(animeId: Int?, onResponse: (Response<Boolean>) -> Unit) = viewModelScope.launch {
-        if (animeId == null) {
+    fun deleteThisSeries(onResponse: (Response<Boolean>) -> Unit) = viewModelScope.launch {
+        if (animeId <= initialID) {
             onResponse(Response.Error(missingAnimeIdError))
             return@launch
         }

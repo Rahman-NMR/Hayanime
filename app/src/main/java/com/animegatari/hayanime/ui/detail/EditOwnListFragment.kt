@@ -2,7 +2,6 @@ package com.animegatari.hayanime.ui.detail
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -15,7 +14,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.animegatari.hayanime.R
 import com.animegatari.hayanime.data.local.datamodel.DateComponents
@@ -31,6 +29,7 @@ import com.animegatari.hayanime.domain.utils.onError
 import com.animegatari.hayanime.domain.utils.onSuccess
 import com.animegatari.hayanime.ui.adapter.NumberAdapter
 import com.animegatari.hayanime.ui.dialog.YearPickerDialogFragment
+import com.animegatari.hayanime.ui.utils.animation.ViewCollapseAnimation.collapseAnimated
 import com.animegatari.hayanime.ui.utils.extension.AutoCompleteTextViewExtensions.setupDropdownWithEnum
 import com.animegatari.hayanime.ui.utils.extension.AutoCompleteTextViewExtensions.setupSimpleDropdown
 import com.animegatari.hayanime.ui.utils.interfaces.AlertDialog.confirmationDialog
@@ -65,16 +64,8 @@ class EditOwnListFragment : Fragment() {
     private var episodesScrollListener: CenterSnapScaleScrollListener? = null
     private var scoreScrollListener: CenterSnapScaleScrollListener? = null
 
-    private var initialAnimeId: Int? = INVALID_ANIME_ID
-    private var requestKey: String = DETAIL_REQUEST_KEY
-    private val args: EditOwnListFragmentArgs by navArgs()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        initialAnimeId = args.animeId
-        requestKey = args.requestKey
-
         setupYearPickerListener()
     }
 
@@ -111,10 +102,10 @@ class EditOwnListFragment : Fragment() {
     private fun setupViews() {
         setupInteractionListeners()
         setupScoreRecyclerView()
-        configureStaticViewTexts()
+        initializeStaticView()
     }
 
-    private fun configureStaticViewTexts() = with(binding) {
+    private fun initializeStaticView() = with(binding) {
         btnActionSave.shrink()
         startDate.labelTitleDate.text = getString(R.string.label_start_date)
         finishDate.labelTitleDate.text = getString(R.string.label_finish_date)
@@ -130,7 +121,12 @@ class EditOwnListFragment : Fragment() {
 
     private fun setupInteractionListeners() = with(binding) {
         toolBar.setNavigationOnClickListener { dismiss() }
-        toolBar.setOnMenuItemClickListener { menuItem -> handleMenuDeletionClick(menuItem) }
+        toolBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu_delete_anime -> openDeleteConfirmationDialog()
+                else -> false
+            }
+        }
         btnActionSave.setOnClickListener { saveChanges() }
         btnActionExpand.setOnClickListener { toggleAdvancedOptions() }
         chipGroup.setOnCheckedStateChangeListener { _, checkedIds -> handleChipGroupSelection(checkedIds) }
@@ -169,10 +165,10 @@ class EditOwnListFragment : Fragment() {
     private fun saveChanges() = with(binding.btnActionSave) {
         hideKeyboardAndClearFocus(requireView())
         if (isExtended) {
-            ownListViewModel.saveChanges(initialAnimeId) { response ->
+            ownListViewModel.saveChanges { response ->
                 response.onSuccess { isSaved ->
                     if (isSaved == true) {
-                        parentFragmentManager.setFragmentResult(requestKey, bundleOf(BUNDLE_KEY_UPDATED to true))
+                        parentFragmentManager.setFragmentResult(ownListViewModel.requestKey, bundleOf(BUNDLE_KEY_UPDATED to true))
                         dismiss()
                     } else {
                         showSnackbar(requireView(), getString(R.string.message_same_data))
@@ -193,11 +189,6 @@ class EditOwnListFragment : Fragment() {
         }
     }
 
-    private fun handleMenuDeletionClick(menuItem: MenuItem?): Boolean = when (menuItem?.itemId) {
-        R.id.menu_delete_anime -> openDeleteConfirmationDialog()
-        else -> false
-    }
-
     private fun openDeleteConfirmationDialog(): Boolean {
         confirmationDialog(
             context = requireContext(),
@@ -206,9 +197,9 @@ class EditOwnListFragment : Fragment() {
             positiveButton = getString(R.string.action_delete),
             negativeButton = getString(R.string.label_cancel)
         ) {
-            ownListViewModel.deleteThisSeries(initialAnimeId) { response ->
+            ownListViewModel.deleteThisSeries { response ->
                 response.onSuccess {
-                    parentFragmentManager.setFragmentResult(requestKey, bundleOf(BUNDLE_KEY_DELETED to true))
+                    parentFragmentManager.setFragmentResult(ownListViewModel.requestKey, bundleOf(BUNDLE_KEY_DELETED to true))
                     dismiss()
                 }
                 response.onError { message ->
@@ -221,13 +212,15 @@ class EditOwnListFragment : Fragment() {
     }
 
     private fun toggleAdvancedOptions() = with(binding) {
-        val isVisible = extraFields.root.isVisible
-        extraFields.root.isVisible = !isVisible
-
-        val textRes = if (isVisible) R.string.label_show_advanced else R.string.label_hide_advanced
-        val drawableRes = if (isVisible) R.drawable.ic_keyboard_arrow_down_24px_rounded else R.drawable.ic_keyboard_arrow_up_24px_rounded
-
-        updateExpandButtonState(textRes, drawableRes)
+        val targetView = extraFields.root
+        if (targetView.isVisible) {
+            targetView.collapseAnimated {
+                updateExpandButtonState(R.string.label_show_advanced, R.drawable.ic_keyboard_arrow_down_24px_rounded)
+            }
+        } else {
+            targetView.isVisible = true
+            updateExpandButtonState(R.string.label_hide_advanced, R.drawable.ic_keyboard_arrow_up_24px_rounded)
+        }
     }
 
     private fun updateExpandButtonState(textResId: Int, drawableResId: Int) = with(binding.btnActionExpand) {
@@ -505,14 +498,7 @@ class EditOwnListFragment : Fragment() {
     }
 
     private fun loadThisAnime() {
-        val currentAnimeId = initialAnimeId
-        if (currentAnimeId == null || currentAnimeId == INVALID_ANIME_ID) {
-            showToast(requireContext(), getString(R.string.message_error_missing_anime_id))
-            dismiss()
-            return
-        }
-
-        ownListViewModel.loadMyAnimeDetail(currentAnimeId) { response ->
+        ownListViewModel.loadMyAnimeDetail { response ->
             response.onError {
                 showToast(requireContext(), getString(R.string.message_failed_load_data))
                 dismiss()
@@ -534,8 +520,6 @@ class EditOwnListFragment : Fragment() {
     }
 
     companion object {
-        private const val INVALID_ANIME_ID = 0
-
         const val DETAIL_REQUEST_KEY = "DETAIL_REQUEST_KEY"
         const val BUNDLE_KEY_DELETED = "BUNDLE_KEY_DELETED"
         const val BUNDLE_KEY_UPDATED = "BUNDLE_KEY_UPDATED"
