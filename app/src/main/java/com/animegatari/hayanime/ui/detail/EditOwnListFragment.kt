@@ -310,7 +310,7 @@ class EditOwnListFragment : Fragment() {
     }
 
     private fun setupScoreRecyclerView() = with(binding) {
-        val scoreLabels = scoreStringMap(requireContext())
+        val scoreLabels = requireContext().scoreStringMap()
 
         scoreScrollListener = setupCenteringRecyclerView(
             recyclerView = score.recyclerView,

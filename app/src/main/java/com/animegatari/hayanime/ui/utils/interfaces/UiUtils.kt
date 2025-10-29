@@ -11,18 +11,18 @@ import com.animegatari.hayanime.utils.FormatterUtils.formatDecimal
 import com.google.android.material.textfield.TextInputEditText
 
 object UiUtils {
-    fun scoreStringMap(context: Context): Map<Int, String> = mapOf(
-        0 to context.getString(R.string.my_score_not_yet_scored),
-        10 to context.getString(R.string.my_score_masterpiece),
-        9 to context.getString(R.string.my_score_great),
-        8 to context.getString(R.string.my_score_very_good),
-        7 to context.getString(R.string.my_score_good),
-        6 to context.getString(R.string.my_score_fine),
-        5 to context.getString(R.string.my_score_average),
-        4 to context.getString(R.string.my_score_bad),
-        3 to context.getString(R.string.my_score_very_bad),
-        2 to context.getString(R.string.my_score_horrible),
-        1 to context.getString(R.string.my_score_appalling)
+    fun Context.scoreStringMap(): Map<Int, String> = mapOf(
+        0 to getString(R.string.my_score_not_yet_scored),
+        10 to getString(R.string.my_score_masterpiece),
+        9 to getString(R.string.my_score_great),
+        8 to getString(R.string.my_score_very_good),
+        7 to getString(R.string.my_score_good),
+        6 to getString(R.string.my_score_fine),
+        5 to getString(R.string.my_score_average),
+        4 to getString(R.string.my_score_bad),
+        3 to getString(R.string.my_score_very_bad),
+        2 to getString(R.string.my_score_horrible),
+        1 to getString(R.string.my_score_appalling)
     ).toSortedMap(compareByDescending { it })
 
     fun handleTextChange(editable: Editable?, action: (String) -> Unit) {
