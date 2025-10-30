@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="@dimen/sub_image_width"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:gravity="start|center_vertical"
+        android:maxLines="3"
+        android:paddingHorizontal="2dp"
+        android:text="@string/label_unknown"
+        android:textSize="16sp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/main_picture" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/main_picture"
+        android:layout_width="@dimen/sub_image_width"
+        android:layout_height="@dimen/sub_image_height"
+        android:background="?attr/colorSecondaryContainer"
+        android:padding="1dp"
+        android:scaleType="fitCenter"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/img_error"
+        app:strokeColor="?attr/colorSecondaryContainer"
+        app:strokeWidth="1dp" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/num_recom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bottom_left_corner_16"
+        android:backgroundTint="?attr/colorSecondaryContainer"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:paddingStart="12dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="4dp"
+        android:paddingBottom="6dp"
+        android:text="@string/not_available"
+        android:textSize="14sp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@id/main_picture"
+        app:layout_constraintTop_toTopOf="@id/main_picture" />
+</androidx.constraintlayout.widget.ConstraintLayout>

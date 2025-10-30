@@ -19,7 +19,7 @@ class AnimeDetailViewModel @Inject constructor(
     repository: AnimeRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    private val animeId = savedStateHandle.get<Int>("animeId") ?: 0
+    val animeId = savedStateHandle.get<Int>("animeId") ?: 0
     val animeDetail: StateFlow<Response<AnimeDetail>> = repository.animeDetails(animeId, Config.ANIME_DETAIL_FIELDS)
         .stateIn(
             scope = viewModelScope,

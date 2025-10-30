@@ -4,12 +4,15 @@ import android.icu.text.NumberFormat
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.Year
 import java.time.YearMonth
+import java.time.ZonedDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+import java.time.format.TextStyle
 import java.time.format.FormatStyle
 import java.util.Locale
 
@@ -81,6 +84,39 @@ object FormatterUtils {
 
             formatter.format(zonedDateTime)
         } catch (_: DateTimeParseException) {
+            null
+        }
+    }
+
+    fun formatTimeIntoLocale(time: String?, sourceTimeZone: String = "Asia/Tokyo"): String? {
+        if (time.isNullOrBlank()) {
+            return null
+        }
+
+        return try {
+            val sourceTime = LocalTime.parse(time)
+            val sourceZonedDateTime = ZonedDateTime.now(ZoneId.of(sourceTimeZone)).with(sourceTime)
+            val localZonedDateTime = sourceZonedDateTime.withZoneSameInstant(ZoneId.systemDefault())
+            val formatter = DateTimeFormatter.ofPattern("HH:mm z", Locale.getDefault())
+            localZonedDateTime.format(formatter)
+        } catch (_: DateTimeParseException) {
+            null
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    fun dayLocaleFormatter(dateStr: String?): String? {
+        if (dateStr.isNullOrBlank()) {
+            return null
+        }
+
+        return try {
+            val dayOfWeek = java.time.DayOfWeek.valueOf(dateStr.uppercase(Locale.ENGLISH))
+            dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
+        } catch (_: IllegalArgumentException) {
+            dateStr.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        } catch (_: Exception) {
             null
         }
     }

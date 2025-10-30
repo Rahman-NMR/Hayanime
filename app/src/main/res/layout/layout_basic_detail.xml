@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.textview.MaterialTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/text_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:drawableStart="@drawable/ic_question_mark_24px_rounded"
+    android:drawablePadding="8dp"
+    android:gravity="center_vertical"
+    android:text="@string/label_unknown"
+    android:textSize="16sp" />

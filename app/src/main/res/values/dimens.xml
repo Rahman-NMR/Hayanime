@@ -1,8 +1,13 @@
 <resources>
     <dimen name="recyclerview_corner_padding_small">6dp</dimen>
     <dimen name="layout_padding_bottom">80dp</dimen>
+    <dimen name="small_dp">8dp</dimen>
     <dimen name="normal_dp">16dp</dimen>
     <dimen name="item_rv_scrolling_width">50dp</dimen>
+    <dimen name="main_image_width">134dp</dimen>
+    <dimen name="main_image_height">190dp</dimen>
+    <dimen name="sub_image_width">123dp</dimen>
+    <dimen name="sub_image_height">174dp</dimen>
 
     <dimen name="pie_chart_center_text_large">24sp</dimen>
     <dimen name="pie_chart_center_text_small">14sp</dimen>

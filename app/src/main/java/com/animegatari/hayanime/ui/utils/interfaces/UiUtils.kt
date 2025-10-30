@@ -7,6 +7,9 @@ import android.text.style.AbsoluteSizeSpan
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import com.animegatari.hayanime.R
+import com.animegatari.hayanime.data.model.AnimeDetail
+import com.animegatari.hayanime.domain.model.RateDetail
+import com.animegatari.hayanime.utils.FormatterUtils.digitNumberFormatter
 import com.animegatari.hayanime.utils.FormatterUtils.formatDecimal
 import com.google.android.material.textfield.TextInputEditText
 
@@ -24,6 +27,43 @@ object UiUtils {
         2 to getString(R.string.my_score_horrible),
         1 to getString(R.string.my_score_appalling)
     ).toSortedMap(compareByDescending { it })
+
+    fun Context.listRateDetail(anime: AnimeDetail?): List<RateDetail> = listOf(
+        RateDetail(
+            name = getString(R.string.label_score),
+            value = anime?.mean
+                ?.let { "☆ " + formatDecimal(it) }
+                ?: getString(R.string.not_available)
+        ),
+        RateDetail(
+            name = getString(R.string.label_user_scored),
+            value = anime?.numScoringUsers
+                ?.takeIf { it > 0 }
+                ?.let { digitNumberFormatter(it) }
+                ?: getString(R.string.not_available)
+        ),
+        RateDetail(
+            name = getString(R.string.label_ranking),
+            value = anime?.rank
+                ?.takeIf { it > 0 }
+                ?.let { "#" + digitNumberFormatter(it) }
+                ?: getString(R.string.not_available)
+        ),
+        RateDetail(
+            name = getString(R.string.label_popularity),
+            value = anime?.popularity
+                ?.takeIf { it > 0 }
+                ?.let { "#" + digitNumberFormatter(it) }
+                ?: getString(R.string.not_available)
+        ),
+        RateDetail(
+            name = getString(R.string.label_members),
+            value = anime?.numListUsers
+                ?.takeIf { it > 0 }
+                ?.let { digitNumberFormatter(it) }
+                ?: getString(R.string.not_available)
+        )
+    )
 
     fun handleTextChange(editable: Editable?, action: (String) -> Unit) {
         action(editable?.toString()?.trim() ?: "")

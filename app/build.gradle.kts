@@ -26,7 +26,7 @@ android {
         minSdk = 28
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0.5-beta"
+        versionName = "1.0.6-beta"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -74,6 +74,7 @@ dependencies {
     implementation(libs.androidx.splashscreen)
     implementation(libs.androidx.paging)
     implementation(libs.androidx.preference)
+    implementation(libs.google.flexbox)
     implementation(libs.glide)
     implementation(libs.androidchart)
 

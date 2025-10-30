@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/label_start_date"
+        style="@style/MoreInfoTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_start_date"
+        app:layout_constraintEnd_toEndOf="@id/guideline_max_label_width"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/data_start_date"
+        style="@style/MoreInfoTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/nothing"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/vertical_barrier"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_start_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:barrierMargin="4dp"
+        app:constraint_referenced_ids="label_start_date, data_start_date" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/label_finish_date"
+        style="@style/MoreInfoTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_finish_date"
+        app:layout_constraintEnd_toEndOf="@id/guideline_max_label_width"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/barrier_start_date" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/data_finish_date"
+        style="@style/MoreInfoTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/nothing"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/vertical_barrier"
+        app:layout_constraintTop_toTopOf="@id/barrier_finish_date" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_finish_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:barrierMargin="4dp"
+        app:constraint_referenced_ids="label_finish_date, data_finish_date" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/label_broadcast"
+        style="@style/MoreInfoTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_broadcast"
+        app:layout_constraintEnd_toEndOf="@id/guideline_max_label_width"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier_finish_date" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/data_broadcast"
+        style="@style/MoreInfoTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/nothing"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/vertical_barrier"
+        app:layout_constraintTop_toBottomOf="@id/barrier_finish_date" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_broadcast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:barrierMargin="4dp"
+        app:constraint_referenced_ids="label_broadcast, data_broadcast" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/label_source"
+        style="@style/MoreInfoTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_source"
+        app:layout_constraintEnd_toEndOf="@id/guideline_max_label_width"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier_broadcast" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/data_source"
+        style="@style/MoreInfoTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/nothing"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/vertical_barrier"
+        app:layout_constraintTop_toBottomOf="@id/barrier_broadcast" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_source"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:barrierMargin="8dp"
+        app:constraint_referenced_ids="label_source, data_source" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/studio_recycler_view" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/label_studio"
+        style="@style/MoreInfoTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_studio"
+        app:layout_constraintBottom_toBottomOf="@id/studio_recycler_view"
+        app:layout_constraintEnd_toEndOf="@id/guideline_max_label_width"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/studio_recycler_view" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/studio_recycler_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:isScrollContainer="false"
+        android:overScrollMode="never"
+        android:paddingHorizontal="-4dp"
+        android:paddingVertical="4dp"
+        app:layout_constrainedHeight="true"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/vertical_barrier"
+        app:layout_constraintTop_toBottomOf="@id/barrier_source"
+        tools:itemCount="1"
+        tools:listitem="@layout/layout_chip" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/studio_recycler_view" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_studio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:barrierMargin="8dp"
+        app:constraint_referenced_ids="label_studio, studio_recycler_view" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/label_synonyms_ttl"
+        style="@style/MoreInfoTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_synonyms"
+        app:layout_constraintEnd_toEndOf="@id/guideline_max_label_width"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier_studio" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/synonyms_title"
+        style="@style/MoreInfoTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/nothing"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/vertical_barrier"
+        app:layout_constraintTop_toBottomOf="@id/barrier_studio" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_altr_ttl_syn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:barrierMargin="4dp"
+        app:constraint_referenced_ids="label_synonyms_ttl, synonyms_title" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/label_en_ttl"
+        style="@style/MoreInfoTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_english"
+        app:layout_constraintEnd_toEndOf="@id/guideline_max_label_width"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier_altr_ttl_syn" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/eng_title"
+        style="@style/MoreInfoTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/nothing"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/vertical_barrier"
+        app:layout_constraintTop_toBottomOf="@id/barrier_altr_ttl_syn" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_altr_ttl_eng"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:barrierMargin="4dp"
+        app:constraint_referenced_ids="label_en_ttl, eng_title" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/label_jp_ttl"
+        style="@style/MoreInfoTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_japanese"
+        app:layout_constraintEnd_toEndOf="@id/guideline_max_label_width"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier_altr_ttl_eng" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/jpn_title"
+        style="@style/MoreInfoTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/nothing"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/vertical_barrier"
+        app:layout_constraintTop_toBottomOf="@id/barrier_altr_ttl_eng" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_max_label_width"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.4" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/vertical_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="end"
+        app:barrierMargin="40dp"
+        app:constraint_referenced_ids="label_start_date,
+        label_finish_date,
+        label_broadcast,
+        label_source,
+        label_studio,
+        label_synonyms_ttl,
+        label_en_ttl,
+        label_jp_ttl," />
+</androidx.constraintlayout.widget.ConstraintLayout>

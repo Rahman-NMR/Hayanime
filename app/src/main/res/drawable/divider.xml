@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:insetLeft="@dimen/item_rv_scrolling_width"
+    android:insetRight="@dimen/item_rv_scrolling_width">
+
+    <shape android:shape="rectangle">
+        <size android:width="1dp" />
+        <corners android:radius="8dp" />
+        <solid android:color="@color/dividerColor" />
+    </shape>
+</inset>

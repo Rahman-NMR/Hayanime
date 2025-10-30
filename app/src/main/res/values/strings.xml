@@ -57,10 +57,28 @@
     <string name="label_supporter">I\'m a supporter</string>
     <string name="label_not_supporter">Not a supporter</string>
     <string name="label_rewatched">Rewatched</string>
+    <string name="label_user_scored">User scored</string>
+    <string name="label_ranking">Ranking</string>
+    <string name="label_popularity">Popularity</string>
+    <string name="label_members">Members</string>
+    <string name="label_statistics">Statistics</string>
+    <string name="label_recommendations">Recommendations</string>
+    <string name="label_background">Background</string>
+    <string name="label_synonyms">Synonyms</string>
+    <string name="label_english">English</string>
+    <string name="label_japanese">Japanese</string>
+    <string name="label_more_info">More Information</string>
+    <string name="label_studio">Studio</string>
+    <string name="label_aired">Aired</string>
+    <string name="label_broadcast">Broadcast</string>
+    <string name="label_source">Source</string>
+    <string name="label_read_more">Read more</string>
+    <string name="label_show_less">Show less</string>
 
     <!-- string format -->
     <string name="episode_duration">%1$s/eps</string>
     <string name="num_episodes">%1$s Episodes</string>
+    <string name="hyphen_string">%1$s - %2$s</string>
     <!-- string format -->
 
     <string name="action_delete">Delete</string>
@@ -76,6 +94,8 @@
     <string name="description_profile">Profile</string>
     <string name="description_edit_this_anime">Edit this anime</string>
     <string name="description_add_one_episode">Add one episode</string>
+    <string name="description_translate_syn">Translate synopsis</string>
+    <string name="description_translate_bg">Translate background</string>
 
     <string name="message_back_pressed">Press back again to exit</string>
     <string name="message_no_internet">No internet connection</string>
@@ -98,6 +118,7 @@
     <string name="message_anime_updated_successfully">Anime details updated successfully</string>
     <string name="message_anime_deleted_successfully">Anime removed from your list</string>
     <string name="message_same_data">The data is totally same</string>
+    <string name="message_error_app_not_found">App not found to handle this action</string>
 
     <!-- Preference: NSFW -->
     <string name="settings_nsfw_title">NSFW Content</string>
@@ -107,4 +128,10 @@
     <string name="pref_nsfw_suggestions_summary">Allow recommendations to include mature-rated anime</string>
     <string name="pref_nsfw_mylist_title">My List</string>
     <string name="pref_nsfw_mylist_summary">Display NSFW anime that you have saved to your list</string>
+
+    <plurals name="num_user">
+        <item quantity="one">1 user</item>
+        <item quantity="many">%1$s users</item>
+        <item quantity="other">%1$s users</item>
+    </plurals>
 </resources>

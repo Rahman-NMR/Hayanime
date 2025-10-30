@@ -66,4 +66,6 @@
 
     <color name="colorMale">#6CD2FF</color>
     <color name="colorFemale">#FFAFD1</color>
+
+    <color name="dividerColor">#66DEE3E5</color>
 </resources>
