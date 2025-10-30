@@ -254,7 +254,7 @@
             android:ellipsize="end"
             android:gravity="end|center_vertical"
             android:maxLines="2"
-            android:text="@string/label_episode_duration"
+            android:text="@string/episode_duration"
             android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="16sp" />
     </LinearLayout>

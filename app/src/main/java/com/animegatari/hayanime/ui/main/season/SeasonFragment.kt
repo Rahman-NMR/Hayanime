@@ -81,6 +81,7 @@ class SeasonFragment : Fragment(), ReselectableFragment {
         ) { _, bundle ->
             val selectedYear = bundle.getInt(YearPickerDialogFragment.BUNDLE_KEY_SELECTED_YEAR)
             seasonViewModel.changeYear(selectedYear)
+            animeAdapter.refresh()
             scrollToTopOnLoad(animeAdapter)
         }
     }
@@ -126,6 +127,7 @@ class SeasonFragment : Fragment(), ReselectableFragment {
         btnChangeSeason.setOnClickListener { displaySeasonPicker(animeAdapter) }
         btnSortBy.setOnClickListener {
             seasonViewModel.toggleSortKey()
+            animeAdapter.refresh()
             scrollToTopOnLoad(animeAdapter)
         }
         swipeRefresh.setOnRefreshListener {
@@ -165,6 +167,7 @@ class SeasonFragment : Fragment(), ReselectableFragment {
 
             selectedSeasonEnum?.let {
                 seasonViewModel.changeSeason(it.apiValue)
+                animeAdapter.refresh()
                 scrollToTopOnLoad(animeAdapter)
             }
             true

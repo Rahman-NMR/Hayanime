@@ -109,7 +109,7 @@ class AnimeGridAdapter(
                     ?.takeIf { it != 0 }
                     ?.let { TimeUtils.durationString(it) }
                     ?: viewContext.getString(R.string.unknown_symbol)
-                avgEpsPerDuration.text = viewContext.getString(R.string.label_episode_duration, durationText)
+                avgEpsPerDuration.text = viewContext.getString(R.string.episode_duration, durationText)
 
                 studio.text = anime.studios
                     ?.mapNotNull { it?.name }

@@ -426,7 +426,7 @@ class EditOwnListFragment : Fragment() {
 
         val numEpisodesWatched = myListStatus?.numEpisodesWatched ?: 0
         val stringTotalEpisode = anime?.numEpisodes?.takeIf { it > 0 }?.toString() ?: getString(R.string.unknown_symbol)
-        progress.extraTitle.text = getString(R.string.label_num_episodes, "$numEpisodesWatched/$stringTotalEpisode")
+        progress.extraTitle.text = getString(R.string.num_episodes, "$numEpisodesWatched/$stringTotalEpisode")
 
         progress.recyclerView.post {
             progress.recyclerView.applyHorizontalPadding(numEpisodesWatched, root.width, itemWidthPx, paddingView)

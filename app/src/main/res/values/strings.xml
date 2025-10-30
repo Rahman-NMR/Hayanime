@@ -31,7 +31,6 @@
     <string name="label_anime">Anime</string>
     <string name="label_episodes">Episodes</string>
     <string name="label_nsfw">NSFW</string>
-    <string name="label_episode_duration">%1$s/eps</string>
     <string name="label_cancel">Cancel</string>
     <string name="label_this_season">this season</string>
     <string name="label_priority_watch">Priority watch this anime</string>
@@ -39,7 +38,6 @@
     <string name="label_total_rewatch">Total time rewatch this anime</string>
     <string name="label_possibility_rewatch">Possibility rewatch this anime</string>
     <string name="label_progress">Progress</string>
-    <string name="label_num_episodes">%1$s Episodes</string>
     <string name="label_start_date">Start Date</string>
     <string name="label_finish_date">Finish Date</string>
     <string name="label_year">Year</string>
@@ -59,6 +57,11 @@
     <string name="label_supporter">I\'m a supporter</string>
     <string name="label_not_supporter">Not a supporter</string>
     <string name="label_rewatched">Rewatched</string>
+
+    <!-- string format -->
+    <string name="episode_duration">%1$s/eps</string>
+    <string name="num_episodes">%1$s Episodes</string>
+    <!-- string format -->
 
     <string name="action_delete">Delete</string>
     <string name="action_logout">Logout</string>
