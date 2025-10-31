@@ -271,13 +271,13 @@ class EditOwnListFragment : Fragment() {
 
     private fun setupCenteringRecyclerView(
         recyclerView: RecyclerView,
-        maxitems: Int,
+        maxItems: Int,
         snapHelper: CenteredSnapHelper,
         labelTextView: TextView? = null,
         labelMap: Map<Int, String>? = null,
         onItemSelected: (Int) -> Unit,
     ): CenterSnapScaleScrollListener {
-        val itemRange = (0..maxitems).toList()
+        val itemRange = (0..maxItems).toList()
         val numberAdapter = NumberAdapter()
         val scrollListener = CenterSnapScaleScrollListener(
             snapHelper = snapHelper,
@@ -302,7 +302,7 @@ class EditOwnListFragment : Fragment() {
 
         episodesScrollListener = setupCenteringRecyclerView(
             recyclerView = progress.recyclerView,
-            maxitems = maxEpisodeCount,
+            maxItems = maxEpisodeCount,
             snapHelper = episodesSnapHelper,
         ) { selectedEpisode ->
             ownListViewModel.updateSelectedEpisode(selectedEpisode)
@@ -314,7 +314,7 @@ class EditOwnListFragment : Fragment() {
 
         scoreScrollListener = setupCenteringRecyclerView(
             recyclerView = score.recyclerView,
-            maxitems = scoreLabels.size - 1,
+            maxItems = scoreLabels.size - 1,
             snapHelper = scoreSnapHelper,
             labelTextView = score.itemLabel,
             labelMap = scoreLabels,
@@ -456,10 +456,10 @@ class EditOwnListFragment : Fragment() {
             onDay = { ownListViewModel.saveStartDateDay(it) })
     }
 
-    private fun finishDateObserver(valuefinishDate: DateComponents?) = with(binding) {
+    private fun finishDateObserver(valueFinishDate: DateComponents?) = with(binding) {
         setDateInputFields(
             dateBinding = finishDate,
-            dateComponents = valuefinishDate,
+            dateComponents = valueFinishDate,
             title = getString(R.string.label_finish_date),
             requestKey = FINISH_DATE_YEAR_REQUEST_KEY,
             onMonth = { ownListViewModel.saveFinishDateMonth(it) },

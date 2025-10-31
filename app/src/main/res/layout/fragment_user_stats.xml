@@ -237,7 +237,8 @@
                 app:constraint_referenced_ids="legend_watching, legend_complete, legend_on_hold, legend_dropped, legend_plan_to_watch"
                 app:flow_maxElementsWrap="2"
                 app:flow_wrapMode="chain"
-                app:layout_constrainedWidth="true" />
+                app:layout_constrainedWidth="true"
+                tools:ignore="MissingConstraints" />
 
             <include
                 android:id="@+id/legend_watching"

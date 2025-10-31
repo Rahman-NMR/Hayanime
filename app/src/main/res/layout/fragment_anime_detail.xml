@@ -92,7 +92,8 @@
                         android:ellipsize="middle"
                         android:maxLines="3"
                         android:text="@string/label_unknown"
-                        app:layout_constrainedWidth="true" />
+                        app:layout_constrainedWidth="true"
+                        tools:ignore="MissingConstraints" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/title"
@@ -214,6 +215,13 @@
                 app:layout_constraintTop_toBottomOf="@id/synopsis"
                 tools:visibility="visible" />
 
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrier_synopsis"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="synopsis,btn_more_syn,btn_tl_syn" />
+
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/label_statistics"
                 android:layout_width="wrap_content"
@@ -227,7 +235,7 @@
                 app:layout_constraintEnd_toEndOf="@id/guideline_end"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@id/guideline_start"
-                app:layout_constraintTop_toBottomOf="@id/btn_more_syn"
+                app:layout_constraintTop_toBottomOf="@id/barrier_synopsis"
                 app:layout_goneMarginTop="16dp" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -329,6 +337,13 @@
                 app:layout_constraintTop_toBottomOf="@id/background"
                 tools:visibility="visible" />
 
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrier_background"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="background,btn_more_bg,btn_tl_bg" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/relation_recycler_view"
                 android:layout_width="match_parent"
@@ -341,7 +356,7 @@
                 app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btn_more_bg"
+                app:layout_constraintTop_toBottomOf="@id/barrier_background"
                 app:layout_goneMarginTop="16dp"
                 tools:itemCount="1"
                 tools:listitem="@layout/layout_anime_recommendation" />

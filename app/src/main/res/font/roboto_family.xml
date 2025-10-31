@@ -5,7 +5,7 @@
         android:fontStyle="normal"
         android:fontWeight="500" />
     <font
-        android:font="@font/roboto_mediumitalic"
+        android:font="@font/roboto_medium_italic"
         android:fontStyle="italic"
         android:fontWeight="500" />
     <font
@@ -13,7 +13,7 @@
         android:fontStyle="normal"
         android:fontWeight="700" />
     <font
-        android:font="@font/roboto_bolditalic"
+        android:font="@font/roboto_bold_italic"
         android:fontStyle="italic"
         android:fontWeight="700" />
 </font-family>
