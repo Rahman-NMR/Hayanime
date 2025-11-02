@@ -57,6 +57,7 @@ class UserStatsFragment : Fragment() {
         Glide.with(requireContext())
             .load(info?.picture)
             .placeholder(R.drawable.img_placeholder)
+            .fallback(R.drawable.img_fallback)
             .error(R.drawable.img_error)
             .into(userPicture)
         userName.text = info?.name?.takeIf { it.isNotBlank() } ?: getString(R.string.label_unknown)

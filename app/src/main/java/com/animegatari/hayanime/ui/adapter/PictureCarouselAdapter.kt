@@ -28,6 +28,7 @@ class PictureCarouselAdapter : ListAdapter<Picture, PictureCarouselAdapter.Pictu
             Glide.with(context)
                 .load(picture.large ?: picture.medium)
                 .placeholder(R.drawable.img_placeholder)
+                .fallback(R.drawable.img_fallback)
                 .error(R.drawable.img_error)
                 .into(binding.carouselImage)
         }

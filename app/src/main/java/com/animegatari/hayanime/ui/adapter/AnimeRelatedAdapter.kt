@@ -30,6 +30,7 @@ class AnimeRelatedAdapter(
             Glide.with(context)
                 .load(anime.node?.mainPicture?.large ?: anime.node?.mainPicture?.medium)
                 .placeholder(R.drawable.img_placeholder)
+                .fallback(R.drawable.img_fallback)
                 .error(R.drawable.img_error)
                 .into(binding.mainPicture)
             binding.title.text = anime.node?.title?.takeIf { it.isNotBlank() } ?: context.getString(R.string.label_unknown)

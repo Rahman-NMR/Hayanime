@@ -52,6 +52,7 @@ class MyListAdapter(
                 Glide.with(viewContext)
                     .load(pictureUrl?.large ?: pictureUrl?.medium)
                     .placeholder(R.drawable.img_placeholder)
+                    .fallback(R.drawable.img_fallback)
                     .error(R.drawable.img_error)
                     .into(mainPicture)
 
