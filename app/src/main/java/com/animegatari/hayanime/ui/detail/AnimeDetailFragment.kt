@@ -300,8 +300,9 @@ class AnimeDetailFragment : Fragment() {
         if (hasSynopsis) {
             synopsis.text = anime.synopsis
             synopsis.post {
-                btnMoreSyn.isVisible = synopsis.lineCount > collapsedMaxLines
-                btnTlSyn.isVisible = synopsis.lineCount > collapsedMaxLines
+                val showButtons = synopsis.lineCount > collapsedMaxLines
+                btnMoreSyn.isVisible = showButtons
+                btnTlSyn.isVisible = showButtons
                 btnTlSyn.setOnClickListener { openTranslator(anime.synopsis) }
             }
         }
@@ -316,8 +317,9 @@ class AnimeDetailFragment : Fragment() {
         if (hasBackground) {
             background.text = anime.background
             background.post {
-                btnMoreBg.isVisible = background.lineCount > collapsedMaxLines
-                btnTlBg.isVisible = background.lineCount > collapsedMaxLines
+                val showButtons = background.lineCount > collapsedMaxLines
+                btnMoreBg.isVisible = showButtons
+                btnTlBg.isVisible = showButtons
                 btnTlBg.setOnClickListener { openTranslator(anime.background) }
             }
         }
