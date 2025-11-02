@@ -65,6 +65,8 @@ object UiUtils {
         )
     )
 
+    fun getBaseUrl(url: String?): String? = url?.substringBeforeLast('.')
+
     fun handleTextChange(editable: Editable?, action: (String) -> Unit) {
         action(editable?.toString()?.trim() ?: "")
     }

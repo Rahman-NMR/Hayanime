@@ -39,6 +39,7 @@ import com.animegatari.hayanime.ui.adapter.AnimeRelatedAdapter
 import com.animegatari.hayanime.ui.adapter.PictureCarouselAdapter
 import com.animegatari.hayanime.ui.adapter.generic.CleanAdapter
 import com.animegatari.hayanime.ui.adapter.generic.GenericDiffUtil
+import com.animegatari.hayanime.ui.utils.interfaces.UiUtils.getBaseUrl
 import com.animegatari.hayanime.ui.utils.interfaces.UiUtils.listRateDetail
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showToast
 import com.animegatari.hayanime.ui.utils.recyclerview.RecyclerViewUtils.carouselRecyclerView
@@ -251,6 +252,8 @@ class AnimeDetailFragment : Fragment() {
         val mergedPictures = buildList {
             anime?.mainPicture?.let(::add)
             anime?.pictures?.let(::addAll)
+        }.distinctBy {
+            getBaseUrl(it?.large) ?: getBaseUrl(it?.medium)
         }.ifEmpty { listOf(null) }
         pictureCarouselAdapter.submitList(mergedPictures)
 
