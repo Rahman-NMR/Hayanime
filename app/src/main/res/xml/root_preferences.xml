@@ -24,4 +24,18 @@
             app:summary="@string/pref_nsfw_mylist_summary"
             app:title="@string/pref_nsfw_mylist_title" />
     </PreferenceCategory>
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/settings_theme_title">
+
+        <ListPreference
+            app:defaultValue="system_default"
+            app:entries="@array/theme_entries"
+            app:entryValues="@array/theme_values"
+            app:iconSpaceReserved="false"
+            app:key="app_theme"
+            app:title="@string/pref_theme_title"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
 </PreferenceScreen>

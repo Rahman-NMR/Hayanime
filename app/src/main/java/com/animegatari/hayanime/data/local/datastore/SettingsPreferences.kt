@@ -4,18 +4,28 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.animegatari.hayanime.data.types.Theme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
-
 
 @Singleton
 class SettingsPreferences @Inject constructor(context: Context) {
     val searchNsfw: Flow<Boolean> = context.datastore.data.map { it[SHOW_NSFW_CONTENT] ?: false }
     val suggestionsNsfw: Flow<Boolean> = context.datastore.data.map { it[SHOW_NSFW_SUGGESTIONS] ?: false }
     val myListNsfw: Flow<Boolean> = context.datastore.data.map { it[SHOW_NSFW_MY_LIST] ?: false }
+    val themeSettings: Flow<Theme> = context.datastore.data.map { themeFromString(it[APP_THEME]) }
+
+    private fun themeFromString(value: String?): Theme {
+        return when (value) {
+            "light" -> Theme.LIGHT
+            "dark" -> Theme.DARK
+            else -> Theme.FOLLOW_SYSTEM
+        }
+    }
 
     companion object {
         val Context.datastore: DataStore<Preferences> by preferencesDataStore(name = "settings")
@@ -23,5 +33,6 @@ class SettingsPreferences @Inject constructor(context: Context) {
         private val SHOW_NSFW_CONTENT = booleanPreferencesKey("show_nsfw_content")
         private val SHOW_NSFW_SUGGESTIONS = booleanPreferencesKey("show_nsfw_suggestions")
         private val SHOW_NSFW_MY_LIST = booleanPreferencesKey("show_nsfw_my_list")
+        private val APP_THEME = stringPreferencesKey("app_theme")
     }
 }

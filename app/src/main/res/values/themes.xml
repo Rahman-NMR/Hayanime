@@ -102,6 +102,9 @@
         <item name="chipStyle">@style/Material.Chip</item>
         <item name="preferenceTheme">@style/ThemeOverlay.Preference</item>
         <item name="colorAccent">?attr/colorTertiary</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.Material3.MaterialAlertDialog</item>
+        <item name="alertDialogStyle">@style/MaterialAlertDialog.Material3</item>
+        <item name="dialogCornerRadius">28dp</item>
     </style>
 
     <style name="MoreInfoTextStyle" parent="Widget.MaterialComponents.TextView">

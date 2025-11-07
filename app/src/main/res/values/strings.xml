@@ -127,6 +127,25 @@
     <string name="pref_nsfw_suggestions_summary">Allow recommendations to include mature-rated anime</string>
     <string name="pref_nsfw_mylist_title">My List</string>
     <string name="pref_nsfw_mylist_summary">Display NSFW anime that you have saved to your list</string>
+    <!-- Preference: NSFW -->
+
+    <!-- Preference: Theme -->
+    <string name="settings_theme_title">Display</string>
+    <string name="pref_theme_title">Theme</string>
+    <string name="theme_entry_system_default">System Default</string>
+    <string name="theme_entry_light">Light</string>
+    <string name="theme_entry_dark">Dark</string>
+    <string-array name="theme_entries">
+        <item>@string/theme_entry_system_default</item>
+        <item>@string/theme_entry_light</item>
+        <item>@string/theme_entry_dark</item>
+    </string-array>
+    <string-array name="theme_values">
+        <item>system_default</item>
+        <item>light</item>
+        <item>dark</item>
+    </string-array>
+    <!-- Preference: Theme -->
 
     <plurals name="num_user">
         <item quantity="one">1 user</item>
