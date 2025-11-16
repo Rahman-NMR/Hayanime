@@ -73,7 +73,7 @@ class AnimeRepositoryImpl @Inject constructor(
             pagingSourceFactory = {
                 AnimePagingSource { limit, offset ->
                     val isNsfw = runBlocking { settingsDataStore.suggestionsNsfw.first() }
-                    apiService.getAnimeSeason(
+                    val apiResponse = apiService.getAnimeSeason(
                         year = seasonModel.year,
                         season = seasonModel.season,
                         sort = seasonModel.sort,
@@ -82,6 +82,9 @@ class AnimeRepositoryImpl @Inject constructor(
                         offset = offset,
                         fields = commonFields
                     )
+
+                    val filteredData = apiResponse.data?.filter(seasonModel::meetsConditions)
+                    apiResponse.copy(data = filteredData)
                 }
             }
         ).flow

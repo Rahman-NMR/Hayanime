@@ -51,7 +51,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:constraint_referenced_ids="button_group, btn_sort_by"
+                app:constraint_referenced_ids="btn_season, btn_open_filter"
                 app:flow_firstHorizontalStyle="spread_inside"
                 app:flow_horizontalGap="4dp"
                 app:flow_lastHorizontalStyle="spread_inside"
@@ -61,37 +61,24 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.button.MaterialButtonGroup
-                android:id="@+id/button_group"
-                style="@style/Widget.Material3.MaterialButtonGroup.Connected"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constrainedWidth="true">
-
-                <Button
-                    android:id="@+id/btn_change_season"
-                    style="@style/Widget.Material3.Button.TonalButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="32dp"
-                    android:text="@string/unknown_symbol" />
-
-                <Button
-                    android:id="@+id/btn_change_year"
-                    style="@style/Widget.Material3.Button.TonalButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="32dp"
-                    android:text="@string/unknown_symbol" />
-            </com.google.android.material.button.MaterialButtonGroup>
-
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_sort_by"
+                android:id="@+id/btn_season"
                 style="@style/Widget.Material3.Button.TonalButton.Icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/label_unknown"
-                app:icon="@drawable/ic_arrow_downward_24px_rounded"
+                android:text="@string/unknown_symbol"
+                app:icon="@drawable/avd_untargeted_to_targeted_24"
+                app:iconPadding="6dp"
+                app:layout_constrainedWidth="true"
+                tools:ignore="MissingConstraints" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_open_filter"
+                style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/description_filter_season"
+                app:icon="@drawable/ic_tune_24px_rounded"
                 app:layout_constrainedWidth="true"
                 tools:ignore="MissingConstraints" />
         </androidx.constraintlayout.widget.ConstraintLayout>

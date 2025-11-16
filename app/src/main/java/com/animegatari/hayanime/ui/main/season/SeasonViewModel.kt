@@ -13,32 +13,37 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
 class SeasonViewModel @Inject constructor(
     private val animeRepository: AnimeRepository,
 ) : ViewModel() {
-    private val _selectedYear = MutableStateFlow(TimeUtils.getCurrentYear())
-    val selectedYear: StateFlow<Int> = _selectedYear
+    val currentSeason get() = TimeUtils.getCurrentSeason()
+    val currentYear get() = TimeUtils.getCurrentYear()
 
-    private val _selectedSeason = MutableStateFlow(TimeUtils.getCurrentSeason())
-    val selectedSeason: StateFlow<String> = _selectedSeason
-
-    private val _sortKey = MutableStateFlow(BY_POPULARITY)
-    val sortKey: StateFlow<String> = _sortKey
+    private val _seasonFilter = MutableStateFlow(
+        SeasonModel(
+            year = currentYear,
+            season = currentSeason,
+            sort = BY_POPULARITY,
+            mediaType = null,
+            isContinued = false
+        )
+    )
+    val seasonalFilterState: StateFlow<SeasonModel> = _seasonFilter
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = _seasonFilter.value
+        )
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val animeList: Flow<PagingData<AnimeList>> = combine(
-        _selectedYear,
-        _selectedSeason,
-        _sortKey
-    ) { year, season, sort ->
-        SeasonModel(year, season, sort)
-    }.flatMapLatest { dataModel ->
+    val animeList: Flow<PagingData<AnimeList>> = seasonalFilterState.flatMapLatest { dataModel ->
         animeRepository.seasonalAnime(
             seasonModel = dataModel,
             limitConfig = Config.DEFAULT_PAGE_LIMIT,
@@ -47,18 +52,37 @@ class SeasonViewModel @Inject constructor(
     }.cachedIn(viewModelScope)
 
     fun changeSeason(season: String) {
-        _selectedSeason.value = season
+        _seasonFilter.value = _seasonFilter.value.copy(season = season)
     }
 
     fun changeYear(year: Int) {
-        _selectedYear.value = year
+        _seasonFilter.value = _seasonFilter.value.copy(year = year)
+    }
+
+    fun setToCurrentSeason() {
+        _seasonFilter.value = _seasonFilter.value.copy(
+            year = currentYear,
+            season = currentSeason,
+            mediaType = null,
+            isContinued = false
+        )
+    }
+
+    fun filterByMediaType(mediaType: String?) {
+        _seasonFilter.value = _seasonFilter.value.copy(mediaType = mediaType)
+    }
+
+    fun toggleContinuedAnime() {
+        _seasonFilter.value = _seasonFilter.value.copy(isContinued = !_seasonFilter.value.isContinued)
     }
 
     fun toggleSortKey() {
-        val currentSort = _sortKey.value
-        _sortKey.value =
-            if (currentSort == BY_POPULARITY) BY_SCORE
-            else BY_POPULARITY
+        val newSort = if (_seasonFilter.value.sort == BY_POPULARITY) {
+            BY_SCORE
+        } else {
+            BY_POPULARITY
+        }
+        _seasonFilter.value = _seasonFilter.value.copy(sort = newSort)
     }
 
     companion object SortKeys {

@@ -1,12 +1,12 @@
 package com.animegatari.hayanime.ui.main.season
 
 import android.content.Intent
+import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -19,16 +19,15 @@ import androidx.paging.LoadState
 import androidx.paging.awaitNotLoading
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.animegatari.hayanime.R
+import com.animegatari.hayanime.data.local.datamodel.SeasonModel
 import com.animegatari.hayanime.data.model.UserInfo
 import com.animegatari.hayanime.data.types.SeasonStart
-import com.animegatari.hayanime.data.types.SortingAnime
 import com.animegatari.hayanime.databinding.FragmentSeasonBinding
 import com.animegatari.hayanime.domain.utils.Response
 import com.animegatari.hayanime.domain.utils.onSuccess
 import com.animegatari.hayanime.ui.adapter.AnimeGridAdapter
 import com.animegatari.hayanime.ui.base.ReselectableFragment
 import com.animegatari.hayanime.ui.detail.EditOwnListFragment
-import com.animegatari.hayanime.ui.dialog.YearPickerDialogFragment
 import com.animegatari.hayanime.ui.main.ProfileMenuViewModel
 import com.animegatari.hayanime.ui.profile.ProfileActivity
 import com.animegatari.hayanime.ui.utils.animation.ViewSlideInOutAnimation.ANIMATION_DURATION
@@ -65,25 +64,12 @@ class SeasonFragment : Fragment(), ReselectableFragment {
 
         val animeAdapter = initializeAnimeAdapter()
 
-        setupYearPickerListener(animeAdapter)
         setupAdapterRefreshListener(animeAdapter)
         initializeViews()
         setupInteractions(animeAdapter)
         setupRecyclerView(animeAdapter)
 
         observeViewModelStates(animeAdapter)
-    }
-
-    private fun setupYearPickerListener(animeAdapter: AnimeGridAdapter) {
-        childFragmentManager.setFragmentResultListener(
-            YearPickerDialogFragment.YEAR_PICKER_REQUEST_KEY,
-            this
-        ) { _, bundle ->
-            val selectedYear = bundle.getInt(YearPickerDialogFragment.BUNDLE_KEY_SELECTED_YEAR)
-            seasonViewModel.changeYear(selectedYear)
-            animeAdapter.refresh()
-            scrollToTopOnLoad(animeAdapter)
-        }
     }
 
     private fun setupAdapterRefreshListener(animeAdapter: AnimeGridAdapter) {
@@ -123,12 +109,14 @@ class SeasonFragment : Fragment(), ReselectableFragment {
     }
 
     private fun setupInteractions(animeAdapter: AnimeGridAdapter) = with(binding) {
-        btnChangeYear.setOnClickListener { displayYearPickerDialog() }
-        btnChangeSeason.setOnClickListener { displaySeasonPicker(animeAdapter) }
-        btnSortBy.setOnClickListener {
-            seasonViewModel.toggleSortKey()
+        btnSeason.setOnClickListener {
+            seasonViewModel.setToCurrentSeason()
             animeAdapter.refresh()
             scrollToTopOnLoad(animeAdapter)
+        }
+        btnOpenFilter.setOnClickListener {
+            val bottomSheet = SeasonFilterBottomSheet()
+            bottomSheet.show(childFragmentManager, bottomSheet.tag)
         }
         swipeRefresh.setOnRefreshListener {
             profileViewModel.getProfileImage()
@@ -147,43 +135,6 @@ class SeasonFragment : Fragment(), ReselectableFragment {
         }
 
         else -> false
-    }
-
-    private fun displaySeasonPicker(animeAdapter: AnimeGridAdapter) {
-        val anchorView = binding.btnChangeSeason
-        val popupMenu = PopupMenu(requireContext(), anchorView)
-
-        val displayableSeasons = SeasonStart.entries.filter { it != SeasonStart.UNKNOWN }
-        displayableSeasons.forEachIndexed { index, season ->
-            popupMenu.menu.add(0, season.ordinal, index, getString(season.stringResId))
-        }
-
-        popupMenu.setOnMenuItemClickListener { menuItem ->
-            val selectedSeasonEnum = try {
-                displayableSeasons.getOrNull(menuItem.itemId)
-            } catch (_: IndexOutOfBoundsException) {
-                null
-            }
-
-            selectedSeasonEnum?.let {
-                seasonViewModel.changeSeason(it.apiValue)
-                animeAdapter.refresh()
-                scrollToTopOnLoad(animeAdapter)
-            }
-            true
-        }
-
-        popupMenu.show()
-    }
-
-    private fun displayYearPickerDialog() {
-        val selectedYear = seasonViewModel.selectedYear.value
-        val dialog = YearPickerDialogFragment.newInstance(
-            initialYear = selectedYear,
-            requestKey = YearPickerDialogFragment.YEAR_PICKER_REQUEST_KEY,
-            dialogTitle = getString(R.string.title_choose_season_year)
-        )
-        dialog.show(childFragmentManager, dialog.tag)
     }
 
     private fun initializeAnimeAdapter(): AnimeGridAdapter = AnimeGridAdapter(
@@ -230,6 +181,24 @@ class SeasonFragment : Fragment(), ReselectableFragment {
         }
     }
 
+    private fun seasonButtonState(seasonModel: SeasonModel) = with(binding) {
+        val (year, season) = seasonModel
+
+        val seasonStr = "${getString(SeasonStart.fromApiValue(season).stringResId)} $year"
+        val isCurrentSeason = year == seasonViewModel.currentYear && season == seasonViewModel.currentSeason
+        val avdResId = if (isCurrentSeason) {
+            R.drawable.avd_untargeted_to_targeted_24
+        } else {
+            R.drawable.avd_targeted_to_untargeted_24
+        }
+
+        btnSeason.apply {
+            text = seasonStr
+            setIconResource(avdResId)
+            (icon as? AnimatedVectorDrawable)?.start()
+        }
+    }
+
     private fun scrollToTopOnLoad(animeAdapter: AnimeGridAdapter) = viewLifecycleOwner.lifecycleScope.launch {
         animeAdapter.loadStateFlow.awaitNotLoading()
         binding.recyclerView.scrollToPosition(0)
@@ -264,9 +233,7 @@ class SeasonFragment : Fragment(), ReselectableFragment {
     private fun observeViewModelStates(animeAdapter: AnimeGridAdapter) = with(binding) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch { seasonViewModel.selectedSeason.collectLatest { btnChangeSeason.text = it.replaceFirstChar { s -> s.titlecase() } } }
-                launch { seasonViewModel.selectedYear.collectLatest { btnChangeYear.text = it.toString() } }
-                launch { seasonViewModel.sortKey.collectLatest { btnSortBy.text = getString(SortingAnime.keyValue(it).stringResId) } }
+                launch { seasonViewModel.seasonalFilterState.collectLatest(::seasonButtonState) }
                 launch { seasonViewModel.animeList.collectLatest(animeAdapter::submitData) }
                 launch { profileViewModel.profileImageUri.collectLatest(::loadProfileImage) }
                 launch { animeAdapter.loadStateFlow.collectLatest { observeLoadState(animeAdapter, it) } }
