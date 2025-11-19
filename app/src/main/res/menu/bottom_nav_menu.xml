@@ -3,16 +3,16 @@
 
     <item
         android:id="@+id/navigation_season"
-        android:icon="@drawable/ic_date_range_24px_round"
+        android:icon="@drawable/nav_ic_season"
         android:title="@string/title_season" />
 
     <item
         android:id="@+id/navigation_search"
-        android:icon="@drawable/ic_search_24px_rounded"
-        android:title="@string/title_search" />
+        android:icon="@drawable/nav_ic_explore"
+        android:title="@string/title_explore" />
 
     <item
         android:id="@+id/navigation_my_list"
-        android:icon="@drawable/ic_lists_24px_rounded"
+        android:icon="@drawable/nav_ic_mylist"
         android:title="@string/title_my_list" />
 </menu>

@@ -8,7 +8,7 @@
     <string name="nothing">-</string>
 
     <string name="title_season">Seasonal</string>
-    <string name="title_search">Search</string>
+    <string name="title_explore">Explore</string>
     <string name="title_my_list">My List</string>
     <string name="title_choose_season_year">Choose Season Year</string>
     <string name="title_choose_x_year">Choose %1$s Year</string>
