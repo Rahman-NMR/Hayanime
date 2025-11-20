@@ -37,6 +37,7 @@ import com.animegatari.hayanime.ui.utils.interfaces.UiUtils.handleTextChange
 import com.animegatari.hayanime.ui.utils.interfaces.UiUtils.hideKeyboardAndClearFocus
 import com.animegatari.hayanime.ui.utils.interfaces.UiUtils.scoreStringMap
 import com.animegatari.hayanime.ui.utils.interfaces.UiUtils.shouldUpdateInputText
+import com.animegatari.hayanime.ui.utils.interfaces.ViewUtils.setupDynamicChips
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showSnackbar
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showToast
 import com.animegatari.hayanime.ui.utils.recyclerview.CenterSnapScaleScrollListener
@@ -46,6 +47,7 @@ import com.animegatari.hayanime.ui.utils.recyclerview.RecyclerViewUtils.setupHor
 import com.animegatari.hayanime.utils.DateInputUtils
 import com.animegatari.hayanime.utils.TimeUtils
 import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -86,7 +88,7 @@ class EditOwnListFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentEditOwnListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -107,6 +109,10 @@ class EditOwnListFragment : Fragment() {
 
     private fun initializeStaticView() = with(binding) {
         btnActionSave.shrink()
+        chipGroup.setupDynamicChips(
+            hasIcon = false,
+            chipInfoProvider = WatchingStatus.entries.filter { it != WatchingStatus.UNKNOWN }
+        )
         startDate.labelTitleDate.text = getString(R.string.label_start_date)
         finishDate.labelTitleDate.text = getString(R.string.label_finish_date)
         progress.apply {
@@ -129,7 +135,7 @@ class EditOwnListFragment : Fragment() {
         }
         btnActionSave.setOnClickListener { saveChanges() }
         btnActionExpand.setOnClickListener { toggleAdvancedOptions() }
-        chipGroup.setOnCheckedStateChangeListener { _, checkedIds -> handleChipGroupSelection(checkedIds) }
+        chipGroup.setOnCheckedStateChangeListener { group, checkedIds -> handleChipGroupSelection(group, checkedIds) }
         swipeRefresh.setOnRefreshListener { loadThisAnime() }
 
         setupDateInputListeners(
@@ -248,17 +254,10 @@ class EditOwnListFragment : Fragment() {
         btnTodayDate.isEnabled = !isChecked
     }
 
-    private fun handleChipGroupSelection(checkedIds: List<Int>) = with(binding) {
+    private fun handleChipGroupSelection(group: ChipGroup, checkedIds: List<Int>) {
         val selectedStatus = if (checkedIds.isNotEmpty()) {
-            val checkedId = checkedIds.first()
-            when (checkedId) {
-                chipPlanToWatch.id -> WatchingStatus.PLAN_TO_WATCH.apiValue
-                chipWatching.id -> WatchingStatus.WATCHING.apiValue
-                chipCompleted.id -> WatchingStatus.COMPLETED.apiValue
-                chipOnHold.id -> WatchingStatus.ON_HOLD.apiValue
-                chipDropped.id -> WatchingStatus.DROPPED.apiValue
-                else -> null
-            }
+            val checkedChip = group.findViewById<Chip>(checkedIds.first())
+            checkedChip.tag as String
         } else {
             null
         }
@@ -320,17 +319,6 @@ class EditOwnListFragment : Fragment() {
             labelMap = scoreLabels,
         ) { selectedScore ->
             ownListViewModel.updateSelectedScore(selectedScore)
-        }
-    }
-
-    private fun findChipForStatus(status: String?): Chip? = with(binding) {
-        return when (status) {
-            WatchingStatus.WATCHING.apiValue -> chipWatching
-            WatchingStatus.COMPLETED.apiValue -> chipCompleted
-            WatchingStatus.ON_HOLD.apiValue -> chipOnHold
-            WatchingStatus.DROPPED.apiValue -> chipDropped
-            WatchingStatus.PLAN_TO_WATCH.apiValue -> chipPlanToWatch
-            else -> null
         }
     }
 
@@ -440,9 +428,9 @@ class EditOwnListFragment : Fragment() {
         setupExtraFieldsViews(myListStatus)
 
         val status = myListStatus?.status
-        val chipToCheck = status?.let { findChipForStatus(it) }
-        chipToCheck?.let { it.isChecked = true } ?: run {
-            chipGroup.clearCheck()
+        val statusChip = chipGroup.findViewWithTag<Chip>(status)
+        statusChip?.takeIf { !it.isChecked }?.let {
+            chipGroup.check(statusChip.id)
         }
     }
 
@@ -467,7 +455,7 @@ class EditOwnListFragment : Fragment() {
     }
 
     private fun observeUIState(anime: AnimeMinimum?) = with(binding) {
-        if (!isAdded || _binding == null) return
+        if (!isAdded || _binding == null) return@with null
 
         animeTitle.text = anime?.title ?: getString(R.string.label_unknown)
         airingStatus.text = getString(AiringStatus.fromApiValue(anime?.status).stringResId)

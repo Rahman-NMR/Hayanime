@@ -62,43 +62,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/anime_title"
                     app:singleLine="false"
-                    app:singleSelection="true">
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_plan_to_watch"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checkable="true"
-                        android:text="@string/watching_status_plan_to_watch" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_watching"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checkable="true"
-                        android:text="@string/watching_status_watching" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_completed"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checkable="true"
-                        android:text="@string/watching_status_completed" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_on_hold"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checkable="true"
-                        android:text="@string/watching_status_on_hold" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_dropped"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checkable="true"
-                        android:text="@string/watching_status_dropped" />
-                </com.google.android.material.chip.ChipGroup>
+                    app:singleSelection="true" />
 
                 <include
                     android:id="@+id/progress"

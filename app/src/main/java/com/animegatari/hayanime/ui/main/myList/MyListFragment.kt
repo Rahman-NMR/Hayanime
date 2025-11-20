@@ -32,9 +32,12 @@ import com.animegatari.hayanime.ui.profile.ProfileActivity
 import com.animegatari.hayanime.ui.utils.animation.ViewSlideInOutAnimation.ANIMATION_DURATION
 import com.animegatari.hayanime.ui.utils.decorations.BottomPaddingItemDecoration
 import com.animegatari.hayanime.ui.utils.extension.ProfileImage.loadProfileImage
+import com.animegatari.hayanime.ui.utils.interfaces.ViewUtils.setupDynamicChips
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showSnackbar
 import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showToast
 import com.bumptech.glide.Glide
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -104,11 +107,15 @@ class MyListFragment : Fragment(), ReselectableFragment {
 
     private fun initializeViews() = with(binding) {
         tvInfoMsg.text = getString(R.string.info_no_results_found, getString(R.string.title_my_list))
+        chipGroup.setupDynamicChips(
+            hasIcon = false,
+            chipInfoProvider = WatchingStatus.entries.filter { it != WatchingStatus.UNKNOWN }
+        )
     }
 
     private fun setupInteractions(myListAdapter: MyListAdapter) = with(binding) {
-        chipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
-            handleChipGroupSelection(checkedIds)
+        chipGroup.setOnCheckedStateChangeListener { group, checkedIds ->
+            handleChipGroupSelection(group, checkedIds)
             scrollToTopOnLoad(myListAdapter)
         }
         swipeRefresh.setOnRefreshListener {
@@ -121,17 +128,10 @@ class MyListFragment : Fragment(), ReselectableFragment {
         }
     }
 
-    private fun handleChipGroupSelection(checkedIds: List<Int>) = with(binding) {
+    private fun handleChipGroupSelection(group: ChipGroup, checkedIds: List<Int>) = with(binding) {
         val selectedStatus = if (checkedIds.isNotEmpty()) {
-            val checkedId = checkedIds.first()
-            when (checkedId) {
-                chipPlanToWatch.id -> WatchingStatus.PLAN_TO_WATCH.apiValue
-                chipWatching.id -> WatchingStatus.WATCHING.apiValue
-                chipCompleted.id -> WatchingStatus.COMPLETED.apiValue
-                chipOnHold.id -> WatchingStatus.ON_HOLD.apiValue
-                chipDropped.id -> WatchingStatus.DROPPED.apiValue
-                else -> null
-            }
+            val checkedChip = group.findViewById<Chip>(checkedIds.first())
+            checkedChip.tag as String
         } else {
             null
         }
@@ -199,6 +199,13 @@ class MyListFragment : Fragment(), ReselectableFragment {
         }
     }
 
+    private fun setChipSelectionState(watchingStatusValue: String?) = with(binding) {
+        val mediaTypeChip = chipGroup.findViewWithTag<Chip>(watchingStatusValue)
+        mediaTypeChip?.takeIf { !it.isChecked }?.let {
+            chipGroup.check(mediaTypeChip.id)
+        }
+    }
+
     private fun scrollToTopOnLoad(myListAdapter: MyListAdapter) = viewLifecycleOwner.lifecycleScope.launch {
         myListAdapter.loadStateFlow.awaitNotLoading()
         binding.recyclerView.scrollToPosition(0)
@@ -236,6 +243,7 @@ class MyListFragment : Fragment(), ReselectableFragment {
                 launch { myListViewModel.myAnimeList.collectLatest(myListAdapter::submitData) }
                 launch { profileViewModel.profileImageUri.collectLatest(::loadProfileImage) }
                 launch { myListAdapter.loadStateFlow.collectLatest { observeLoadState(myListAdapter, it) } }
+                launch { myListViewModel.watchingStatusValue.collectLatest(::setChipSelectionState) }
                 launch { myListViewModel.events.collectLatest { handleEvent(it, myListAdapter) } }
             }
         }

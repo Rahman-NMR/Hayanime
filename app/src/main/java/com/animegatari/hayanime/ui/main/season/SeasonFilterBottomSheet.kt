@@ -29,7 +29,7 @@ class SeasonFilterBottomSheet : BottomSheetDialogFragment() {
 
     private val seasonViewModel: SeasonViewModel by activityViewModels()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = BottomsheetSeasonFilterBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -113,7 +113,7 @@ class SeasonFilterBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
-    private fun observeViewModelStates() = with(binding) {
+    private fun observeViewModelStates() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
