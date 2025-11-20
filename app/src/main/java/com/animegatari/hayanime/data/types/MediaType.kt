@@ -15,6 +15,7 @@ enum class MediaType(
     ONA(R.string.media_type_ona, "ona"),
     MUSIC(R.string.media_type_music, "music"),
     TV_SPECIAL(R.string.media_type_tv_special, "tv_special"),
+    PV(R.string.media_type_pv, "pv"),
     UNKNOWN(R.string.label_unknown);
 
     override val uniqueValue: String

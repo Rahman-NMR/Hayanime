@@ -27,7 +27,7 @@ class SeasonViewModel @Inject constructor(
     val currentYear get() = TimeUtils.getCurrentYear()
 
     private val _seasonFilter = MutableStateFlow(
-        SeasonModel(
+        value = SeasonModel(
             year = currentYear,
             season = currentSeason,
             sort = BY_POPULARITY,

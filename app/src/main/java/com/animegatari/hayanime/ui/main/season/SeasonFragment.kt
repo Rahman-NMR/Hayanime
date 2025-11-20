@@ -230,7 +230,7 @@ class SeasonFragment : Fragment(), ReselectableFragment {
         }
     }
 
-    private fun observeViewModelStates(animeAdapter: AnimeGridAdapter) = with(binding) {
+    private fun observeViewModelStates(animeAdapter: AnimeGridAdapter) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch { seasonViewModel.seasonalFilterState.collectLatest(::seasonButtonState) }
