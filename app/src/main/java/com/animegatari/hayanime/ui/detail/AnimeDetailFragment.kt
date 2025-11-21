@@ -71,7 +71,7 @@ class AnimeDetailFragment : Fragment() {
     private var isBackgroundCollapsed = false
     private val collapsedMaxLines = 4
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentAnimeDetailBinding.inflate(inflater, container, false)
         return binding.root
     }

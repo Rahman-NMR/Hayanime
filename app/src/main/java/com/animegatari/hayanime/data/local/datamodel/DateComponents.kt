@@ -16,7 +16,7 @@ data class DateComponents(
     }
 
     companion object {
-        fun fromFormattedString(dateString: String?): DateComponents? {
+        fun fromFormattedString(dateString: String?): DateComponents {
             if (dateString == null) return DateComponents()
             val parts = dateString.split("-")
             return DateComponents(

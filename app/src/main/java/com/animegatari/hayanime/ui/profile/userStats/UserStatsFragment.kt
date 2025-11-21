@@ -80,7 +80,7 @@ class UserStatsFragment : Fragment() {
         }
     }
 
-    private fun setupMyAnimeListStats(stats: UserAnimeStatistics?) = with(binding) {
+    private fun setupMyAnimeListStats(stats: UserAnimeStatistics?) {
         updateSummaryStats(stats)
         updatePieChart(stats)
     }

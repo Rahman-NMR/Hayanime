@@ -45,9 +45,8 @@ class YearPickerDialogFragment : DialogFragment() {
     }
 
     private fun setupRecyclerView() {
-        val systemCurrentYear = TimeUtils.getCurrentYear()
+        val endYear = TimeUtils.getCurrentYear()
         val startYear = DEFAULT_START_YEAR
-        val endYear = systemCurrentYear
         val displayedYears = (startYear..endYear).toList().reversed()
 
         val yearPickerAdapter = YearPickerAdapter(displayedYears, initialYear) { selectedYear ->

@@ -77,10 +77,8 @@ class AuthActivity : AppCompatActivity() {
         val codeVerifier = generateCodeVerifier()
         authViewModel.saveCodeVerifier(codeVerifier)
 
-        val codeChallenge = codeVerifier
         val customTabsIntent = CustomTabsIntent.Builder().build()
-
-        customTabsIntent.launchUrl(this, authViewModel.authUrl(codeChallenge))
+        customTabsIntent.launchUrl(this, authViewModel.authUrl(codeChallenge = codeVerifier))
     }
 
     private fun handleRedirect(intent: Intent) {
