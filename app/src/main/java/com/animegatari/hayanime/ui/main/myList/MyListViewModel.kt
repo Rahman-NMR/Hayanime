@@ -8,9 +8,12 @@ import androidx.paging.cachedIn
 import com.animegatari.hayanime.R
 import com.animegatari.hayanime.core.Config
 import com.animegatari.hayanime.data.local.datamodel.DateComponents
+import com.animegatari.hayanime.data.local.datamodel.MyListModel
 import com.animegatari.hayanime.data.remote.response.AnimeList
+import com.animegatari.hayanime.data.types.SortListUser
 import com.animegatari.hayanime.data.types.WatchingStatus
 import com.animegatari.hayanime.domain.repository.UserAnimeListRepository
+import com.animegatari.hayanime.domain.utils.UiEvent
 import com.animegatari.hayanime.domain.utils.onError
 import com.animegatari.hayanime.domain.utils.onSuccess
 import com.animegatari.hayanime.utils.TimeUtils.getCurrentDay
@@ -34,31 +37,56 @@ class MyListViewModel @Inject constructor(
     private val userAnimeListRepository: UserAnimeListRepository,
     private val application: Application,
 ) : AndroidViewModel(application) {
-    private val _eventChannel = Channel<MyListEvent>(Channel.BUFFERED)
+    private val _eventChannel = Channel<UiEvent>(Channel.BUFFERED)
     val events = _eventChannel.receiveAsFlow()
 
-    private val _myAnimeList = MutableStateFlow<String?>(null)
-    val watchingStatusValue: StateFlow<String?> = _myAnimeList
+    private val _myAnimeList = MutableStateFlow(
+        value = MyListModel(
+            sort = SortListUser.LIST_UPDATED_AT.apiValue,
+            watchingStatus = null
+        )
+    )
+    val myAnimeListState: StateFlow<MyListModel> = _myAnimeList
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = _myAnimeList.value
         )
 
-
     @OptIn(ExperimentalCoroutinesApi::class)
     val myAnimeList: Flow<PagingData<AnimeList>> = _myAnimeList
         .flatMapLatest { watchingStatus ->
             userAnimeListRepository.userAnimeList(
-                status = watchingStatus,
-                sort = "list_updated_at",
+                dataModel = watchingStatus,
                 limitConfig = Config.DEFAULT_PAGE_LIMIT,
                 commonFields = Config.MYLIST_ANIME_FIELDS
             )
         }.cachedIn(viewModelScope)
 
+    fun notifyDataModified() = viewModelScope.launch {
+        _eventChannel.send(UiEvent.DataModified)
+    }
+
+    fun notifyDataUpdated() = viewModelScope.launch {
+        _eventChannel.send(UiEvent.DataUpdated)
+    }
+
     fun getAnimeList(watchingStatusValue: String? = null) {
-        _myAnimeList.value = watchingStatusValue
+        if (watchingStatusValue == _myAnimeList.value.watchingStatus) {
+            return
+        }
+
+        _myAnimeList.value = _myAnimeList.value.copy(watchingStatus = watchingStatusValue)
+        notifyDataModified()
+    }
+
+    fun sortByValue(sortValue: String) {
+        if (sortValue == _myAnimeList.value.sort) {
+            return
+        }
+
+        _myAnimeList.value = _myAnimeList.value.copy(sort = sortValue)
+        notifyDataModified()
     }
 
     fun updateAnimeProgress(
@@ -68,7 +96,7 @@ class MyListViewModel @Inject constructor(
     ) = viewModelScope.launch {
         if (animeId == null || currentEpisodeProgress == null) {
             val errorMessage = application.getString(R.string.message_missing_anime_id_or_current_episode)
-            _eventChannel.send(MyListEvent.UpdateProgressError(errorMessage))
+            _eventChannel.send(UiEvent.UpdateProgressError(errorMessage))
             return@launch
         }
 
@@ -90,16 +118,9 @@ class MyListViewModel @Inject constructor(
         }
 
         userAnimeListRepository.updateAnimeProgress(animeId, newProgressEpisode, isCompletedWatching, finishDate)
-            .onSuccess {
-                _eventChannel.send(MyListEvent.DataModified)
-            }
+            .onSuccess { notifyDataUpdated() }
             .onError { message ->
-                _eventChannel.send(MyListEvent.UpdateProgressError(message))
+                _eventChannel.send(UiEvent.UpdateProgressError(message))
             }
     }
-}
-
-sealed class MyListEvent {
-    object DataModified : MyListEvent()
-    data class UpdateProgressError(val message: String?) : MyListEvent()
 }

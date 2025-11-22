@@ -67,6 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/unknown_symbol"
+                app:cornerRadius="16dp"
                 app:icon="@drawable/avd_untargeted_to_targeted_24"
                 app:iconPadding="6dp"
                 app:layout_constrainedWidth="true"
@@ -78,7 +79,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/description_filter_season"
+                android:padding="12dp"
+                app:cornerRadius="16dp"
                 app:icon="@drawable/ic_tune_24px_rounded"
+                app:iconSize="24dp"
                 app:layout_constrainedWidth="true"
                 tools:ignore="MissingConstraints" />
         </androidx.constraintlayout.widget.ConstraintLayout>

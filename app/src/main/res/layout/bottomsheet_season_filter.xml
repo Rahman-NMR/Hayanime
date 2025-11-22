@@ -12,6 +12,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="32dp" />
+
     <androidx.core.widget.NestedScrollView
         android:id="@+id/container"
         android:layout_width="match_parent"
@@ -19,59 +26,104 @@
         app:layout_constrainedHeight="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/drag_handle">
+        app:layout_constraintTop_toBottomOf="@id/guideline_top">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingBottom="@dimen/layout_padding_bottom">
+            android:paddingBottom="@dimen/layout_padding_bottom_half">
 
-            <com.google.android.material.button.MaterialButtonGroup
-                android:id="@+id/btng_sort"
-                style="@style/Widget.Material3.MaterialButtonGroup.Connected"
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="16dp"
-                app:layout_constrainedHeight="true"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="16dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="16dp" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_filter_season"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@id/guideline_end"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/guideline_start"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <HorizontalScrollView
+                android:id="@+id/scroll_btn_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:scrollbars="none"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toBottomOf="@id/title">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_sort_by"
-                    style="@style/Widget.Material3.Button.TonalButton.Icon"
+                <com.google.android.material.button.MaterialButtonGroup
+                    android:id="@+id/btng_sort"
+                    style="@style/Widget.Material3.MaterialButtonGroup.Connected"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/label_unknown"
-                    app:icon="@drawable/ic_arrow_downward_24px_rounded" />
+                    android:paddingHorizontal="16dp">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_change_year"
-                    style="@style/Widget.Material3.Button.TonalButton.Icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/label_unknown"
-                    app:icon="@drawable/ic_calendar_today_24px_rounded" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_sort_by"
+                        style="@style/Widget.Material3.Button.TonalButton.Icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_unknown"
+                        app:icon="@drawable/ic_arrow_downward_24px_rounded" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_continued_anime"
-                    style="@style/Widget.Material3.Button.TonalButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/label_unknown" />
-            </com.google.android.material.button.MaterialButtonGroup>
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_change_year"
+                        style="@style/Widget.Material3.Button.TonalButton.Icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_unknown"
+                        app:icon="@drawable/ic_calendar_today_24px_rounded" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_continued_anime"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_unknown" />
+                </com.google.android.material.button.MaterialButtonGroup>
+            </HorizontalScrollView>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/divider1"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toEndOf="@id/guideline_end"
+                app:layout_constraintStart_toStartOf="@id/guideline_start"
+                app:layout_constraintTop_toBottomOf="@id/scroll_btn_group" />
 
             <HorizontalScrollView
                 android:id="@+id/scroll_season"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:scrollbars="none"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btng_sort">
+                app:layout_constraintTop_toBottomOf="@id/divider1">
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/chipg_season"
@@ -85,16 +137,27 @@
                     app:singleSelection="true" />
             </HorizontalScrollView>
 
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/divider2"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toEndOf="@id/guideline_end"
+                app:layout_constraintStart_toStartOf="@id/guideline_start"
+                app:layout_constraintTop_toBottomOf="@id/scroll_season" />
+
             <HorizontalScrollView
                 android:id="@+id/scroll_media_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:scrollbars="none"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/scroll_season">
+                app:layout_constraintTop_toBottomOf="@id/divider2">
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/chipg_media_type"

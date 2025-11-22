@@ -8,21 +8,28 @@ import com.animegatari.hayanime.core.Config
 import com.animegatari.hayanime.data.local.datamodel.SeasonModel
 import com.animegatari.hayanime.data.remote.response.AnimeList
 import com.animegatari.hayanime.domain.repository.AnimeRepository
+import com.animegatari.hayanime.domain.utils.UiEvent
 import com.animegatari.hayanime.utils.TimeUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SeasonViewModel @Inject constructor(
     private val animeRepository: AnimeRepository,
 ) : ViewModel() {
+    private val _eventChannel = Channel<UiEvent>(Channel.BUFFERED)
+    val events = _eventChannel.receiveAsFlow()
+
     val currentSeason get() = TimeUtils.getCurrentSeason()
     val currentYear get() = TimeUtils.getCurrentYear()
 
@@ -51,12 +58,30 @@ class SeasonViewModel @Inject constructor(
         )
     }.cachedIn(viewModelScope)
 
+    fun notifyDataModified() = viewModelScope.launch {
+        _eventChannel.send(UiEvent.DataModified)
+    }
+
+    fun notifyDataUpdated() = viewModelScope.launch {
+        _eventChannel.send(UiEvent.DataUpdated)
+    }
+
     fun changeSeason(season: String) {
+        if (season == _seasonFilter.value.season) {
+            return
+        }
+
         _seasonFilter.value = _seasonFilter.value.copy(season = season)
+        notifyDataModified()
     }
 
     fun changeYear(year: Int) {
+        if (year == _seasonFilter.value.year) {
+            return
+        }
+
         _seasonFilter.value = _seasonFilter.value.copy(year = year)
+        notifyDataModified()
     }
 
     fun setToCurrentSeason() {
@@ -66,14 +91,21 @@ class SeasonViewModel @Inject constructor(
             mediaType = null,
             isContinued = false
         )
+        notifyDataModified()
     }
 
     fun filterByMediaType(mediaType: String?) {
+        if (mediaType == _seasonFilter.value.mediaType) {
+            return
+        }
+
         _seasonFilter.value = _seasonFilter.value.copy(mediaType = mediaType)
+        notifyDataModified()
     }
 
     fun toggleContinuedAnime() {
         _seasonFilter.value = _seasonFilter.value.copy(isContinued = !_seasonFilter.value.isContinued)
+        notifyDataModified()
     }
 
     fun toggleSortKey() {
@@ -82,7 +114,9 @@ class SeasonViewModel @Inject constructor(
         } else {
             BY_POPULARITY
         }
+
         _seasonFilter.value = _seasonFilter.value.copy(sort = newSort)
+        notifyDataModified()
     }
 
     companion object SortKeys {

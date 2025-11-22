@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -19,11 +18,16 @@ import androidx.paging.LoadState
 import androidx.paging.awaitNotLoading
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.animegatari.hayanime.R
+import com.animegatari.hayanime.data.local.datamodel.MyListModel
 import com.animegatari.hayanime.data.model.UserInfo
 import com.animegatari.hayanime.data.types.WatchingStatus
 import com.animegatari.hayanime.databinding.FragmentMyListBinding
 import com.animegatari.hayanime.domain.utils.Response
+import com.animegatari.hayanime.domain.utils.UiEvent
+import com.animegatari.hayanime.domain.utils.onDataModified
+import com.animegatari.hayanime.domain.utils.onDataUpdated
 import com.animegatari.hayanime.domain.utils.onSuccess
+import com.animegatari.hayanime.domain.utils.onUpdateProgressError
 import com.animegatari.hayanime.ui.adapter.MyListAdapter
 import com.animegatari.hayanime.ui.base.ReselectableFragment
 import com.animegatari.hayanime.ui.detail.EditOwnListFragment
@@ -52,7 +56,7 @@ class MyListFragment : Fragment(), ReselectableFragment {
     private var _binding: FragmentMyListBinding? = null
     private val binding get() = _binding!!
 
-    private val myListViewModel: MyListViewModel by viewModels()
+    private val myListViewModel: MyListViewModel by activityViewModels()
     private val profileViewModel: ProfileMenuViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -65,15 +69,15 @@ class MyListFragment : Fragment(), ReselectableFragment {
 
         val myListAdapter = initializeMyListAdapter()
 
-        setupAdapterRefreshListener(myListAdapter)
+        setupAdapterRefreshListener()
         initializeViews()
-        setupInteractions(myListAdapter)
+        setupInteractions()
         setupRecyclerView(myListAdapter)
 
         observeViewModelStates(myListAdapter)
     }
 
-    private fun setupAdapterRefreshListener(myListAdapter: MyListAdapter) {
+    private fun setupAdapterRefreshListener() {
         parentFragmentManager.setFragmentResultListener(
             EditOwnListFragment.DETAIL_REQUEST_KEY,
             this
@@ -84,7 +88,7 @@ class MyListFragment : Fragment(), ReselectableFragment {
             if (resultUpdate || resultDeleted) {
                 viewLifecycleOwner.lifecycleScope.launch {
                     delay(ANIMATION_DURATION)
-                    myListAdapter.refresh()
+                    myListViewModel.notifyDataUpdated()
 
                     if (resultUpdate) {
                         showSnackbar(
@@ -113,15 +117,15 @@ class MyListFragment : Fragment(), ReselectableFragment {
         )
     }
 
-    private fun setupInteractions(myListAdapter: MyListAdapter) = with(binding) {
-        chipGroup.setOnCheckedStateChangeListener { group, checkedIds ->
-            handleChipGroupSelection(group, checkedIds)
-            scrollToTopOnLoad(myListAdapter)
+    private fun setupInteractions() = with(binding) {
+        btnOpenFilter.setOnClickListener {
+            val bottomSheet = MyListFilterBottomSheet()
+            bottomSheet.show(childFragmentManager, bottomSheet.tag)
         }
+        chipGroup.setOnCheckedStateChangeListener { group, checkedIds -> handleChipGroupSelection(group, checkedIds) }
         swipeRefresh.setOnRefreshListener {
             profileViewModel.getProfileImage()
-            myListAdapter.refresh()
-            scrollToTopOnLoad(myListAdapter)
+            myListViewModel.notifyDataModified()
         }
         toolBar.setOnMenuItemClickListener { menuItem ->
             handleMenuItemClick(menuItem)
@@ -129,17 +133,13 @@ class MyListFragment : Fragment(), ReselectableFragment {
     }
 
     private fun handleChipGroupSelection(group: ChipGroup, checkedIds: List<Int>) = with(binding) {
-        val selectedStatus = if (checkedIds.isNotEmpty()) {
-            val checkedChip = group.findViewById<Chip>(checkedIds.first())
-            checkedChip.tag as String
-        } else {
-            null
-        }
-
-        val watchingStatusString = WatchingStatus.fromApiValue(selectedStatus).stringResId
+        val selectedStatus = checkedIds.firstOrNull()
+            ?.let { group.findViewById<Chip>(it)?.tag as? String }
 
         myListViewModel.getAnimeList(selectedStatus)
-        tvInfoMsg.text = getString(R.string.info_no_results_found, getString(watchingStatusString))
+
+        val statusStringResId = WatchingStatus.fromApiValue(selectedStatus).stringResId
+        tvInfoMsg.text = getString(R.string.info_no_results_found, getString(statusStringResId))
     }
 
     private fun handleMenuItemClick(menuItem: MenuItem?): Boolean = when (menuItem?.itemId) {
@@ -199,10 +199,10 @@ class MyListFragment : Fragment(), ReselectableFragment {
         }
     }
 
-    private fun setChipSelectionState(watchingStatusValue: String?) = with(binding) {
-        val mediaTypeChip = chipGroup.findViewWithTag<Chip>(watchingStatusValue)
-        mediaTypeChip?.takeIf { !it.isChecked }?.let {
-            chipGroup.check(mediaTypeChip.id)
+    private fun setChipSelectionState(value: MyListModel) = with(binding) {
+        val watchingStatusChip = chipGroup.findViewWithTag<Chip>(value.watchingStatus)
+        watchingStatusChip?.takeIf { !it.isChecked }?.let {
+            chipGroup.check(watchingStatusChip.id)
         }
     }
 
@@ -243,22 +243,20 @@ class MyListFragment : Fragment(), ReselectableFragment {
                 launch { myListViewModel.myAnimeList.collectLatest(myListAdapter::submitData) }
                 launch { profileViewModel.profileImageUri.collectLatest(::loadProfileImage) }
                 launch { myListAdapter.loadStateFlow.collectLatest { observeLoadState(myListAdapter, it) } }
-                launch { myListViewModel.watchingStatusValue.collectLatest(::setChipSelectionState) }
+                launch { myListViewModel.myAnimeListState.collectLatest(::setChipSelectionState) }
                 launch { myListViewModel.events.collectLatest { handleEvent(it, myListAdapter) } }
             }
         }
     }
 
-    private fun handleEvent(event: MyListEvent, myListAdapter: MyListAdapter) {
-        when (event) {
-            is MyListEvent.DataModified -> {
-                myListAdapter.refresh()
-                scrollToTopOnLoad(myListAdapter)
-            }
-
-            is MyListEvent.UpdateProgressError -> {
-                showToast(requireContext(), event.message ?: getString(R.string.message_error_occurred))
-            }
+    private fun handleEvent(event: UiEvent, myListAdapter: MyListAdapter) {
+        event.onDataModified {
+            myListAdapter.refresh()
+            scrollToTopOnLoad(myListAdapter)
+        }.onDataUpdated {
+            myListAdapter.refresh()
+        }.onUpdateProgressError { message ->
+            showToast(requireContext(), message ?: getString(R.string.message_error_occurred))
         }
     }
 

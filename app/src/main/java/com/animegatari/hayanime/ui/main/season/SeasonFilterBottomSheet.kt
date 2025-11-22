@@ -37,14 +37,7 @@ class SeasonFilterBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.chipgSeason.setupDynamicChips(
-            hasIcon = true,
-            chipInfoProvider = SeasonStart.entries.filter { it != SeasonStart.UNKNOWN }
-        )
-        binding.chipgMediaType.setupDynamicChips(
-            hasIcon = false,
-            chipInfoProvider = MediaType.entries.filter { it != MediaType.UNKNOWN }
-        )
+        initializeViews()
         setupYearPickerListener()
         setupInteractionsListeners()
         observeViewModelStates()
@@ -60,28 +53,34 @@ class SeasonFilterBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
-    private fun setupInteractionsListeners() = with(binding) {
-        btnChangeYear.setOnClickListener { displayYearPickerDialog() }
-        chipgSeason.setOnCheckedStateChangeListener { group, checkedIds ->
-            if (checkedIds.isEmpty()) return@setOnCheckedStateChangeListener
+    private fun initializeViews() = with(binding) {
+        chipgSeason.setupDynamicChips(
+            hasIcon = true,
+            chipInfoProvider = SeasonStart.entries.filter { it != SeasonStart.UNKNOWN }
+        )
+        chipgMediaType.setupDynamicChips(
+            hasIcon = false,
+            chipInfoProvider = MediaType.entries.filter { it != MediaType.UNKNOWN }
+        )
+    }
 
-            val checkedChip = group.findViewById<Chip>(checkedIds.first())
-            val selectedSeasonValue = checkedChip.tag as String
+    private fun setupInteractionsListeners() = with(binding) {
+        btnSortBy.setOnClickListener { seasonViewModel.toggleSortKey() }
+        btnChangeYear.setOnClickListener { displayYearPickerDialog() }
+        btnContinuedAnime.setOnClickListener { seasonViewModel.toggleContinuedAnime() }
+        chipgSeason.setOnCheckedStateChangeListener { group, checkedIds ->
+            val checkedId = checkedIds.firstOrNull() ?: return@setOnCheckedStateChangeListener
+            val checkedChip = group.findViewById<Chip>(checkedId) ?: return@setOnCheckedStateChangeListener
+            val selectedSeasonValue = checkedChip.tag as? String ?: return@setOnCheckedStateChangeListener
+
             seasonViewModel.changeSeason(selectedSeasonValue)
         }
-
         chipgMediaType.setOnCheckedStateChangeListener { group, checkedIds ->
-            val selectedMediaTypeValue = if (checkedIds.isNotEmpty()) {
-                val checkedChip = group.findViewById<Chip>(checkedIds.first())
-                checkedChip.tag as String
-            } else {
-                null
-            }
+            val selectedMediaTypeValue = checkedIds.firstOrNull()
+                ?.let { group.findViewById<Chip>(it)?.tag as? String }
+
             seasonViewModel.filterByMediaType(selectedMediaTypeValue)
         }
-
-        btnSortBy.setOnClickListener { seasonViewModel.toggleSortKey() }
-        btnContinuedAnime.setOnClickListener { seasonViewModel.toggleContinuedAnime() }
     }
 
     private fun displayYearPickerDialog() {

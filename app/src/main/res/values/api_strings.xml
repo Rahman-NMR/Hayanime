@@ -56,6 +56,12 @@
     <string name="sort_by_anime_score" translatable="false">Score</string>
     <string name="sort_by_anime_num_list_users" translatable="false">Members</string>
 
+    <!-- sort user list -->
+    <string name="sort_user_list_score" translatable="false">Score</string>
+    <string name="sort_user_list_updated_at" translatable="false">Last Updated</string>
+    <string name="sort_user_list_anime_title" translatable="false">Alphabetical</string>
+    <string name="sort_user_list_anime_start_date" translatable="false">Air Start Date</string>
+
     <!-- continued status -->
     <string name="continued_anime" translatable="false">Continued Anime</string>
     <string name="uncontinued_anime" translatable="false">New Anime</string>

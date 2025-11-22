@@ -24,6 +24,9 @@ import com.animegatari.hayanime.data.model.UserInfo
 import com.animegatari.hayanime.data.types.SeasonStart
 import com.animegatari.hayanime.databinding.FragmentSeasonBinding
 import com.animegatari.hayanime.domain.utils.Response
+import com.animegatari.hayanime.domain.utils.UiEvent
+import com.animegatari.hayanime.domain.utils.onDataModified
+import com.animegatari.hayanime.domain.utils.onDataUpdated
 import com.animegatari.hayanime.domain.utils.onSuccess
 import com.animegatari.hayanime.ui.adapter.AnimeGridAdapter
 import com.animegatari.hayanime.ui.base.ReselectableFragment
@@ -64,15 +67,15 @@ class SeasonFragment : Fragment(), ReselectableFragment {
 
         val animeAdapter = initializeAnimeAdapter()
 
-        setupAdapterRefreshListener(animeAdapter)
+        setupAdapterRefreshListener()
         initializeViews()
-        setupInteractions(animeAdapter)
+        setupInteractions()
         setupRecyclerView(animeAdapter)
 
         observeViewModelStates(animeAdapter)
     }
 
-    private fun setupAdapterRefreshListener(animeAdapter: AnimeGridAdapter) {
+    private fun setupAdapterRefreshListener() {
         parentFragmentManager.setFragmentResultListener(
             EditOwnListFragment.DETAIL_REQUEST_KEY,
             this
@@ -83,7 +86,7 @@ class SeasonFragment : Fragment(), ReselectableFragment {
             if (resultUpdate || resultDeleted) {
                 viewLifecycleOwner.lifecycleScope.launch {
                     delay(ANIMATION_DURATION)
-                    animeAdapter.refresh()
+                    seasonViewModel.notifyDataUpdated()
 
                     if (resultUpdate) {
                         showSnackbar(
@@ -108,20 +111,15 @@ class SeasonFragment : Fragment(), ReselectableFragment {
         tvInfoMsg.text = getString(R.string.info_no_results_found, getString(R.string.label_this_season))
     }
 
-    private fun setupInteractions(animeAdapter: AnimeGridAdapter) = with(binding) {
-        btnSeason.setOnClickListener {
-            seasonViewModel.setToCurrentSeason()
-            animeAdapter.refresh()
-            scrollToTopOnLoad(animeAdapter)
-        }
+    private fun setupInteractions() = with(binding) {
+        btnSeason.setOnClickListener { seasonViewModel.setToCurrentSeason() }
         btnOpenFilter.setOnClickListener {
             val bottomSheet = SeasonFilterBottomSheet()
             bottomSheet.show(childFragmentManager, bottomSheet.tag)
         }
         swipeRefresh.setOnRefreshListener {
             profileViewModel.getProfileImage()
-            animeAdapter.refresh()
-            scrollToTopOnLoad(animeAdapter)
+            seasonViewModel.notifyDataModified()
         }
         toolBar.setOnMenuItemClickListener { menuItem ->
             handleMenuItemClick(menuItem)
@@ -137,7 +135,7 @@ class SeasonFragment : Fragment(), ReselectableFragment {
         else -> false
     }
 
-    private fun initializeAnimeAdapter(): AnimeGridAdapter = AnimeGridAdapter(
+    private fun initializeAnimeAdapter() = AnimeGridAdapter(
         onItemClicked = { anime ->
             anime.id?.let {
                 val action = SeasonFragmentDirections.actionNavigationToNavigationAnimeDetail(it)
@@ -237,7 +235,17 @@ class SeasonFragment : Fragment(), ReselectableFragment {
                 launch { seasonViewModel.animeList.collectLatest(animeAdapter::submitData) }
                 launch { profileViewModel.profileImageUri.collectLatest(::loadProfileImage) }
                 launch { animeAdapter.loadStateFlow.collectLatest { observeLoadState(animeAdapter, it) } }
+                launch { seasonViewModel.events.collectLatest { handleEvent(it, animeAdapter) } }
             }
+        }
+    }
+
+    private fun handleEvent(event: UiEvent, animeAdapter: AnimeGridAdapter) {
+        event.onDataModified {
+            animeAdapter.refresh()
+            scrollToTopOnLoad(animeAdapter)
+        }.onDataUpdated {
+            animeAdapter.refresh()
         }
     }
 

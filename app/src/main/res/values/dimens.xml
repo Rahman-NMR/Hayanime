@@ -1,6 +1,7 @@
 <resources>
     <dimen name="recyclerview_corner_padding_small">6dp</dimen>
     <dimen name="layout_padding_bottom">80dp</dimen>
+    <dimen name="layout_padding_bottom_half">40dp</dimen>
     <dimen name="small_dp">8dp</dimen>
     <dimen name="normal_dp">16dp</dimen>
     <dimen name="item_rv_scrolling_width">50dp</dimen>

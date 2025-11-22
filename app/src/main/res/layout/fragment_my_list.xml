@@ -20,6 +20,7 @@
             android:clipToPadding="false"
             android:paddingHorizontal="@dimen/recyclerview_corner_padding_small"
             android:paddingTop="@dimen/recyclerview_corner_padding_small"
+            android:paddingBottom="@dimen/layout_padding_bottom"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:itemCount="3"
             tools:listitem="@layout/layout_anime_list" />
@@ -40,19 +41,54 @@
             app:logo="@drawable/hayanime_logo"
             app:menu="@menu/avatar_menu" />
 
-        <HorizontalScrollView
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="none">
+            android:paddingStart="8dp">
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chip_group"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_open_filter"
+                style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="12dp"
-                app:singleLine="true"
-                app:singleSelection="true" />
-        </HorizontalScrollView>
+                android:contentDescription="@string/description_sort_mylist"
+                android:padding="12dp"
+                app:cornerRadius="16dp"
+                app:icon="@drawable/ic_tune_24px_rounded"
+                app:iconSize="24dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/divider"
+                android:layout_width="1dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/horizontal_scroll_view"
+                app:layout_constraintStart_toEndOf="@id/btn_open_filter"
+                app:layout_constraintTop_toTopOf="@+id/horizontal_scroll_view" />
+
+            <HorizontalScrollView
+                android:id="@+id/horizontal_scroll_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/divider"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="12dp"
+                    app:singleLine="true"
+                    app:singleSelection="true" />
+            </HorizontalScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.textview.MaterialTextView
