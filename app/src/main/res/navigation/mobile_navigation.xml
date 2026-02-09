@@ -55,6 +55,14 @@
         <argument
             android:name="animeId"
             app:argType="integer" />
+
+        <action
+            android:id="@+id/action_animeDetail_to_animeDetailPictures"
+            app:destination="@id/navigation_anime_detail_pictures"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 
     <action
@@ -64,4 +72,15 @@
         app:exitAnim="@anim/nav_default_exit_anim"
         app:popEnterAnim="@anim/nav_default_pop_enter_anim"
         app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
+    <fragment
+        android:id="@+id/navigation_anime_detail_pictures"
+        android:name="com.animegatari.hayanime.ui.detail.AnimeDetailPicturesFragment"
+        android:label="@string/title_pictures"
+        tools:layout="@layout/fragment_anime_detail_pictures">
+
+        <argument
+            android:name="animeId"
+            app:argType="integer" />
+    </fragment>
 </navigation>

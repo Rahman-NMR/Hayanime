@@ -10,7 +10,9 @@ import com.animegatari.hayanime.data.model.Picture
 import com.animegatari.hayanime.databinding.LayoutCarouselBinding
 import com.bumptech.glide.Glide
 
-class PictureCarouselAdapter : ListAdapter<Picture, PictureCarouselAdapter.PictureCarouselViewHolder>(DiffCallback()) {
+class PictureCarouselAdapter(
+    private val onPictureClicked: () -> Unit,
+) : ListAdapter<Picture, PictureCarouselAdapter.PictureCarouselViewHolder>(DiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PictureCarouselViewHolder {
         val binding = LayoutCarouselBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PictureCarouselViewHolder(binding)
@@ -18,11 +20,11 @@ class PictureCarouselAdapter : ListAdapter<Picture, PictureCarouselAdapter.Pictu
 
     override fun onBindViewHolder(holder: PictureCarouselViewHolder, position: Int) {
         val picture = getItem(position)
-        picture?.let { holder.bind(it) }
+        picture?.let { holder.bind(it, onPictureClicked) }
     }
 
     class PictureCarouselViewHolder(private val binding: LayoutCarouselBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(picture: Picture) {
+        fun bind(picture: Picture, onPictureClicked: () -> Unit) {
             val context = binding.root.context
 
             Glide.with(context)
@@ -31,6 +33,8 @@ class PictureCarouselAdapter : ListAdapter<Picture, PictureCarouselAdapter.Pictu
                 .fallback(R.drawable.img_fallback)
                 .error(R.drawable.img_error)
                 .into(binding.carouselImage)
+
+            binding.root.setOnClickListener { onPictureClicked() }
         }
     }
 

@@ -60,7 +60,7 @@ class AnimeDetailFragment : Fragment() {
 
     private val animeDetailViewModel: AnimeDetailViewModel by viewModels()
 
-    private val pictureCarouselAdapter by lazy { PictureCarouselAdapter() }
+    private val pictureCarouselAdapter by lazy { pictureCarouselAdapter() }
     private val genreAdapter by lazy { genreAdapter() }
     private val rateDetailAdapter by lazy { rateDetailAdapter() }
     private val studioAdapter by lazy { studioAdapter() }
@@ -182,6 +182,15 @@ class AnimeDetailFragment : Fragment() {
             divider = divider
         )
     }
+
+    private fun pictureCarouselAdapter() = PictureCarouselAdapter(
+        onPictureClicked = {
+            val action = AnimeDetailFragmentDirections.actionAnimeDetailToAnimeDetailPictures(
+                animeId = animeDetailViewModel.animeId,
+            )
+            findNavController().navigate(action)
+        }
+    )
 
     private fun genreAdapter(): CleanAdapter<Genre, LayoutChipBinding> {
         val genreDiffUtil = GenericDiffUtil<Genre>(
