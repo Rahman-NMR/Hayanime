@@ -247,7 +247,7 @@
                 android:layout_marginTop="8dp"
                 android:clipChildren="false"
                 android:clipToPadding="false"
-                android:paddingHorizontal="16dp"
+                android:paddingStart="16dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -355,7 +355,7 @@
                 android:layout_marginTop="8dp"
                 android:clipChildren="false"
                 android:clipToPadding="false"
-                android:paddingHorizontal="16dp"
+                android:paddingStart="16dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -363,7 +363,7 @@
                 app:layout_constraintTop_toBottomOf="@id/barrier_background"
                 app:layout_goneMarginTop="16dp"
                 tools:itemCount="1"
-                tools:listitem="@layout/layout_anime_recommendation" />
+                tools:listitem="@layout/layout_anime_related" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/label_recommendation"
@@ -386,7 +386,7 @@
                 android:layout_marginTop="16dp"
                 android:clipChildren="false"
                 android:clipToPadding="false"
-                android:paddingHorizontal="16dp"
+                android:paddingStart="16dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toEndOf="parent"

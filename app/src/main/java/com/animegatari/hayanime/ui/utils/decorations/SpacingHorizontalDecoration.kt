@@ -18,11 +18,11 @@ class SpacingHorizontalDecoration(
         val position = parent.getChildAdapterPosition(view)
         val lastItemPosition = adapter.itemCount.minus(1)
 
-        if (position == RecyclerView.NO_POSITION || position == lastItemPosition) {
-            return
-        }
-
         outRect.right = spacing
+
+        if (position == lastItemPosition && !showDivider) {
+            outRect.right = spacing * 2
+        }
     }
 
     override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {

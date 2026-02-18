@@ -51,7 +51,7 @@
         android:text="@string/nothing"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/vertical_barrier"
-        app:layout_constraintTop_toTopOf="@id/barrier_finish_date" />
+        app:layout_constraintTop_toTopOf="@id/barrier_start_date" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier_finish_date"

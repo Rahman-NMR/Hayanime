@@ -58,7 +58,7 @@
     <string name="label_supporter">I\'m a supporter</string>
     <string name="label_not_supporter">Not a supporter</string>
     <string name="label_rewatched">Rewatched</string>
-    <string name="label_user_scored">User scored</string>
+    <string name="label_user_scored">User Scored</string>
     <string name="label_ranking">Ranking</string>
     <string name="label_popularity">Popularity</string>
     <string name="label_members">Members</string>
@@ -155,7 +155,6 @@
 
     <plurals name="num_user">
         <item quantity="one">1 user</item>
-        <item quantity="many">%1$s users</item>
         <item quantity="other">%1$s users</item>
     </plurals>
 </resources>

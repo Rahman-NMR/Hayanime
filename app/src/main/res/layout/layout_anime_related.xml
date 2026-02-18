@@ -55,7 +55,7 @@
         android:background="@drawable/bg_right_corner_10"
         android:backgroundTint="?attr/colorSecondaryContainer"
         android:ellipsize="end"
-        android:gravity="center"
+        android:gravity="start"
         android:maxLines="2"
         android:paddingStart="4dp"
         android:paddingTop="4dp"

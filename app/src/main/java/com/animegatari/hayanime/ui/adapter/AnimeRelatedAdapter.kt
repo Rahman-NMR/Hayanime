@@ -26,7 +26,7 @@ class AnimeRelatedAdapter(
         fun bind(anime: RelatedAnime, onRecommendationClick: (RelatedAnime) -> Unit) {
             val context = binding.root.context
 
-            binding.relationName.text = anime.relationTypeFormatted
+            binding.relationName.text = anime.relationTypeFormatted?.replace(" ", "\n")
             Glide.with(context)
                 .load(anime.node?.mainPicture?.large ?: anime.node?.mainPicture?.medium)
                 .placeholder(R.drawable.img_placeholder)

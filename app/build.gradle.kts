@@ -26,7 +26,7 @@ android {
         minSdk = 28
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0.11-beta"
+        versionName = "1.0.12-beta"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -38,10 +38,15 @@ android {
             }
         }
 
-        buildConfigField("String", "BASE_URL", "\"${properties.getProperty("base_url")}\"")
-        buildConfigField("String", "API_URL", "\"${properties.getProperty("api_url")}\"")
-        buildConfigField("String", "MAL_CLIENT_ID", "\"${properties.getProperty("mal_client_id")}\"")
-        buildConfigField("String", "MAL_CLIENT_SECRET", "\"${properties.getProperty("mal_client_secret")}\"")
+        val baseUrl = properties.getProperty("base_url") ?: ""
+        val apiUrl = properties.getProperty("api_url") ?: ""
+        val malClientId = properties.getProperty("mal_client_id") ?: ""
+        val malClientSecret = properties.getProperty("mal_client_secret") ?: ""
+
+        buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
+        buildConfigField("String", "API_URL", "\"$apiUrl\"")
+        buildConfigField("String", "MAL_CLIENT_ID", "\"$malClientId\"")
+        buildConfigField("String", "MAL_CLIENT_SECRET", "\"$malClientSecret\"")
     }
 
     buildTypes {

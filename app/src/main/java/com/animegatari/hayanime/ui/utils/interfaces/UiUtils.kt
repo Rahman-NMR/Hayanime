@@ -43,6 +43,13 @@ object UiUtils {
                 ?: getString(R.string.not_available)
         ),
         RateDetail(
+            name = getString(R.string.label_members),
+            value = anime?.numListUsers
+                ?.takeIf { it > 0 }
+                ?.let { digitNumberFormatter(it) }
+                ?: getString(R.string.not_available)
+        ),
+        RateDetail(
             name = getString(R.string.label_ranking),
             value = anime?.rank
                 ?.takeIf { it > 0 }
@@ -54,13 +61,6 @@ object UiUtils {
             value = anime?.popularity
                 ?.takeIf { it > 0 }
                 ?.let { "#" + digitNumberFormatter(it) }
-                ?: getString(R.string.not_available)
-        ),
-        RateDetail(
-            name = getString(R.string.label_members),
-            value = anime?.numListUsers
-                ?.takeIf { it > 0 }
-                ?.let { digitNumberFormatter(it) }
                 ?: getString(R.string.not_available)
         )
     )
