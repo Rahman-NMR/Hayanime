@@ -174,6 +174,192 @@
                 tools:itemCount="1"
                 tools:listitem="@layout/layout_chip" />
 
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_my_progress"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                app:cardBackgroundColor="?attr/colorCardOnSurface"
+                app:cardCornerRadius="12dp"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/genre_recycler_view"
+                tools:visibility="visible">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline_card_center"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.5" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/label_my_progress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_my_progress"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        app:layout_constrainedHeight="true"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintEnd_toStartOf="@id/chip_status_watching"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:textColor="?attr/colorWatchingColor" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/chip_status_watching"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_corner_16"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="4dp"
+                        android:text="@string/watching_status_watching"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:backgroundTint="?attr/colorWatchingColorContainer"
+                        tools:textColor="?attr/colorWatchingColor" />
+
+                    <androidx.constraintlayout.widget.Barrier
+                        android:id="@+id/barrier_head"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:barrierDirection="bottom"
+                        app:barrierMargin="18dp"
+                        app:constraint_referenced_ids="label_my_progress,chip_status_watching" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tv_start_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:paddingEnd="4dp"
+                        android:text="@string/label_start_date"
+                        app:layout_constrainedHeight="true"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintEnd_toStartOf="@+id/guideline_card_center"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/barrier_head" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tv_finish_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:paddingStart="4dp"
+                        android:text="@string/label_finish_date"
+                        app:layout_constrainedHeight="true"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintStart_toEndOf="@+id/guideline_card_center"
+                        app:layout_constraintTop_toBottomOf="@id/barrier_head" />
+
+                    <androidx.constraintlayout.widget.Barrier
+                        android:id="@+id/barrier_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:barrierDirection="bottom"
+                        app:barrierMargin="8dp"
+                        app:constraint_referenced_ids="tv_start_date, tv_finish_date" />
+
+                    <com.google.android.material.progressindicator.LinearProgressIndicator
+                        android:id="@+id/progress_indic_me"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:max="12"
+                        android:progress="4"
+                        app:indicatorColor="?attr/colorWatchingColor"
+                        app:indicatorTrackGapSize="0dp"
+                        app:layout_constrainedHeight="true"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/barrier_date"
+                        app:trackColor="?attr/colorOutlineVariant"
+                        app:trackStopIndicatorSize="0dp"
+                        app:trackThickness="16dp" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/label_my_score"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:alpha="0.7"
+                        android:gravity="center"
+                        android:paddingHorizontal="4dp"
+                        android:text="@string/label_my_score"
+                        android:textSize="14sp"
+                        app:layout_constrainedHeight="true"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintEnd_toStartOf="@id/guideline_card_center"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/progress_indic_me" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/value_my_score"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingHorizontal="4dp"
+                        android:text="@string/nothing"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constrainedHeight="true"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintEnd_toStartOf="@id/guideline_card_center"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/label_my_score" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/label_duration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:alpha="0.7"
+                        android:gravity="center"
+                        android:paddingHorizontal="4dp"
+                        android:text="@string/label_duration"
+                        android:textSize="14sp"
+                        app:layout_constrainedHeight="true"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@id/guideline_card_center"
+                        app:layout_constraintTop_toBottomOf="@id/progress_indic_me" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/value_duration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingHorizontal="4dp"
+                        android:text="@string/nothing"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constrainedHeight="true"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@id/guideline_card_center"
+                        app:layout_constraintTop_toBottomOf="@id/label_duration" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/synopsis"
                 android:layout_width="0dp"
@@ -186,7 +372,7 @@
                 app:layout_constraintEnd_toEndOf="@id/guideline_end"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@id/guideline_start"
-                app:layout_constraintTop_toBottomOf="@id/genre_recycler_view" />
+                app:layout_constraintTop_toBottomOf="@id/card_my_progress" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_tl_syn"

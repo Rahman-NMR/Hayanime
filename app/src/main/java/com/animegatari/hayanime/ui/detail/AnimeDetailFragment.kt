@@ -27,6 +27,7 @@ import com.animegatari.hayanime.data.types.NsfwMedia
 import com.animegatari.hayanime.data.types.RatingCategory
 import com.animegatari.hayanime.data.types.SeasonStart
 import com.animegatari.hayanime.data.types.SourceOfRefference
+import com.animegatari.hayanime.data.types.WatchingStatus
 import com.animegatari.hayanime.databinding.FragmentAnimeDetailBinding
 import com.animegatari.hayanime.databinding.LayoutChipBinding
 import com.animegatari.hayanime.databinding.LayoutRateDetailsBinding
@@ -45,6 +46,7 @@ import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showToast
 import com.animegatari.hayanime.ui.utils.recyclerview.RecyclerViewUtils.carouselRecyclerView
 import com.animegatari.hayanime.ui.utils.recyclerview.RecyclerViewUtils.flexChipRecyclerView
 import com.animegatari.hayanime.ui.utils.recyclerview.RecyclerViewUtils.horizontalSpacingRecyclerView
+import com.animegatari.hayanime.utils.FormatterUtils
 import com.animegatari.hayanime.utils.FormatterUtils.dayLocaleFormatter
 import com.animegatari.hayanime.utils.FormatterUtils.formatApiDate
 import com.animegatari.hayanime.utils.FormatterUtils.formatTimeIntoLocale
@@ -52,6 +54,7 @@ import com.animegatari.hayanime.utils.TimeUtils
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class AnimeDetailFragment : Fragment() {
@@ -302,6 +305,8 @@ class AnimeDetailFragment : Fragment() {
         airing.textView.text = getString(airingStatus)
         airing.textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_broadcast_on_personal_24px_rounded, 0, 0, 0)
 
+        displayAnimeProgress(anime)
+
         genreAdapter.submitList(anime?.genres)
 
         val hasSynopsis = anime?.synopsis.isNullOrBlank().not()
@@ -341,6 +346,52 @@ class AnimeDetailFragment : Fragment() {
         labelRecommendation.isVisible = hasRecommendations
         recommendationRecyclerView.isVisible = hasRecommendations
         animeRecAdapter.submitList(anime?.recommendations)
+    }
+
+    private fun displayAnimeProgress(anime: AnimeDetail?) = with(binding) {
+        val myListStatus = anime?.myListStatus
+        cardMyProgress.isVisible = myListStatus != null
+
+        myListStatus?.let { status ->
+            val context = requireContext()
+            val defaultText = getString(R.string.nothing)
+
+            val watchingStatus = WatchingStatus.fromApiValue(status.status)
+            val statusColor = context.getColor(watchingStatus.colorResId)
+            val statusText = getString(watchingStatus.stringResId)
+            val statusBgColor = context.getColorStateList(watchingStatus.bgColorResId)
+
+            labelMyProgress.setTextColor(statusColor)
+            chipStatusWatching.apply {
+                text = statusText
+                setTextColor(statusColor)
+                backgroundTintList = statusBgColor
+            }
+
+            tvStartDate.text = formatApiDate(status.startDate).takeIf { !it.isNullOrBlank() } ?: defaultText
+            tvFinishDate.text = if (watchingStatus == WatchingStatus.WATCHING) {
+                getString(R.string.label_now)
+            } else {
+                formatApiDate(status.finishDate).takeIf { !it.isNullOrBlank() } ?: defaultText
+            }
+
+            val episodeWatched = status.numEpisodesWatched ?: 0
+            progressIndicMe.apply {
+                min = 0
+                max = anime.numEpisodes.takeIf { it != 0 } ?: (episodeWatched * 2.0).roundToInt()
+                progress = episodeWatched
+                setIndicatorColor(statusColor)
+            }
+
+            val myScore = status.score?.takeIf { it != 0 }?.let { "☆ $it" } ?: defaultText
+            valueMyScore.text = myScore
+
+            val totalDays = FormatterUtils.calculateDaysBetween(status.startDate, status.finishDate)
+            val watchingDays = totalDays?.let { days ->
+                resources.getQuantityString(R.plurals.count_days, days.toInt(), days)
+            } ?: defaultText
+            valueDuration.text = watchingDays
+        }
     }
 
     private fun setupMoreInfoSection(anime: AnimeDetail?) = with(binding.moreInfo) {

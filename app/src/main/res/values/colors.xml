@@ -19,6 +19,7 @@
     <color name="md_theme_background">#F5FAFB</color>
     <color name="md_theme_onBackground">#171D1E</color>
     <color name="md_theme_surface">#F5FAFB</color>
+    <color name="md_theme_cardOnSurface">#E8ECED</color>
     <color name="md_theme_onSurface">#171D1E</color>
     <color name="md_theme_surfaceVariant">#DBE4E6</color>
     <color name="md_theme_onSurfaceVariant">#3F484A</color>

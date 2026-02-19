@@ -8,12 +8,13 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.Year
 import java.time.YearMonth
-import java.time.ZonedDateTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
-import java.time.format.TextStyle
 import java.time.format.FormatStyle
+import java.time.format.TextStyle
+import java.time.temporal.ChronoUnit
 import java.util.Locale
 
 object FormatterUtils {
@@ -116,6 +117,25 @@ object FormatterUtils {
             dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
         } catch (_: IllegalArgumentException) {
             dateStr.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    fun calculateDaysBetween(startDateStr: String?, endDateStr: String?): Long? {
+        if (startDateStr.isNullOrBlank()) {
+            return null
+        }
+
+        return try {
+            val startDate = LocalDate.parse(startDateStr)
+            val endDate = endDateStr.takeIf { !it.isNullOrBlank() }
+                ?.let { LocalDate.parse(it) }
+                ?: LocalDate.now()
+
+            ChronoUnit.DAYS.between(startDate, endDate) + 1
+        } catch (_: DateTimeParseException) {
+            null
         } catch (_: Exception) {
             null
         }

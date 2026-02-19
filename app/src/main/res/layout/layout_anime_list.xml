@@ -211,6 +211,7 @@
         app:layout_constraintEnd_toEndOf="@id/barrier_btn_action_y"
         app:layout_constraintStart_toStartOf="@id/barrier_main_picture"
         app:layout_constraintTop_toBottomOf="@id/source_n_studio"
+        app:trackColor="?attr/colorOutlineVariant"
         app:trackStopIndicatorSize="0dp"
         app:trackThickness="16dp" />
 

@@ -1,4 +1,5 @@
 <resources>
+    <attr name="colorCardOnSurface" format="color" />
     <attr name="colorWatchingColor" format="color" />
     <attr name="colorOnWatchingColor" format="color" />
     <attr name="colorWatchingColorContainer" format="color" />
