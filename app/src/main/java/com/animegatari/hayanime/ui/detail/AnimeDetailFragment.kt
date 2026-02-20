@@ -435,7 +435,7 @@ class AnimeDetailFragment : Fragment() {
         animePicturesViewModel.clearPictures()
 
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 animeDetailViewModel.animeDetail.collect { response ->
                     response.onSuccess { anime ->
                         loadingVisibilityView(indicator = false, layout = true)

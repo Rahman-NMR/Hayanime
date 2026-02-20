@@ -475,7 +475,7 @@ class EditOwnListFragment : Fragment() {
 
     private fun observeViewModelStates() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 launch { ownListViewModel.isLoading.collectLatest(::updateLoadingState) }
                 launch { ownListViewModel.animeUIState.collectLatest(::observeUIState) }
                 launch { ownListViewModel.maxEpisodes.collectLatest(::setupEpisodesRecyclerView) }

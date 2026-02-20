@@ -78,6 +78,8 @@
         android:padding="32dp"
         android:textAlignment="center"
         android:textSize="24sp"
+        android:visibility="gone"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:text="@string/info_empty_initial_search" />
+        tools:text="@string/info_empty_initial_search"
+        tools:visibility="visible" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

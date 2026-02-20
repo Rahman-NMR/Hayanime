@@ -288,12 +288,18 @@ class SearchFragment : Fragment(), ReselectableFragment {
     }
 
     private fun observeViewModelStates(animeAdapter: AnimeGridAdapter, historyAdapter: SearchHistoryAdapter) {
+        animeAdapter.addLoadStateListener { observeLoadState(animeAdapter, it) }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch { searchViewModel.animeList.collectLatest(animeAdapter::submitData) }
                 launch { profileViewModel.profileImageUri.collectLatest(::loadProfileImage) }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                launch { searchViewModel.animeList.collectLatest(animeAdapter::submitData) }
                 launch { historyViewModel.historyState.collectLatest(historyAdapter::submitList) }
-                launch { animeAdapter.loadStateFlow.collectLatest { observeLoadState(animeAdapter, it) } }
             }
         }
     }

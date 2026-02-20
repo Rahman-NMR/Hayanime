@@ -229,12 +229,18 @@ class SeasonFragment : Fragment(), ReselectableFragment {
     }
 
     private fun observeViewModelStates(animeAdapter: AnimeGridAdapter) {
+        animeAdapter.addLoadStateListener { observeLoadState(animeAdapter, it) }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch { profileViewModel.profileImageUri.collectLatest(::loadProfileImage) }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 launch { seasonViewModel.seasonalFilterState.collectLatest(::seasonButtonState) }
                 launch { seasonViewModel.animeList.collectLatest(animeAdapter::submitData) }
-                launch { profileViewModel.profileImageUri.collectLatest(::loadProfileImage) }
-                launch { animeAdapter.loadStateFlow.collectLatest { observeLoadState(animeAdapter, it) } }
                 launch { seasonViewModel.events.collectLatest { handleEvent(it, animeAdapter) } }
             }
         }

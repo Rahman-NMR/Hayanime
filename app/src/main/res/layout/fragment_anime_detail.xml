@@ -10,7 +10,9 @@
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:visibility="gone"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:visibility="visible">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -424,7 +426,7 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@id/guideline_start"
                 app:layout_constraintTop_toBottomOf="@id/barrier_synopsis"
-                app:layout_goneMarginTop="16dp" />
+                app:layout_goneMarginTop="20dp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rate_recycler_view"
@@ -446,7 +448,7 @@
                 android:id="@+id/label_more_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="20dp"
                 android:text="@string/label_more_info"
                 android:textColor="?attr/colorPrimary"
                 android:textSize="20sp"
@@ -473,7 +475,7 @@
                 android:id="@+id/label_background"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="20dp"
                 android:text="@string/label_background"
                 android:textColor="?attr/colorPrimary"
                 android:textSize="20sp"
@@ -555,7 +557,7 @@
                 android:id="@+id/label_recommendation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="20dp"
                 android:text="@string/label_recommendations"
                 android:textColor="?attr/colorPrimary"
                 android:textSize="20sp"

@@ -238,11 +238,17 @@ class MyListFragment : Fragment(), ReselectableFragment {
     }
 
     private fun observeViewModelStates(myListAdapter: MyListAdapter) {
+        myListAdapter.addLoadStateListener { observeLoadState(myListAdapter, it) }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch { myListViewModel.myAnimeList.collectLatest(myListAdapter::submitData) }
                 launch { profileViewModel.profileImageUri.collectLatest(::loadProfileImage) }
-                launch { myListAdapter.loadStateFlow.collectLatest { observeLoadState(myListAdapter, it) } }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                launch { myListViewModel.myAnimeList.collectLatest(myListAdapter::submitData) }
                 launch { myListViewModel.myAnimeListState.collectLatest(::setChipSelectionState) }
                 launch { myListViewModel.events.collectLatest { handleEvent(it, myListAdapter) } }
             }
