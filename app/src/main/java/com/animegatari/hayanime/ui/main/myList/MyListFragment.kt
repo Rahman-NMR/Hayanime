@@ -154,7 +154,7 @@ class MyListFragment : Fragment(), ReselectableFragment {
     private fun initializeMyListAdapter(): MyListAdapter = MyListAdapter(
         onItemClicked = { anime ->
             anime.id?.let { animeId ->
-                val action = MyListFragmentDirections.actionNavigationToNavigationAnimeDetail(animeId)
+                val action = MyListFragmentDirections.actionGlobalToAnimeDetailGraph(animeId)
                 findNavController().navigate(action)
             } ?: run {
                 showToast(requireContext(), getString(R.string.message_error_missing_anime_id))
@@ -162,7 +162,7 @@ class MyListFragment : Fragment(), ReselectableFragment {
         },
         onEditMyListClicked = { anime ->
             anime.id?.let { animeId ->
-                val action = MyListFragmentDirections.actionNavigationToNavigationEditAnime(
+                val action = MyListFragmentDirections.actionGlobalToEditAnime(
                     animeId = animeId,
                     requestKey = EditOwnListFragment.DETAIL_REQUEST_KEY
                 )

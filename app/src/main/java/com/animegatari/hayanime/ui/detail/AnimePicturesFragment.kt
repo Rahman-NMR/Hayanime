@@ -6,38 +6,33 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.animegatari.hayanime.R
-import com.animegatari.hayanime.data.model.AnimeDetail
 import com.animegatari.hayanime.data.model.Picture
-import com.animegatari.hayanime.databinding.FragmentAnimeDetailPicturesBinding
+import com.animegatari.hayanime.databinding.FragmentAnimePicturesBinding
 import com.animegatari.hayanime.databinding.LayoutAnimePictureBinding
-import com.animegatari.hayanime.domain.utils.onError
-import com.animegatari.hayanime.domain.utils.onLoading
-import com.animegatari.hayanime.domain.utils.onSuccess
 import com.animegatari.hayanime.ui.adapter.generic.CleanAdapter
 import com.animegatari.hayanime.ui.adapter.generic.GenericDiffUtil
 import com.animegatari.hayanime.ui.utils.layout.SpanCalculator.calculateSpanCount
-import com.animegatari.hayanime.ui.utils.notifier.PopupMessage.showToast
 import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class AnimeDetailPicturesFragment : Fragment() {
-    private var _binding: FragmentAnimeDetailPicturesBinding? = null
+class AnimePicturesFragment : Fragment() {
+    private var _binding: FragmentAnimePicturesBinding? = null
     private val binding get() = _binding!!
 
-    private val animeDetailViewModel: AnimeDetailViewModel by viewModels()
-    private val animePictures by lazy { animePicsAdapter() }
+    private val animePicturesViewModel: AnimePicturesViewModel by navGraphViewModels(R.id.anime_detail_graph)
+    private val picturesAdapter by lazy { animePicsAdapter() }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentAnimeDetailPicturesBinding.inflate(inflater, container, false)
+        _binding = FragmentAnimePicturesBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -59,7 +54,7 @@ class AnimeDetailPicturesFragment : Fragment() {
                 calculateSpanCount(requireContext(), 200),
                 StaggeredGridLayoutManager.VERTICAL
             )
-            adapter = animePictures
+            adapter = picturesAdapter
         }
     }
 
@@ -82,35 +77,22 @@ class AnimeDetailPicturesFragment : Fragment() {
         )
     }
 
-    private fun observeUIState(anime: AnimeDetail?) = with(binding) {
-        val hasPictures = anime?.pictures.isNullOrEmpty().not()
+    private fun observeUIState(pictures: List<Picture?>) = with(binding) {
+        val hasPictures = pictures.isEmpty().not()
         picturesRecyclerView.isVisible = hasPictures
-        animePictures.submitList(anime?.pictures)
+        picturesAdapter.submitList(pictures)
 
         tvInfoMsg.isVisible = hasPictures.not()
     }
 
     private fun observeViewModelStates() {
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                animeDetailViewModel.animeDetail.collect { response ->
-                    response.onSuccess { anime ->
-                        loadingVisibilityView(indicator = false, layout = true)
-                        observeUIState(anime)
-                    }.onError {
-                        loadingVisibilityView(indicator = false, layout = false)
-                        showToast(requireContext(), getString(R.string.message_failed_load_data))
-                        dismiss()
-                    }.onLoading { loadingVisibilityView(indicator = true, layout = false) }
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                animePicturesViewModel.pictures.collect { pictures ->
+                    observeUIState(pictures)
                 }
             }
         }
-    }
-
-    private fun loadingVisibilityView(indicator: Boolean, layout: Boolean) {
-        binding.progressBar.isVisible = indicator
-        binding.appBar.isVisible = layout
-        binding.picturesRecyclerView.isVisible = layout
     }
 
     private fun dismiss() {

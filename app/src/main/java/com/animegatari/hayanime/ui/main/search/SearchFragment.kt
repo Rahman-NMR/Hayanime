@@ -201,8 +201,8 @@ class SearchFragment : Fragment(), ReselectableFragment {
 
     private fun initializeAnimeAdapter(): AnimeGridAdapter = AnimeGridAdapter(
         onItemClicked = { anime ->
-            anime.id?.let {
-                val action = SearchFragmentDirections.actionNavigationToNavigationAnimeDetail(animeId = it)
+            anime.id?.let { animeId ->
+                val action = SearchFragmentDirections.actionGlobalToAnimeDetailGraph(animeId)
                 findNavController().navigate(action)
             } ?: run {
                 showToast(requireContext(), getString(R.string.message_error_missing_anime_id))
@@ -210,7 +210,7 @@ class SearchFragment : Fragment(), ReselectableFragment {
         },
         onEditMyListClicked = { anime ->
             anime.id?.let { animeId ->
-                val action = SearchFragmentDirections.actionNavigationToNavigationEditAnime(
+                val action = SearchFragmentDirections.actionGlobalToEditAnime(
                     animeId = animeId,
                     requestKey = EditOwnListFragment.DETAIL_REQUEST_KEY
                 )

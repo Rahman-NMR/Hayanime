@@ -16,6 +16,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
 import androidx.transition.TransitionManager
 import com.animegatari.hayanime.R
 import com.animegatari.hayanime.data.model.AnimeDetail
@@ -62,6 +63,7 @@ class AnimeDetailFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val animeDetailViewModel: AnimeDetailViewModel by viewModels()
+    private val animePicturesViewModel: AnimePicturesViewModel by navGraphViewModels(R.id.anime_detail_graph)
 
     private val pictureCarouselAdapter by lazy { pictureCarouselAdapter() }
     private val genreAdapter by lazy { genreAdapter() }
@@ -105,7 +107,7 @@ class AnimeDetailFragment : Fragment() {
         btnMoreBg.setOnClickListener { toggleBackgroundExpansion() }
 
         fabEditMylist.setOnClickListener {
-            val action = AnimeDetailFragmentDirections.actionNavigationToNavigationEditAnime(
+            val action = AnimeDetailFragmentDirections.actionAnimeDetailToEditAnime(
                 animeId = animeDetailViewModel.animeId,
                 requestKey = EditOwnListFragment.DETAIL_REQUEST_KEY
             )
@@ -188,7 +190,7 @@ class AnimeDetailFragment : Fragment() {
 
     private fun pictureCarouselAdapter() = PictureCarouselAdapter(
         onPictureClicked = {
-            val action = AnimeDetailFragmentDirections.actionAnimeDetailToAnimeDetailPictures(
+            val action = AnimeDetailFragmentDirections.actionAnimeDetailToAnimePictures(
                 animeId = animeDetailViewModel.animeId,
             )
             findNavController().navigate(action)
@@ -241,7 +243,7 @@ class AnimeDetailFragment : Fragment() {
     private fun relatedAnimeAdapter(): AnimeRelatedAdapter = AnimeRelatedAdapter(
         onRecommendationClick = { anime ->
             anime.node?.id?.let { animeId ->
-                val action = AnimeDetailFragmentDirections.actionNavigationToNavigationAnimeDetail(animeId)
+                val action = AnimeDetailFragmentDirections.actionAnimeDetailSelf(animeId)
                 findNavController().navigate(action)
             } ?: run {
                 showToast(requireContext(), getString(R.string.message_error_missing_anime_id))
@@ -252,7 +254,7 @@ class AnimeDetailFragment : Fragment() {
     private fun animeRecAdapter(): AnimeRecommendationAdapter = AnimeRecommendationAdapter(
         onRecommendationClick = { anime ->
             anime.node?.id?.let { animeId ->
-                val action = AnimeDetailFragmentDirections.actionNavigationToNavigationAnimeDetail(animeId)
+                val action = AnimeDetailFragmentDirections.actionAnimeDetailSelf(animeId)
                 findNavController().navigate(action)
             } ?: run {
                 showToast(requireContext(), getString(R.string.message_error_missing_anime_id))
@@ -430,17 +432,24 @@ class AnimeDetailFragment : Fragment() {
     }
 
     private fun observeViewModelStates() {
+        animePicturesViewModel.clearPictures()
+
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 animeDetailViewModel.animeDetail.collect { response ->
                     response.onSuccess { anime ->
                         loadingVisibilityView(indicator = false, layout = true)
                         observeUIState(anime)
+                        anime?.pictures?.let { animePicturesViewModel.setPictures(it) }
                     }.onError {
                         loadingVisibilityView(indicator = false, layout = false)
                         showToast(requireContext(), getString(R.string.message_error_missing_anime_id))
                         dismiss()
-                    }.onLoading { loadingVisibilityView(indicator = true, layout = false) }
+                    }.onLoading {
+                        if (!binding.content.isVisible) {
+                            loadingVisibilityView(indicator = true, layout = false)
+                        }
+                    }
                 }
             }
         }

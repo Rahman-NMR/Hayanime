@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.detail.AnimeDetailPicturesFragment">
+    tools:context=".ui.detail.AnimePicturesFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/pictures_recycler_view"
@@ -18,7 +18,6 @@
         app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:spanCount="2"
-        tools:context=".ui.detail.AnimeDetailPicturesFragment"
         tools:itemCount="5"
         tools:listitem="@layout/layout_anime_picture" />
 
@@ -52,12 +51,4 @@
             app:navigationIcon="@drawable/ic_arrow_back_24px_rounded"
             app:title="@string/title_pictures" />
     </com.google.android.material.appbar.AppBarLayout>
-
-    <com.google.android.material.progressindicator.CircularProgressIndicator
-        android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:indeterminate="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
