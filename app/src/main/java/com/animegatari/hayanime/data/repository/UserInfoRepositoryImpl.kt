@@ -1,10 +1,10 @@
 package com.animegatari.hayanime.data.repository
 
-import com.animegatari.hayanime.core.Config
-import com.animegatari.hayanime.data.model.UserInfo
+import com.animegatari.hayanime.core.config.Config
+import com.animegatari.hayanime.data.remote.dto.UserInfo
 import com.animegatari.hayanime.data.remote.api.UserInfoApiService
 import com.animegatari.hayanime.domain.repository.UserInfoRepository
-import com.animegatari.hayanime.domain.utils.Response
+import com.animegatari.hayanime.core.result.Response
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject

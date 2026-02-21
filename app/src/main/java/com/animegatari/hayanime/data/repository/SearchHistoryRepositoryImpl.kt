@@ -1,7 +1,7 @@
 package com.animegatari.hayanime.data.repository
 
 import com.animegatari.hayanime.data.local.dao.SearchHistoryDao
-import com.animegatari.hayanime.data.local.datamodel.toDomain
+import com.animegatari.hayanime.data.local.entity.toDomain
 import com.animegatari.hayanime.domain.model.SearchHistoryItem
 import com.animegatari.hayanime.domain.repository.SearchHistoryRepository
 import kotlinx.coroutines.flow.Flow

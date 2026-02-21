@@ -7,25 +7,25 @@
 
     <fragment
         android:id="@+id/navigation_season"
-        android:name="com.animegatari.hayanime.ui.main.season.SeasonFragment"
+        android:name="com.animegatari.hayanime.presentation.feature.main.season.SeasonFragment"
         android:label="@string/title_season"
         tools:layout="@layout/fragment_season" />
 
     <fragment
         android:id="@+id/navigation_search"
-        android:name="com.animegatari.hayanime.ui.main.search.SearchFragment"
+        android:name="com.animegatari.hayanime.presentation.feature.main.search.SearchFragment"
         android:label="@string/title_explore"
         tools:layout="@layout/fragment_search" />
 
     <fragment
         android:id="@+id/navigation_my_list"
-        android:name="com.animegatari.hayanime.ui.main.myList.MyListFragment"
+        android:name="com.animegatari.hayanime.presentation.feature.main.myList.MyListFragment"
         android:label="@string/title_my_list"
         tools:layout="@layout/fragment_my_list" />
 
     <fragment
         android:id="@+id/navigation_edit_anime"
-        android:name="com.animegatari.hayanime.ui.detail.EditOwnListFragment"
+        android:name="com.animegatari.hayanime.presentation.feature.detail.EditOwnListFragment"
         android:label="@string/title_edit_anime"
         tools:layout="@layout/fragment_edit_own_list">
 
@@ -56,7 +56,7 @@
 
         <fragment
             android:id="@+id/navigation_anime_detail"
-            android:name="com.animegatari.hayanime.ui.detail.AnimeDetailFragment"
+            android:name="com.animegatari.hayanime.presentation.feature.detail.AnimeDetailFragment"
             android:label="@string/title_anime_detail"
             tools:layout="@layout/fragment_anime_detail">
 
@@ -91,7 +91,7 @@
 
         <fragment
             android:id="@+id/navigation_anime_pictures"
-            android:name="com.animegatari.hayanime.ui.detail.AnimePicturesFragment"
+            android:name="com.animegatari.hayanime.presentation.feature.detail.AnimePicturesFragment"
             android:label="@string/title_pictures"
             tools:layout="@layout/fragment_anime_pictures">
 

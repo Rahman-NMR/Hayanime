@@ -3,7 +3,7 @@ package com.animegatari.hayanime
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.animegatari.hayanime.data.local.datastore.SettingsPreferences
-import com.animegatari.hayanime.data.types.Theme
+import com.animegatari.hayanime.core.config.Theme
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

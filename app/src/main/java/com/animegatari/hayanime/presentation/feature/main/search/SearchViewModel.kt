@@ -1,0 +1,43 @@
+package com.animegatari.hayanime.presentation.feature.main.search
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.animegatari.hayanime.core.config.Config
+import com.animegatari.hayanime.data.remote.dto.AnimeList
+import com.animegatari.hayanime.domain.repository.AnimeRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+
+@HiltViewModel
+class SearchViewModel @Inject constructor(
+    private val animeRepository: AnimeRepository,
+) : ViewModel() {
+    private val _searchQuery = MutableStateFlow("")
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val animeList: Flow<PagingData<AnimeList>> = _searchQuery
+        .flatMapLatest { query ->
+            if (query.isEmpty()) {
+                animeRepository.suggestedAnime(
+                    limitConfig = Config.DEFAULT_PAGE_LIMIT,
+                    commonFields = Config.ANIME_LIST_FIELDS
+                )
+            } else {
+                animeRepository.searchAnime(
+                    query = query,
+                    limitConfig = Config.DEFAULT_PAGE_LIMIT,
+                    commonFields = Config.ANIME_LIST_FIELDS
+                )
+            }
+        }.cachedIn(viewModelScope)
+
+    fun getAnimeList(searchQuery: String) {
+        _searchQuery.value = searchQuery
+    }
+}

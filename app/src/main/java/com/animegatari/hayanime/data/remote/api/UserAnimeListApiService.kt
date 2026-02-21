@@ -1,6 +1,6 @@
 package com.animegatari.hayanime.data.remote.api
 
-import com.animegatari.hayanime.data.remote.response.AnimeListResponse
+import com.animegatari.hayanime.data.remote.dto.AnimeListResponse
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.DELETE

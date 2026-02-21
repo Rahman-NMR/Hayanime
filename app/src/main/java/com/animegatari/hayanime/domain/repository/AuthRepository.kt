@@ -1,7 +1,7 @@
 package com.animegatari.hayanime.domain.repository
 
 import android.net.Uri
-import com.animegatari.hayanime.data.remote.response.AccessTokenResponse
+import com.animegatari.hayanime.data.remote.dto.AccessTokenResponse
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {

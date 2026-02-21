@@ -1,10 +1,10 @@
 package com.animegatari.hayanime.domain.repository
 
 import androidx.paging.PagingData
-import com.animegatari.hayanime.data.local.datamodel.SeasonModel
-import com.animegatari.hayanime.data.model.AnimeDetail
-import com.animegatari.hayanime.data.remote.response.AnimeList
-import com.animegatari.hayanime.domain.utils.Response
+import com.animegatari.hayanime.domain.model.SeasonModel
+import com.animegatari.hayanime.data.remote.dto.AnimeDetail
+import com.animegatari.hayanime.data.remote.dto.AnimeList
+import com.animegatari.hayanime.core.result.Response
 import kotlinx.coroutines.flow.Flow
 
 interface AnimeRepository {

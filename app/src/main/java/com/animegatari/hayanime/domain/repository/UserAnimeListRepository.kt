@@ -1,11 +1,11 @@
 package com.animegatari.hayanime.domain.repository
 
 import androidx.paging.PagingData
-import com.animegatari.hayanime.data.local.datamodel.MyListModel
-import com.animegatari.hayanime.data.model.AnimeMinimum
-import com.animegatari.hayanime.data.model.MyListStatus
-import com.animegatari.hayanime.data.remote.response.AnimeList
-import com.animegatari.hayanime.domain.utils.Response
+import com.animegatari.hayanime.domain.model.MyListModel
+import com.animegatari.hayanime.data.remote.dto.AnimeMinimum
+import com.animegatari.hayanime.data.remote.dto.MyListStatus
+import com.animegatari.hayanime.data.remote.dto.AnimeList
+import com.animegatari.hayanime.core.result.Response
 import kotlinx.coroutines.flow.Flow
 
 interface UserAnimeListRepository {

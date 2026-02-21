@@ -14,13 +14,13 @@
         android:supportsRtl="false"
         android:theme="@style/MainTheme.Hayanime">
         <activity
-            android:name=".ui.profile.ProfileActivity"
+            android:name=".presentation.feature.profile.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.main.MainActivity"
+            android:name=".presentation.feature.main.MainActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.auth.AuthActivity"
+            android:name=".presentation.feature.auth.AuthActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/Theme.Hayanime.Splash">

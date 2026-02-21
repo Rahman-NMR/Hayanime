@@ -1,8 +1,8 @@
 package com.animegatari.hayanime.data.remote.api
 
-import com.animegatari.hayanime.data.model.AnimeDetail
-import com.animegatari.hayanime.data.model.AnimeMinimum
-import com.animegatari.hayanime.data.remote.response.AnimeListResponse
+import com.animegatari.hayanime.data.remote.dto.AnimeDetail
+import com.animegatari.hayanime.data.remote.dto.AnimeMinimum
+import com.animegatari.hayanime.data.remote.dto.AnimeListResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query

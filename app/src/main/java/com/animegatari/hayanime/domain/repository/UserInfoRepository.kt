@@ -1,7 +1,7 @@
 package com.animegatari.hayanime.domain.repository
 
-import com.animegatari.hayanime.data.model.UserInfo
-import com.animegatari.hayanime.domain.utils.Response
+import com.animegatari.hayanime.data.remote.dto.UserInfo
+import com.animegatari.hayanime.core.result.Response
 import kotlinx.coroutines.flow.Flow
 
 interface UserInfoRepository {

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_user_stats"
-        android:name="com.animegatari.hayanime.ui.profile.userStats.UserStatsFragment"
+        android:name="com.animegatari.hayanime.presentation.feature.profile.userStats.UserStatsFragment"
         android:label="@string/title_user_stats"
         tools:layout="@layout/fragment_user_stats">
 
@@ -22,6 +22,6 @@
 
     <fragment
         android:id="@+id/navigation_settings"
-        android:name="com.animegatari.hayanime.ui.profile.settings.SettingsFragment"
+        android:name="com.animegatari.hayanime.presentation.feature.profile.settings.SettingsFragment"
         android:label="@string/title_settings" />
 </navigation>

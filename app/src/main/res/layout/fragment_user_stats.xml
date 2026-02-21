@@ -5,7 +5,7 @@
     android:id="@+id/user_stats"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.profile.userStats.UserStatsFragment">
+    tools:context=".presentation.feature.profile.userStats.UserStatsFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

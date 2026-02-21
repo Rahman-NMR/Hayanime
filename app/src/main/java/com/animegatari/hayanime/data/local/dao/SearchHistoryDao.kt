@@ -5,7 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import com.animegatari.hayanime.data.local.datamodel.SearchHistoryEntity
+import com.animegatari.hayanime.data.local.entity.SearchHistoryEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

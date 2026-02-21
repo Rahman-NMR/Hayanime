@@ -2,8 +2,8 @@ package com.animegatari.hayanime.data.pagination
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.animegatari.hayanime.data.remote.response.AnimeList
-import com.animegatari.hayanime.data.remote.response.AnimeListResponse
+import com.animegatari.hayanime.data.remote.dto.AnimeList
+import com.animegatari.hayanime.data.remote.dto.AnimeListResponse
 import retrofit2.HttpException
 
 class AnimePagingSource(

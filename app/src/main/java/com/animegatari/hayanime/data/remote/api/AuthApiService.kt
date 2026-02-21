@@ -1,6 +1,6 @@
 package com.animegatari.hayanime.data.remote.api
 
-import com.animegatari.hayanime.data.remote.response.AccessTokenResponse
+import com.animegatari.hayanime.data.remote.dto.AccessTokenResponse
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
