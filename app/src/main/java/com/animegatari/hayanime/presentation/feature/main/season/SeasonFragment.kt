@@ -44,6 +44,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import java.net.ConnectException
 import java.net.SocketException
 import java.net.SocketTimeoutException
@@ -210,7 +211,8 @@ class SeasonFragment : Fragment(), ReselectableFragment {
         swipeRefresh.isRefreshing = refreshState is LoadState.Loading
 
         if (refreshState is LoadState.Error) {
-            val message = when (refreshState.error) {
+            val message = when (val error = refreshState.error) {
+                is HttpException if error.code() == 401 -> getString(R.string.message_error_invalid_token)
                 is ConnectException -> getString(R.string.message_failed_to_connect)
                 is SocketException -> getString(R.string.message_connection_lost)
                 is SocketTimeoutException -> getString(R.string.message_timeout)
